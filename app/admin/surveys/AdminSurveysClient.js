@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createSurveyAction, addQuestionAction } from '@/app/actions/admin'
 
 const QUESTION_TYPES = [
@@ -27,6 +29,7 @@ export default function AdminSurveysClient({ initialSurveys, completionCounts })
   const [questionError, setQuestionError] = useState('')
   const [isPendingCreate, startCreate] = useTransition()
   const [isPendingQuestion, startQuestion] = useTransition()
+  const router = useRouter()
 
   async function handleCreateSurvey(e) {
     e.preventDefault()
@@ -37,9 +40,7 @@ export default function AdminSurveysClient({ initialSurveys, completionCounts })
       if (result?.error) {
         setCreateError(result.error)
       } else if (result?.survey) {
-        setSurveys(prev => [result.survey, ...prev])
-        setShowCreateForm(false)
-        e.target.reset()
+        router.push(`/admin/surveys/${result.survey.id}/questions`)
       }
     })
   }
@@ -210,15 +211,13 @@ export default function AdminSurveysClient({ initialSurveys, completionCounts })
                     {completionCounts[survey.id] ?? 0}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => setActiveSurveyId(
-                        activeSurveyId === survey.id ? null : survey.id
-                      )}
+                    <Link
+                      href={`/admin/surveys/${survey.id}/questions`}
                       className="text-sm font-medium hover:opacity-70 transition-opacity"
                       style={{ color: '#CA9662' }}
                     >
-                      {activeSurveyId === survey.id ? 'Hide' : 'Add Questions'}
-                    </button>
+                      Manage Questions
+                    </Link>
                   </td>
                 </tr>
               ))}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -20,6 +20,13 @@ const SUBJECTS = [
 
 export default function RegisterPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const ref = params.get('ref')
+    if (ref) localStorage.setItem('referrer_id', ref)
+  }, [])
+
   const [firstName, setFirstName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -87,6 +94,28 @@ export default function RegisterPage() {
         setErrors({ form: profileError.message })
         setLoading(false)
         return
+      }
+
+      const referrerId = localStorage.getItem('referrer_id')
+      if (referrerId) {
+        try {
+          console.log('[register] processing referral for referrer:', referrerId)
+          const res = await fetch('/api/referral', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ referrerId, newUserId: data.user.id }),
+          })
+          const result = await res.json()
+          if (!res.ok || result?.error) {
+            console.error('[register] referral API error:', result?.error)
+          } else {
+            console.log('[register] referral succeeded')
+          }
+        } catch (err) {
+          console.error('[register] referral fetch threw:', err)
+        } finally {
+          localStorage.removeItem('referrer_id')
+        }
       }
     }
 

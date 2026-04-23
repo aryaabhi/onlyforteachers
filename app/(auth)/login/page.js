@@ -26,6 +26,12 @@ export default function LoginPage() {
       return
     }
 
+    fetch('/api/brevo/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'lastLogin', email }),
+    }).catch(() => {})
+
     router.push('/dashboard')
     router.refresh()
   }

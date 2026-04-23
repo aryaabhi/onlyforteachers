@@ -23,8 +23,9 @@ export default function Navbar({ user }) {
             <>
               <NavLink href="/dashboard">Dashboard</NavLink>
               <NavLink href="/survey">Survey</NavLink>
+              <NavLink href="/survey-results">Results</NavLink>
+              <NavLink href="/offers">Offers</NavLink>
               <NavLink href="/profile">Profile</NavLink>
-              <NavLink href="/rewards">Rewards</NavLink>
               <LogoutButton />
             </>
           ) : (

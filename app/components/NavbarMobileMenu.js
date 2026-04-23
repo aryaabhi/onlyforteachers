@@ -44,8 +44,9 @@ export default function NavbarMobileMenu({ isLoggedIn }) {
               <>
                 <MobileLink href="/dashboard" onClick={close}>Dashboard</MobileLink>
                 <MobileLink href="/survey" onClick={close}>Survey</MobileLink>
+                <MobileLink href="/survey-results" onClick={close}>Results</MobileLink>
+                <MobileLink href="/offers" onClick={close}>Offers</MobileLink>
                 <MobileLink href="/profile" onClick={close}>Profile</MobileLink>
-                <MobileLink href="/rewards" onClick={close}>Rewards</MobileLink>
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
 
 async function requireAdmin(supabase, user) {
@@ -63,4 +64,87 @@ export async function addQuestionAction(formData) {
 
   if (error) return { error: error.message }
   return { question }
+}
+
+export async function deleteQuestionAction(questionId) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  await requireAdmin(supabase, user)
+
+  const { error } = await supabase.from('questions').delete().eq('id', questionId)
+  if (error) return { error: error.message }
+  return { success: true }
+}
+
+export async function setSurveyReadyAction(surveyId) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  await requireAdmin(supabase, user)
+
+  const { data: survey } = await supabase
+    .from('surveys')
+    .select('starts_at')
+    .eq('id', surveyId)
+    .single()
+
+  const now = new Date()
+  const startsAt = new Date(survey?.starts_at)
+  const status = startsAt <= now ? 'active' : 'scheduled'
+
+  const { error } = await supabase.from('surveys').update({ status }).eq('id', surveyId)
+  if (error) return { error: error.message }
+  return { success: true, status }
+}
+
+export async function runMonthlyDrawAction(drawMonth) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  await requireAdmin(supabase, user)
+
+  const { data: existing } = await supabase
+    .from('monthly_draws')
+    .select('id')
+    .eq('draw_month', drawMonth)
+    .maybeSingle()
+
+  if (existing) return { error: 'Draw already run for this month' }
+
+  const monthStart = new Date(`${drawMonth}-01T00:00:00Z`)
+  const monthEnd = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 1))
+
+  const { data: completions } = await supabase
+    .from('survey_completions')
+    .select('user_id')
+    .gte('completed_at', monthStart.toISOString())
+    .lt('completed_at', monthEnd.toISOString())
+
+  if (!completions || completions.length === 0) {
+    return { error: 'No eligible participants for this month' }
+  }
+
+  const userIds = [...new Set(completions.map(c => c.user_id))]
+  const winnerId = userIds[Math.floor(Math.random() * userIds.length)]
+
+  const service = createServiceClient()
+  const { data: winner } = await service
+    .from('profiles')
+    .select('id, first_name, email')
+    .eq('id', winnerId)
+    .single()
+
+  if (!winner) return { error: 'Could not find winner profile' }
+
+  const { error: drawError } = await supabase.from('monthly_draws').insert({
+    draw_month: drawMonth,
+    winner_id: winnerId,
+    prize_description: 'Monthly Prize Draw',
+    drawn_at: new Date().toISOString(),
+  })
+
+  if (drawError) return { error: drawError.message }
+
+  return { success: true, winner: { name: winner.first_name, email: winner.email } }
 }
