@@ -4,7 +4,10 @@ import Link from 'next/link'
 import LogoutButton from './LogoutButton'
 import CopyButton from './CopyButton'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }) {
+  const params = await searchParams
+  const surveyCompleted = params?.survey === 'completed'
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -56,6 +59,14 @@ export default async function DashboardPage() {
         </h1>
         <LogoutButton />
       </header>
+
+      {surveyCompleted && (
+        <div className="bg-green-50 border-b border-green-200 px-4 sm:px-6 py-3">
+          <p className="text-green-800 text-sm font-medium text-center">
+            Thank you! Your survey response has been saved and your points have been added.
+          </p>
+        </div>
+      )}
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-6">
         {/* Stats row */}
