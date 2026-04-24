@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import NavbarMobileMenu from './NavbarMobileMenu'
+import NavbarMoreDropdown from './NavbarMoreDropdown'
 import LogoutButton from '@/app/dashboard/LogoutButton'
 
 export default function Navbar({ user }) {
@@ -11,27 +12,31 @@ export default function Navbar({ user }) {
         {/* Logo */}
         <Link
           href={isLoggedIn ? '/dashboard' : '/'}
-          className="font-bold text-lg"
+          className="font-bold text-lg flex-shrink-0"
           style={{ color: '#CA9662' }}
         >
           Only For Teachers
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden sm:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-4">
           {isLoggedIn ? (
             <>
               <NavLink href="/dashboard">Dashboard</NavLink>
               <NavLink href="/survey">Survey</NavLink>
-              <NavLink href="/survey-results">Results</NavLink>
               <NavLink href="/offers">Offers</NavLink>
+              <NavLink href="/survey-results">Results</NavLink>
               <NavLink href="/profile">Profile</NavLink>
+              <NavbarMoreDropdown />
               <LogoutButton />
             </>
           ) : (
             <>
-              <NavLink href="/#how-it-works">How It Works</NavLink>
+              <NavLink href="/how-it-works">How It Works</NavLink>
               <NavLink href="/rewards">Rewards</NavLink>
+              <NavLink href="/survey-results">Survey Results</NavLink>
+              <NavLink href="/teacher-index">Pulse Index</NavLink>
+              <NavLink href="/ask-a-question">Ask a Question</NavLink>
               <NavLink href="/login">Login</NavLink>
               <Link
                 href="/register"
@@ -55,7 +60,7 @@ function NavLink({ href, children }) {
   return (
     <Link
       href={href}
-      className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+      className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
     >
       {children}
     </Link>

@@ -21,7 +21,7 @@ export default function NavbarMobileMenu({ isLoggedIn }) {
   }
 
   return (
-    <div className="sm:hidden">
+    <div className="md:hidden">
       <button
         onClick={() => setIsOpen(prev => !prev)}
         className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
@@ -44,9 +44,16 @@ export default function NavbarMobileMenu({ isLoggedIn }) {
               <>
                 <MobileLink href="/dashboard" onClick={close}>Dashboard</MobileLink>
                 <MobileLink href="/survey" onClick={close}>Survey</MobileLink>
-                <MobileLink href="/survey-results" onClick={close}>Results</MobileLink>
                 <MobileLink href="/offers" onClick={close}>Offers</MobileLink>
+                <MobileLink href="/survey-results" onClick={close}>Survey Results</MobileLink>
                 <MobileLink href="/profile" onClick={close}>Profile</MobileLink>
+                <div className="my-1.5 border-t border-gray-100" />
+                <MobileLink href="/how-it-works" onClick={close}>How It Works</MobileLink>
+                <MobileLink href="/rewards" onClick={close}>Rewards</MobileLink>
+                <MobileLink href="/teacher-index" onClick={close}>Teacher Pulse Index</MobileLink>
+                <MobileLink href="/ask-a-question" onClick={close}>Ask a Question</MobileLink>
+                <MobileLink href="/about" onClick={close}>About Us</MobileLink>
+                <div className="my-1.5 border-t border-gray-100" />
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
@@ -56,10 +63,21 @@ export default function NavbarMobileMenu({ isLoggedIn }) {
               </>
             ) : (
               <>
-                <MobileLink href="/#how-it-works" onClick={close}>How It Works</MobileLink>
+                <MobileLink href="/how-it-works" onClick={close}>How It Works</MobileLink>
                 <MobileLink href="/rewards" onClick={close}>Rewards</MobileLink>
-                <MobileLink href="/register" onClick={close}>Join Now</MobileLink>
+                <MobileLink href="/survey-results" onClick={close}>Survey Results</MobileLink>
+                <MobileLink href="/teacher-index" onClick={close}>Teacher Pulse Index</MobileLink>
+                <MobileLink href="/ask-a-question" onClick={close}>Ask a Question</MobileLink>
+                <div className="my-1.5 border-t border-gray-100" />
                 <MobileLink href="/login" onClick={close}>Login</MobileLink>
+                <Link
+                  href="/register"
+                  onClick={close}
+                  className="block mx-4 mt-2 mb-1 py-2.5 rounded-lg text-white text-sm font-semibold text-center transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: '#CA9662' }}
+                >
+                  Join Now
+                </Link>
               </>
             )}
           </div>

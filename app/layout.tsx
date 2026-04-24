@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/app/components/Navbar";
+import Footer from "@/app/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Only For Teachers",
-  description: "The survey platform built exclusively for teachers",
+  description: "The UK teacher community that rewards you for sharing your professional opinion.",
 };
 
 export default async function RootLayout({
@@ -36,7 +37,10 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Navbar user={user} />
-        {children}
+        <div className="flex-1">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );
