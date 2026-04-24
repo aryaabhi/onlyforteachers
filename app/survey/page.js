@@ -19,20 +19,25 @@ export default async function SurveyPage() {
 
   if (!survey) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 max-w-md w-full text-center">
-          <div className="text-4xl mb-4">📋</div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">No Active Survey</h1>
-          <p className="text-gray-500 mb-6">
-            No survey is currently active. Check back next week!
-          </p>
-          <Link
-            href="/dashboard"
-            className="inline-block px-6 py-2.5 rounded-lg text-white font-semibold text-sm transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#CA9662' }}
-          >
-            Back to Dashboard
-          </Link>
+      <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
+        <div className="py-20 px-4 text-center" style={{ backgroundColor: '#1B3A2D' }}>
+          <h1 className="text-3xl font-bold text-white">This Week&apos;s Survey</h1>
+        </div>
+        <div className="flex items-center justify-center px-4 py-20">
+          <div className="bg-white rounded-2xl border p-10 max-w-md w-full text-center shadow-sm" style={{ borderColor: '#E8DDD0' }}>
+            <div className="text-4xl mb-4">📋</div>
+            <h2 className="text-xl font-bold text-[#1B3A2D] mb-2">No Active Survey</h2>
+            <p className="text-[#6B6B6B] mb-6">
+              No survey is currently active. Check back next week!
+            </p>
+            <Link
+              href="/dashboard"
+              className="inline-block px-6 py-3 rounded-full text-white font-semibold text-sm transition-all hover:opacity-90"
+              style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
+            >
+              Back to Dashboard
+            </Link>
+          </div>
         </div>
       </main>
     )
@@ -47,25 +52,30 @@ export default async function SurveyPage() {
 
   if (completion) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 max-w-md w-full text-center">
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center text-white text-xl mx-auto mb-4"
-            style={{ backgroundColor: '#16a34a' }}
-          >
-            ✓
+      <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
+        <div className="py-20 px-4 text-center" style={{ backgroundColor: '#1B3A2D' }}>
+          <h1 className="text-3xl font-bold text-white">This Week&apos;s Survey</h1>
+        </div>
+        <div className="flex items-center justify-center px-4 py-20">
+          <div className="bg-white rounded-2xl border p-10 max-w-md w-full text-center shadow-sm" style={{ borderColor: '#E8DDD0' }}>
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4"
+              style={{ backgroundColor: '#16a34a' }}
+            >
+              ✓
+            </div>
+            <h2 className="text-xl font-bold text-[#1B3A2D] mb-2">Already Completed</h2>
+            <p className="text-[#6B6B6B] mb-6">
+              You have already completed this week&apos;s survey. Your points have been added.
+            </p>
+            <Link
+              href="/dashboard"
+              className="inline-block px-6 py-3 rounded-full text-white font-semibold text-sm transition-all hover:opacity-90"
+              style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
+            >
+              Back to Dashboard
+            </Link>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Already Completed</h1>
-          <p className="text-gray-500 mb-6">
-            You have already completed this week&apos;s survey. Your points have been added.
-          </p>
-          <Link
-            href="/dashboard"
-            className="inline-block px-6 py-2.5 rounded-lg text-white font-semibold text-sm transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#CA9662' }}
-          >
-            Back to Dashboard
-          </Link>
         </div>
       </main>
     )

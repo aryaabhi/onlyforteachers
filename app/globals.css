@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F5EDE0;
+  --foreground: #2C2C2C;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-serif: var(--font-playfair), 'Playfair Display', serif;
+  --font-sans: var(--font-inter), 'Inter', sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-green-primary: #1B3A2D;
+  --color-orange-primary: #C94F2C;
+  --color-cream: #F5EDE0;
+  --color-text-dark: #2C2C2C;
+  --color-text-muted: #6B6B6B;
+  --color-border-light: #E8DDD0;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), 'Inter', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+}
+
+a {
+  color: #C94F2C;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #C94F2C;
+  outline-offset: 2px;
+}
+
+input[type="checkbox"]:focus,
+input[type="radio"]:focus {
+  outline: 2px solid #C94F2C;
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F5EDE0;
+}
+::-webkit-scrollbar-thumb {
+  background: #C6B9A8;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A89880;
 }

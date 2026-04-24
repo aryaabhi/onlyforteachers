@@ -68,50 +68,54 @@ export default function SurveyForm({ survey, questions }) {
   }
 
   const answeredCount = questions.filter(q => isAnswered(q.id)).length
+  const progressPct = total > 0 ? (answeredCount / total) * 100 : 0
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">{survey.title}</h1>
-          {survey.description && (
-            <p className="mt-1 text-gray-500 text-sm">{survey.description}</p>
-          )}
-        </div>
+    <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
+      {/* Hero header */}
+      <div className="py-12 px-4 text-center text-white" style={{ backgroundColor: '#1B3A2D' }}>
+        <p className="text-xs font-semibold tracking-widest uppercase mb-2 opacity-70">
+          This Week&apos;s Survey
+        </p>
+        <h1 className="text-2xl sm:text-3xl font-bold">{survey.title}</h1>
+        {survey.description && (
+          <p className="mt-2 text-sm opacity-70 max-w-xl mx-auto">{survey.description}</p>
+        )}
+      </div>
 
-        {/* Progress */}
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        {/* Progress bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600">
+            <span className="text-sm font-medium text-[#2C2C2C]">
               {total} question{total !== 1 ? 's' : ''}
             </span>
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-[#6B6B6B]">
               {answeredCount}/{total} answered
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-[#E8DDD0] rounded-full h-2">
             <div
               className="h-2 rounded-full transition-all duration-300"
-              style={{
-                backgroundColor: '#CA9662',
-                width: total > 0 ? `${(answeredCount / total) * 100}%` : '0%',
-              }}
+              style={{ backgroundColor: '#C94F2C', width: `${progressPct}%` }}
             />
           </div>
         </div>
 
-        {/* All questions */}
+        {/* Questions */}
         <div className="space-y-4 mb-6">
           {questions.map((q, i) => (
             <div
               key={q.id}
               id={`q-${q.id}`}
-              className={`bg-white rounded-2xl border shadow-sm p-6 transition-colors ${
-                unanswered.has(q.id) ? 'border-red-300' : 'border-gray-100'
-              }`}
+              className="bg-white rounded-2xl border shadow-sm p-6 transition-colors"
+              style={{ borderColor: unanswered.has(q.id) ? '#dc2626' : '#E8DDD0' }}
             >
-              <p className="text-base font-semibold text-gray-900 mb-4">
-                {i + 1}. {q.question_text}
+              <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: '#C94F2C' }}>
+                Question {i + 1}
+              </p>
+              <p className="text-base font-semibold text-[#1B3A2D] mb-4">
+                {q.question_text}
               </p>
 
               {q.question_type === 'checkbox' && (
@@ -122,10 +126,10 @@ export default function SurveyForm({ survey, questions }) {
                         type="checkbox"
                         checked={(answers[q.id] ?? []).includes(option)}
                         onChange={() => handleCheckboxChange(q.id, option)}
-                        className="w-5 h-5 rounded border-gray-300 cursor-pointer"
-                        style={{ accentColor: '#CA9662' }}
+                        className="w-4 h-4 rounded cursor-pointer"
+                        style={{ accentColor: '#C94F2C' }}
                       />
-                      <span className="text-gray-700 group-hover:text-gray-900">{option}</span>
+                      <span className="text-sm text-[#2C2C2C] group-hover:text-[#1B3A2D]">{option}</span>
                     </label>
                   ))}
                 </div>
@@ -141,10 +145,10 @@ export default function SurveyForm({ survey, questions }) {
                         value={option}
                         checked={answers[q.id] === option}
                         onChange={() => handleRadioChange(q.id, option)}
-                        className="w-5 h-5 border-gray-300 cursor-pointer"
-                        style={{ accentColor: '#CA9662' }}
+                        className="w-4 h-4 cursor-pointer"
+                        style={{ accentColor: '#C94F2C' }}
                       />
-                      <span className="text-gray-700 group-hover:text-gray-900">{option}</span>
+                      <span className="text-sm text-[#2C2C2C] group-hover:text-[#1B3A2D]">{option}</span>
                     </label>
                   ))}
                 </div>
@@ -156,8 +160,8 @@ export default function SurveyForm({ survey, questions }) {
                   onChange={e => handleTextChange(q.id, e.target.value)}
                   placeholder="Type your answer here..."
                   rows={4}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-700 text-sm focus:outline-none focus:ring-2 resize-none"
-                  style={{ '--tw-ring-color': '#CA9662' }}
+                  className="w-full rounded-xl border px-4 py-3 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 resize-none transition-colors"
+                  style={{ borderColor: '#E8DDD0', '--tw-ring-color': '#C94F2C' }}
                 />
               )}
 
@@ -167,8 +171,8 @@ export default function SurveyForm({ survey, questions }) {
                   value={answers[q.id] ?? ''}
                   onChange={e => handleTextChange(q.id, e.target.value)}
                   placeholder="Type your answer here..."
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-700 text-sm focus:outline-none focus:ring-2"
-                  style={{ '--tw-ring-color': '#CA9662' }}
+                  className="w-full rounded-xl border px-4 py-3 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 transition-colors"
+                  style={{ borderColor: '#E8DDD0', '--tw-ring-color': '#C94F2C' }}
                 />
               )}
 
@@ -188,14 +192,14 @@ export default function SurveyForm({ survey, questions }) {
             type="button"
             onClick={handleSubmit}
             disabled={isPending}
-            className="w-full sm:w-auto px-8 py-3 rounded-lg text-white text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#CA9662' }}
+            className="w-full py-4 rounded-full text-white font-semibold transition-all hover:opacity-90 hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+            style={{ backgroundColor: '#C94F2C' }}
           >
-            {isPending ? 'Submitting…' : 'Submit Survey'}
+            {isPending ? 'Submitting…' : 'Submit survey →'}
           </button>
 
           {survey.points_value && (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-[#6B6B6B]">
               You&apos;ll earn {survey.points_value} points for completing this survey.
             </p>
           )}

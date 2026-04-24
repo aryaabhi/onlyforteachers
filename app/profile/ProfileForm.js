@@ -45,10 +45,13 @@ export default function ProfileForm({ profile }) {
     setLoading(false)
   }
 
+  const inputClass = "w-full rounded-xl border px-4 py-3 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+  const inputStyle = { borderColor: '#E8DDD0', '--tw-ring-color': '#C94F2C' }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="firstName" className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
           First name
         </label>
         <input
@@ -57,88 +60,94 @@ export default function ProfileForm({ profile }) {
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
           required
-          className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
+          className={inputClass}
+          style={inputStyle}
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">Email</label>
         <input
           type="email"
           value={profile?.email ?? ''}
           disabled
-          className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed"
+          className="w-full rounded-xl border px-4 py-3 text-sm text-[#6B6B6B] cursor-not-allowed"
+          style={{ borderColor: '#E8DDD0', backgroundColor: '#F5EDE0' }}
         />
-        <p className="mt-1 text-xs text-gray-400">Email cannot be changed</p>
+        <p className="mt-1 text-xs text-[#6B6B6B]">Email cannot be changed</p>
       </div>
 
-      <fieldset>
-        <legend className="block text-sm font-medium text-gray-700 mb-2">
-          Year group(s) you teach{' '}
-          <span className="text-gray-400 font-normal">(select all that apply)</span>
-        </legend>
-        <div className="grid grid-cols-4 gap-y-2 gap-x-4">
-          {YEAR_GROUPS.map((yg) => (
-            <label key={yg} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={yearGroups.includes(yg)}
-                onChange={() => toggle(yearGroups, setYearGroups, yg)}
-                className="rounded border-gray-300"
-                style={{ accentColor: '#CA9662' }}
-              />
-              <span className="text-sm text-gray-700">{yg}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      <div>
+        <h3 className="text-sm font-semibold text-[#1B3A2D] mb-3 uppercase tracking-wide">Your teaching role</h3>
 
-      <fieldset>
-        <legend className="block text-sm font-medium text-gray-700 mb-2">
-          Subject(s) you teach{' '}
-          <span className="text-gray-400 font-normal">(select all that apply)</span>
-        </legend>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-          {SUBJECTS.map((subject) => (
-            <label key={subject} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={subjects.includes(subject)}
-                onChange={() => toggle(subjects, setSubjects, subject)}
-                className="rounded border-gray-300"
-                style={{ accentColor: '#CA9662' }}
-              />
-              <span className="text-sm text-gray-700">{subject}</span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
+        <fieldset className="mb-5">
+          <legend className="block text-sm font-medium text-[#2C2C2C] mb-2">
+            Year group(s) you teach{' '}
+            <span className="text-[#6B6B6B] font-normal">(select all that apply)</span>
+          </legend>
+          <div className="grid grid-cols-4 gap-y-2 gap-x-4">
+            {YEAR_GROUPS.map((yg) => (
+              <label key={yg} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={yearGroups.includes(yg)}
+                  onChange={() => toggle(yearGroups, setYearGroups, yg)}
+                  className="rounded w-4 h-4"
+                  style={{ accentColor: '#C94F2C' }}
+                />
+                <span className="text-sm text-[#2C2C2C]">{yg}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend className="block text-sm font-medium text-[#2C2C2C] mb-2">
+            Subject(s) you teach{' '}
+            <span className="text-[#6B6B6B] font-normal">(select all that apply)</span>
+          </legend>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+            {SUBJECTS.map((subject) => (
+              <label key={subject} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={subjects.includes(subject)}
+                  onChange={() => toggle(subjects, setSubjects, subject)}
+                  className="rounded w-4 h-4 shrink-0"
+                  style={{ accentColor: '#C94F2C' }}
+                />
+                <span className="text-sm text-[#2C2C2C]">{subject}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </div>
 
       <label className="flex items-start gap-3 cursor-pointer">
         <input
           type="checkbox"
           checked={emailConsent}
           onChange={(e) => setEmailConsent(e.target.checked)}
-          className="mt-0.5 rounded border-gray-300 shrink-0"
-          style={{ accentColor: '#CA9662' }}
+          className="mt-0.5 rounded w-4 h-4 shrink-0"
+          style={{ accentColor: '#C94F2C' }}
         />
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-[#6B6B6B]">
           Yes, I&apos;d like to receive updates, news, and prize alerts by email from Only for Teachers
         </span>
       </label>
 
       {status?.type === 'success' && (
-        <p className="text-sm text-green-700 bg-green-50 rounded-lg px-4 py-2">{status.message}</p>
+        <p className="text-sm text-green-700 bg-green-50 rounded-xl px-4 py-2.5">{status.message}</p>
       )}
       {status?.type === 'error' && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-lg px-4 py-2">{status.message}</p>
+        <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5">{status.message}</p>
       )}
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-2.5 rounded-lg text-white font-semibold text-sm transition-opacity disabled:opacity-60"
-        style={{ backgroundColor: '#CA9662' }}
+        className="w-full py-3 rounded-full text-white font-semibold text-sm transition-all hover:opacity-90 hover:shadow-md disabled:opacity-60"
+        style={{ backgroundColor: '#C94F2C' }}
       >
         {loading ? 'Saving…' : 'Save profile'}
       </button>

@@ -1,19 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
-import { client, urlFor } from '@/lib/sanity'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
+import { client, urlFor } from '@/lib/sanity'
 
-export const metadata = {
-  title: 'Survey Results & Reports | Only For Teachers',
-  description: 'Read the latest survey reports and explore aggregate data from UK teacher surveys conducted by Only For Teachers.',
-  openGraph: {
-    title: 'Survey Results & Reports | Only For Teachers',
-    description: 'UK teacher survey data and reports — see what teachers across the country really think.',
-    type: 'website',
-  },
-}
-
-export const revalidate = 3600
+const CATEGORIES = ['All', 'Assessment', 'Wellbeing', 'Technology', 'CPD', 'Policy']
 
 function formatDate(iso) {
   if (!iso) return '—'
@@ -22,134 +15,175 @@ function formatDate(iso) {
   })
 }
 
-export default async function SurveyResultsPage() {
-  const supabase = await createClient()
-  const now = new Date().toISOString()
+export default function SurveyResultsPage() {
+  const [posts, setPosts] = useState([])
+  const [pastSurveys, setPastSurveys] = useState([])
+  const [activeCategory, setActiveCategory] = useState('All')
+  const [loading, setLoading] = useState(true)
 
-  const [posts, { data: pastSurveys }] = await Promise.all([
-    client.fetch(
-      `*[_type == "post"] | order(publishedAt desc) {
-        title,
-        "slug": slug.current,
-        publishedAt,
-        excerpt,
-        mainImage
-      }`
-    ).catch(() => []),
-    supabase
-      .from('surveys')
-      .select('id, title, ends_at')
-      .lt('ends_at', now)
-      .order('ends_at', { ascending: false }),
-  ])
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient()
+      const now = new Date().toISOString()
+      const [fetchedPosts, { data: surveys }] = await Promise.all([
+        client.fetch(
+          `*[_type == "post"] | order(publishedAt desc) {
+            title, "slug": slug.current, publishedAt, excerpt, mainImage, categories
+          }`
+        ).catch(() => []),
+        supabase.from('surveys').select('id, title, ends_at').lt('ends_at', now).order('ends_at', { ascending: false }),
+      ])
+      setPosts(fetchedPosts ?? [])
+      setPastSurveys(surveys ?? [])
+      setLoading(false)
+    }
+    load()
+  }, [])
+
+  const filteredPosts = activeCategory === 'All'
+    ? posts
+    : posts.filter(p => p.categories && p.categories.some(c => c.toLowerCase() === activeCategory.toLowerCase()))
 
   return (
     <main className="min-h-screen bg-white">
-      <section className="bg-gray-50 py-16 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Survey Results &amp; Reports</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Insights from UK teachers — published after each survey closes. All data
-          is free to use with attribution.
-        </p>
+      {/* Hero */}
+      <section className="pt-16 pb-0 px-4 text-white" style={{ backgroundColor: '#1B3A2D' }}>
+        <div className="max-w-4xl mx-auto text-center pb-16">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+            Insights <em>hub</em>
+          </h1>
+          <p className="text-lg mb-4" style={{ color: '#D4C9B8' }}>
+            Data-driven stories from the UK teaching community.
+          </p>
+          <Link
+            href="/survey-methodology"
+            className="text-sm hover:underline"
+            style={{ color: '#9A8F82' }}
+          >
+            All insights follow our published survey methodology — read how →
+          </Link>
+        </div>
+        <div className="w-full leading-[0] overflow-hidden">
+          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0,40 C360,0 1080,80 1440,40 L1440,0 L0,0 Z" fill="#1B3A2D" />
+          </svg>
+        </div>
       </section>
 
-      <div className="max-w-5xl mx-auto px-4 py-12 space-y-16">
+      <div className="max-w-6xl mx-auto px-4 py-12">
 
-        {/* Survey Reports (Sanity) */}
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Survey Reports</h2>
+        {/* Category filters */}
+        <div className="flex flex-wrap gap-2 mb-10 justify-center">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="px-4 py-2 rounded-full text-sm font-medium transition-all"
+              style={{
+                backgroundColor: activeCategory === cat ? '#C94F2C' : '#F5EDE0',
+                color: activeCategory === cat ? '#fff' : '#2C2C2C',
+                border: activeCategory === cat ? 'none' : '1px solid #E8DDD0',
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
 
-          {posts && posts.length > 0 ? (
+        {/* Posts grid */}
+        <section className="mb-16">
+          {loading ? (
+            <div className="text-center py-16 text-[#6B6B6B]">Loading insights…</div>
+          ) : filteredPosts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {posts.map(post => (
+              {filteredPosts.map(post => (
                 <Link
                   key={post.slug}
                   href={`/survey-results/${post.slug}`}
-                  className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+                  className="group bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-shadow"
+                  style={{ borderColor: '#E8DDD0', textDecoration: 'none' }}
                 >
-                  {post.mainImage && (
+                  {post.mainImage ? (
                     <div className="relative h-44 w-full overflow-hidden bg-gray-100">
                       <Image
-                        src={urlFor(post.mainImage).width(600).height(350).url()}
+                        src={urlFor(post.mainImage).width(600).height(330).url()}
                         alt={post.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     </div>
+                  ) : (
+                    <div className="h-44 bg-[#F5EDE0]" />
                   )}
                   <div className="p-5">
-                    <p className="text-xs text-gray-400 mb-2">{formatDate(post.publishedAt)}</p>
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:opacity-80 transition-opacity leading-snug">
+                    {post.categories && post.categories.length > 0 && (
+                      <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#C94F2C' }}>
+                        {post.categories[0]}
+                      </span>
+                    )}
+                    <h3 className="font-semibold text-[#2C2C2C] mt-1 mb-2 leading-snug group-hover:text-[#C94F2C] transition-colors">
                       {post.title}
                     </h3>
                     {post.excerpt && (
-                      <p className="text-sm text-gray-500 line-clamp-2">{post.excerpt}</p>
+                      <p className="text-sm text-[#6B6B6B] line-clamp-2 mb-3">{post.excerpt}</p>
                     )}
-                    <span
-                      className="mt-3 inline-block text-sm font-medium"
-                      style={{ color: '#CA9662' }}
-                    >
-                      Read more →
-                    </span>
+                    <p className="text-xs text-[#6B6B6B]">{formatDate(post.publishedAt)}</p>
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="bg-gray-50 rounded-2xl p-12 text-center">
-              <p className="text-gray-500">Survey reports will appear here as they are published.</p>
+            <div className="text-center py-16 rounded-2xl" style={{ backgroundColor: '#F5EDE0' }}>
+              <p className="text-[#6B6B6B]">
+                {activeCategory === 'All'
+                  ? 'Survey reports will appear here as they are published.'
+                  : `No posts in the "${activeCategory}" category yet.`}
+              </p>
             </div>
           )}
         </section>
 
-        {/* Survey Data (Supabase) */}
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Survey Data</h2>
-
-          {pastSurveys && pastSurveys.length > 0 ? (
+        {/* Past survey data */}
+        {pastSurveys.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold text-[#1B3A2D] mb-6">Survey Data</h2>
             <div className="space-y-3">
               {pastSurveys.map(survey => (
                 <div
                   key={survey.id}
-                  className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors"
+                  className="flex items-center justify-between p-4 rounded-xl border hover:shadow-sm transition-all"
+                  style={{ borderColor: '#E8DDD0', backgroundColor: '#fff' }}
                 >
                   <div>
-                    <p className="font-medium text-gray-900">{survey.title}</p>
-                    <p className="text-sm text-gray-500 mt-0.5">Closed {formatDate(survey.ends_at)}</p>
+                    <p className="font-medium text-[#2C2C2C]">{survey.title}</p>
+                    <p className="text-sm text-[#6B6B6B] mt-0.5">Closed {formatDate(survey.ends_at)}</p>
                   </div>
                   <Link
                     href={`/survey-results/data/${survey.id}`}
-                    className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50"
-                    style={{ color: '#CA9662' }}
+                    className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-[#F5EDE0]"
+                    style={{ color: '#C94F2C' }}
                   >
                     View data →
                   </Link>
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="bg-gray-50 rounded-2xl p-12 text-center">
-              <p className="text-gray-500">Aggregate survey data will appear here once surveys close.</p>
-            </div>
-          )}
-        </section>
+          </section>
+        )}
 
         {/* CTA */}
-        <section className="rounded-2xl p-8 text-center" style={{ backgroundColor: '#FDF8F3' }}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Add your voice to the data
-          </h2>
-          <p className="text-gray-600 max-w-xl mx-auto mb-6">
-            Join thousands of UK teachers who share their professional opinion in weekly surveys.
-            Free forever, and you earn points for every survey you complete.
+        <section className="mt-16 rounded-2xl p-10 text-white text-center" style={{ backgroundColor: '#1B3A2D' }}>
+          <h2 className="text-2xl font-bold mb-3">Add your voice to the data</h2>
+          <p className="mb-6 max-w-xl mx-auto" style={{ color: '#D4C9B8' }}>
+            Join UK teachers who share their professional opinion in weekly surveys. Free forever, and you earn points for every survey you complete.
           </p>
           <Link
             href="/register"
-            className="inline-block px-8 py-3 rounded-lg text-white font-semibold transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#CA9662' }}
+            className="inline-block px-8 py-3.5 rounded-full text-white font-semibold transition-all hover:opacity-90"
+            style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
           >
-            Join Free
+            Join free →
           </Link>
         </section>
       </div>
