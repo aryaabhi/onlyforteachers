@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function AskForm() {
+export default function AskForm({ initialEmail = '' }) {
   const [questionText, setQuestionText] = useState('')
   const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(initialEmail)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)

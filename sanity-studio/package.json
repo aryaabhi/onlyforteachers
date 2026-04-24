@@ -1,0 +1,16 @@
+{
+  "name": "onlyforteachers-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "start": "sanity start"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sanity": "^3.66.0",
+    "styled-components": "^6.1.13"
+  }
+}

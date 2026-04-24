@@ -30,6 +30,22 @@ export async function createSurveyAction(formData) {
   const starts_at = new Date(`${startDate}T${startTime}:00`).toISOString()
   const ends_at = new Date(`${endDate}T${endTime}:00`).toISOString()
 
+  if (new Date(ends_at) <= new Date(starts_at)) {
+    return { error: 'End date/time must be after start date/time' }
+  }
+
+  // Overlap: existing.starts_at < new ends_at AND existing.ends_at > new starts_at
+  // Touching boundaries (one ends at 12:00, next starts at 12:00) are NOT overlaps
+  const { data: overlapping } = await supabase
+    .from('surveys')
+    .select('id, title')
+    .lt('starts_at', ends_at)
+    .gt('ends_at', starts_at)
+
+  if (overlapping && overlapping.length > 0) {
+    return { error: `Overlaps with existing survey: "${overlapping[0].title}"` }
+  }
+
   const { data: survey, error } = await supabase
     .from('surveys')
     .insert({ title, description, starts_at, ends_at, points_value: pointsValue, status: 'active' })

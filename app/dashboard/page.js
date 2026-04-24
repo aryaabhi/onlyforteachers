@@ -4,6 +4,28 @@ import Link from 'next/link'
 import LogoutButton from './LogoutButton'
 import CopyButton from './CopyButton'
 
+const EVENT_LABELS = {
+  survey_completion: 'Survey Completed',
+  referral: 'Referral Bonus',
+  streak_award: 'Streak Bonus',
+  redemption: 'Points Redeemed',
+}
+
+function formatEventType(eventType, pointType) {
+  if (EVENT_LABELS[eventType]) return EVENT_LABELS[eventType]
+  if (pointType === 'survey_points') return 'Survey Points'
+  if (pointType === 'referral_points') return 'Referral Bonus'
+  if (pointType === 'streak_bonus') return 'Streak Bonus'
+  return 'Points'
+}
+
+function formatDate(iso) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  })
+}
+
 export default async function DashboardPage({ searchParams }) {
   const params = await searchParams
   const surveyCompleted = params?.survey === 'completed'
@@ -21,6 +43,7 @@ export default async function DashboardPage({ searchParams }) {
     { data: streakData },
     { data: survey },
     { data: completions },
+    { data: recentActivity },
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('points_ledger').select('points, point_type').eq('user_id', user.id),
@@ -35,6 +58,12 @@ export default async function DashboardPage({ searchParams }) {
       .from('survey_completions')
       .select('id, survey_id')
       .eq('user_id', user.id),
+    supabase
+      .from('points_ledger')
+      .select('points, point_type, event_type, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10),
   ])
 
   const firstName = profile?.first_name ?? user.email?.split('@')[0] ?? 'Teacher'
@@ -103,6 +132,48 @@ export default async function DashboardPage({ searchParams }) {
             )
           ) : (
             <p className="text-gray-500 text-sm">No active survey right now — check back soon!</p>
+          )}
+        </div>
+
+        {/* Recent Points Activity */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-semibold text-gray-900">Recent Points Activity</h2>
+            <Link
+              href="/profile/points"
+              className="text-sm font-medium hover:opacity-70 transition-opacity"
+              style={{ color: '#CA9662' }}
+            >
+              View Full History
+            </Link>
+          </div>
+
+          {recentActivity && recentActivity.length > 0 ? (
+            <div className="space-y-1">
+              {recentActivity.map((entry, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between py-2.5 border-b border-gray-50 last:border-0"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-gray-900">
+                      {formatEventType(entry.event_type, entry.point_type)}
+                    </span>
+                    <span className="text-xs text-gray-400">{formatDate(entry.created_at)}</span>
+                  </div>
+                  <span
+                    className="text-sm font-bold"
+                    style={{ color: entry.points >= 0 ? '#16a34a' : '#dc2626' }}
+                  >
+                    {entry.points >= 0 ? '+' : ''}{entry.points}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400 py-4 text-center">
+              No points activity yet — complete a survey to earn your first points!
+            </p>
           )}
         </div>
 

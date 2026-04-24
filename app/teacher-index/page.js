@@ -1,9 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
+import { client } from '@/lib/sanity'
 import Link from 'next/link'
 
 export const metadata = {
   title: 'UK Teacher Pulse Index | Only For Teachers',
   description: 'The UK Teacher Pulse Index — a public record of how UK teachers think and feel about the issues that matter most to their profession.',
+}
+
+export const revalidate = 3600
+
+function formatDate(iso) {
+  if (!iso) return ''
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  })
 }
 
 export default async function TeacherIndexPage() {
@@ -12,11 +22,19 @@ export default async function TeacherIndexPage() {
   const isLoggedIn = !!user
 
   const now = new Date().toISOString()
-  const { data: surveys } = await supabase
-    .from('surveys')
-    .select('id, title, ends_at, starts_at')
-    .lt('ends_at', now)
-    .order('ends_at', { ascending: false })
+
+  const [{ data: surveys }, reports] = await Promise.all([
+    supabase
+      .from('surveys')
+      .select('id, title, ends_at, starts_at')
+      .lt('ends_at', now)
+      .order('ends_at', { ascending: false }),
+    client.fetch(
+      `*[_type == "post"] | order(publishedAt desc) {
+        title, "slug": slug.current, publishedAt, excerpt
+      }`
+    ).catch(() => []),
+  ])
 
   return (
     <main className="min-h-screen bg-white">
@@ -28,7 +46,7 @@ export default async function TeacherIndexPage() {
         </p>
       </section>
 
-      <div className="max-w-4xl mx-auto px-4 py-12 space-y-12">
+      <div className="max-w-4xl mx-auto px-4 py-12 space-y-14">
 
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <ExplainerCard
@@ -48,8 +66,66 @@ export default async function TeacherIndexPage() {
           />
         </section>
 
+        {/* Methodology summary */}
+        <section className="bg-gray-50 rounded-2xl p-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-3">How the Index Works</h2>
+          <div className="space-y-3 text-sm text-gray-600 leading-relaxed">
+            <p>
+              The UK Teacher Pulse Index is built from weekly surveys sent to verified UK teachers.
+              Each survey focuses on a specific theme — from workload and wellbeing to pay, curriculum design,
+              and the use of technology in classrooms.
+            </p>
+            <p>
+              Results are aggregated across all respondents and published here after each survey closes.
+              No individual responses are ever published. Participation is voluntary and anonymous.
+            </p>
+            <p>
+              The index is updated weekly as new surveys complete. Historical data is preserved so
+              trends can be tracked over time.
+            </p>
+          </div>
+          <Link
+            href="/survey-methodology"
+            className="inline-block mt-4 text-sm font-medium hover:opacity-70 transition-opacity"
+            style={{ color: '#CA9662' }}
+          >
+            Read the full methodology →
+          </Link>
+        </section>
+
+        {/* Survey Reports (Sanity) */}
+        {reports && reports.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Published Survey Reports</h2>
+            <div className="space-y-3">
+              {reports.map(report => (
+                <div
+                  key={report.slug}
+                  className="flex items-start justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors"
+                >
+                  <div>
+                    <p className="font-medium text-gray-900">{report.title}</p>
+                    <p className="text-sm text-gray-500 mt-0.5">{formatDate(report.publishedAt)}</p>
+                    {report.excerpt && (
+                      <p className="text-sm text-gray-400 mt-1 line-clamp-1">{report.excerpt}</p>
+                    )}
+                  </div>
+                  <Link
+                    href={`/survey-results/${report.slug}`}
+                    className="flex-shrink-0 ml-4 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50 whitespace-nowrap"
+                    style={{ color: '#CA9662' }}
+                  >
+                    Read report →
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Past Surveys */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Past Surveys</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Survey Archive</h2>
 
           {surveys && surveys.length > 0 ? (
             <div className="space-y-3">
@@ -81,7 +157,7 @@ export default async function TeacherIndexPage() {
             className="inline-block px-8 py-3 rounded-lg text-white font-semibold transition-opacity hover:opacity-90"
             style={{ backgroundColor: '#CA9662' }}
           >
-            {isLoggedIn ? 'Take This Week\'s Survey' : 'Join Free'}
+            {isLoggedIn ? "Take This Week's Survey" : 'Join Free'}
           </Link>
         </section>
 
@@ -111,9 +187,7 @@ function ExplainerCard({ icon, title, description }) {
 function SurveyRow({ survey }) {
   const endDate = new Date(survey.ends_at)
   const formatted = endDate.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+    day: 'numeric', month: 'long', year: 'numeric',
   })
 
   return (
@@ -123,11 +197,11 @@ function SurveyRow({ survey }) {
         <p className="text-sm text-gray-500 mt-0.5">Closed {formatted}</p>
       </div>
       <Link
-        href={`/survey-results`}
+        href={`/survey-results/data/${survey.id}`}
         className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50"
         style={{ color: '#CA9662' }}
       >
-        View results →
+        View data →
       </Link>
     </div>
   )

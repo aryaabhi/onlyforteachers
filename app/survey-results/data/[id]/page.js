@@ -1,30 +1,45 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
+export const revalidate = 3600
 
 const LIKERT_OPTIONS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree']
 
-export default async function SurveyResultDetailPage({ params }) {
-  const { surveyId } = await params
+export async function generateMetadata({ params }) {
+  const { id } = await params
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { data: survey } = await supabase
+    .from('surveys')
+    .select('title, description')
+    .eq('id', id)
+    .single()
 
-  const { data: completion } = await supabase
-    .from('survey_completions')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('survey_id', surveyId)
-    .maybeSingle()
+  if (!survey) return { title: 'Survey Not Found' }
 
-  if (!completion) redirect('/survey-results')
+  return {
+    title: `${survey.title} — Results | Only For Teachers`,
+    description: survey.description || `Aggregate results from the "${survey.title}" survey of UK teachers.`,
+    openGraph: {
+      title: `${survey.title} — Results | Only For Teachers`,
+      description: survey.description || 'UK teacher survey aggregate results.',
+      type: 'article',
+    },
+  }
+}
+
+export default async function SurveyDataPage({ params }) {
+  const { id } = await params
+  const supabase = await createClient()
+  const now = new Date().toISOString()
 
   const [{ data: survey }, { data: questions }] = await Promise.all([
-    supabase.from('surveys').select('*').eq('id', surveyId).single(),
-    supabase.from('questions').select('*').eq('survey_id', surveyId).order('position'),
+    supabase.from('surveys').select('*').eq('id', id).single(),
+    supabase.from('questions').select('*').eq('survey_id', id).order('position'),
   ])
 
-  if (!survey || !questions) redirect('/survey-results')
+  // Only show data for surveys that have ended
+  if (!survey || !questions || survey.ends_at > now) notFound()
 
   const questionResults = await Promise.all(
     questions.map(async q => {
@@ -52,15 +67,18 @@ export default async function SurveyResultDetailPage({ params }) {
         }
         return { ...q, resultType: 'aggregate', counts, total: (responses ?? []).length, options: LIKERT_OPTIONS }
       }
-      const { data: response } = await supabase
+      // For text/textarea: show total response count, no individual answers (privacy)
+      const { count } = await supabase
         .from('responses')
-        .select('answer')
+        .select('id', { count: 'exact', head: true })
         .eq('question_id', q.id)
-        .eq('user_id', user.id)
-        .maybeSingle()
-      return { ...q, resultType: 'own', answer: response?.answer ?? '' }
+      return { ...q, resultType: 'text', total: count ?? 0 }
     })
   )
+
+  const closedDate = new Date(survey.ends_at).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  })
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -69,9 +87,10 @@ export default async function SurveyResultDetailPage({ params }) {
           href="/survey-results"
           className="text-sm text-gray-400 hover:text-gray-600 transition-colors mb-6 inline-block"
         >
-          ← Back to Survey Results
+          ← Survey Results
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 mb-1">{survey.title}</h1>
+        <p className="text-sm text-gray-500 mb-2">Closed {closedDate}</p>
         {survey.description && (
           <p className="text-sm text-gray-500 mb-8">{survey.description}</p>
         )}
@@ -85,12 +104,25 @@ export default async function SurveyResultDetailPage({ params }) {
               {q.resultType === 'aggregate' ? (
                 <AggregateChart options={q.options} counts={q.counts} total={q.total} />
               ) : (
-                <div className="text-sm text-gray-700 bg-gray-50 rounded-lg px-4 py-3">
-                  {q.answer || <span className="text-gray-400 italic">No answer submitted</span>}
-                </div>
+                <p className="text-sm text-gray-500">
+                  {q.total} open-ended {q.total === 1 ? 'response' : 'responses'} received.
+                </p>
               )}
             </div>
           ))}
+        </div>
+
+        <div className="mt-10 rounded-2xl p-6 text-center" style={{ backgroundColor: '#FDF8F3' }}>
+          <p className="text-gray-700 font-medium mb-4">
+            Want to contribute to future surveys?
+          </p>
+          <Link
+            href="/register"
+            className="inline-block px-6 py-2.5 rounded-lg text-white text-sm font-semibold transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#CA9662' }}
+          >
+            Join Free
+          </Link>
         </div>
       </div>
     </main>
