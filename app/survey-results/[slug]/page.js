@@ -42,23 +42,36 @@ export async function generateMetadata({ params }) {
 const portableTextComponents = {
   types: {
     image: ({ value }) => (
-      <div className="my-6 rounded-xl overflow-hidden">
-        <Image
-          src={urlFor(value).width(800).url()}
-          alt={value.alt || ''}
-          width={800}
-          height={450}
-          className="w-full object-cover"
-        />
-      </div>
+      <figure className="my-6">
+        <div className="rounded-xl overflow-hidden">
+          <Image
+            src={urlFor(value).width(800).url()}
+            alt={value.alt || ''}
+            width={800}
+            height={450}
+            className="w-full object-cover"
+          />
+        </div>
+        {value.caption && (
+          <figcaption className="mt-2 text-sm text-center text-gray-500 italic">
+            {value.caption}
+          </figcaption>
+        )}
+      </figure>
     ),
   },
   block: {
+    h1: ({ children }) => (
+      <h1 className="text-4xl font-bold text-gray-900 mt-10 mb-4">{children}</h1>
+    ),
     h2: ({ children }) => (
       <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-3">{children}</h2>
     ),
     h3: ({ children }) => (
       <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-2">{children}</h3>
+    ),
+    h4: ({ children }) => (
+      <h4 className="text-lg font-semibold text-gray-900 mt-5 mb-2">{children}</h4>
     ),
     normal: ({ children }) => (
       <p className="text-gray-700 leading-relaxed mb-4">{children}</p>
@@ -80,11 +93,13 @@ const portableTextComponents = {
   marks: {
     strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
+    underline: ({ children }) => <span className="underline">{children}</span>,
+    'strike-through': ({ children }) => <span className="line-through">{children}</span>,
     link: ({ value, children }) => (
       <a
         href={value?.href}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={value?.blank ? '_blank' : undefined}
+        rel={value?.blank ? 'noopener noreferrer' : undefined}
         className="underline hover:opacity-70"
         style={{ color: '#CA9662' }}
       >
