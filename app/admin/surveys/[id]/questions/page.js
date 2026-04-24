@@ -32,7 +32,16 @@ export default async function SurveyQuestionsPage({ params }) {
         <span className="text-sm font-semibold" style={{ color: '#CA9662' }}>Admin</span>
       </header>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Manage Questions</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Manage Questions</h1>
+          <Link
+            href={`/admin/surveys/${id}/edit`}
+            className="text-sm font-medium hover:opacity-70 transition-opacity"
+            style={{ color: '#CA9662' }}
+          >
+            ← Edit Survey Details
+          </Link>
+        </div>
         <QuestionsClient survey={survey} initialQuestions={questions ?? []} />
       </div>
     </main>

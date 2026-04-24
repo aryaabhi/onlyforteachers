@@ -114,6 +114,50 @@ export async function setSurveyReadyAction(surveyId) {
   return { success: true, status }
 }
 
+export async function updateSurveyAction(formData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  await requireAdmin(supabase, user)
+
+  const surveyId = formData.get('surveyId')
+  const title = formData.get('title')
+  const description = formData.get('description')
+  const startDate = formData.get('startDate')
+  const startTime = formData.get('startTime')
+  const endDate = formData.get('endDate')
+  const endTime = formData.get('endTime')
+  const pointsValue = parseInt(formData.get('pointsValue') || '100')
+  const status = formData.get('status')
+
+  const starts_at = new Date(`${startDate}T${startTime}:00`).toISOString()
+  const ends_at = new Date(`${endDate}T${endTime}:00`).toISOString()
+
+  if (new Date(ends_at) <= new Date(starts_at)) {
+    return { error: 'End date/time must be after start date/time' }
+  }
+
+  // Overlap check excluding the current survey being edited
+  const { data: overlapping } = await supabase
+    .from('surveys')
+    .select('id, title')
+    .lt('starts_at', ends_at)
+    .gt('ends_at', starts_at)
+    .neq('id', surveyId)
+
+  if (overlapping && overlapping.length > 0) {
+    return { error: `Overlaps with existing survey: "${overlapping[0].title}"` }
+  }
+
+  const { error } = await supabase
+    .from('surveys')
+    .update({ title, description, starts_at, ends_at, points_value: pointsValue, status })
+    .eq('id', surveyId)
+
+  if (error) return { error: error.message }
+  return { success: true }
+}
+
 export async function runMonthlyDrawAction(drawMonth) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

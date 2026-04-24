@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation'
 import AdminSurveysClient from './AdminSurveysClient'
 import Link from 'next/link'
 
-export default async function AdminSurveysPage() {
+export default async function AdminSurveysPage({ searchParams }) {
+  const sp = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -34,6 +35,11 @@ export default async function AdminSurveysPage() {
         </Link>
         <span className="text-sm font-semibold" style={{ color: '#CA9662' }}>Admin</span>
       </header>
+      {sp?.updated && (
+        <div className="bg-green-50 border-b border-green-200 px-4 sm:px-6 py-3 text-center">
+          <p className="text-sm text-green-800 font-medium">Survey updated successfully.</p>
+        </div>
+      )}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         <AdminSurveysClient
           initialSurveys={surveys ?? []}

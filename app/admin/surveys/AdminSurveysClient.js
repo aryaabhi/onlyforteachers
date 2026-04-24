@@ -211,13 +211,21 @@ export default function AdminSurveysClient({ initialSurveys, completionCounts })
                     {completionCounts[survey.id] ?? 0}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Link
-                      href={`/admin/surveys/${survey.id}/questions`}
-                      className="text-sm font-medium hover:opacity-70 transition-opacity"
-                      style={{ color: '#CA9662' }}
-                    >
-                      Manage Questions
-                    </Link>
+                    <div className="flex items-center justify-end gap-4">
+                      <Link
+                        href={`/admin/surveys/${survey.id}/edit`}
+                        className="text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors"
+                      >
+                        Edit
+                      </Link>
+                      <Link
+                        href={`/admin/surveys/${survey.id}/questions`}
+                        className="text-sm font-medium hover:opacity-70 transition-opacity"
+                        style={{ color: '#CA9662' }}
+                      >
+                        Questions
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
-const protectedRoutes = ['/dashboard', '/survey', '/profile', '/offers']
+const protectedRoutes = ['/dashboard', '/survey', '/profile', '/offers', '/ask-a-question']
 const authRoutes = ['/login', '/register']
 
 export async function proxy(request) {
@@ -29,7 +29,9 @@ export async function proxy(request) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
-  const isProtected = protectedRoutes.some((route) => pathname.startsWith(route))
+  const isProtected = protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + '/')
+  )
   const isAuthRoute = authRoutes.some((route) => pathname === route)
 
   if (isProtected && !user) {

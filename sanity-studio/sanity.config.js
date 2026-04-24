@@ -1,7 +1,7 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
-import post from './schemas/post'
+import { schemaTypes } from './schemas/index'
 
 export default defineConfig({
   name: 'onlyforteachers',
@@ -10,6 +10,6 @@ export default defineConfig({
   dataset: 'production',
   plugins: [structureTool(), visionTool()],
   schema: {
-    types: [post],
+    types: schemaTypes,
   },
 })
