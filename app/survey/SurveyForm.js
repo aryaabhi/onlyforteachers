@@ -120,8 +120,8 @@ export default function SurveyForm({ survey, questions }) {
 
               {q.question_type === 'checkbox' && (
                 <div className="space-y-3">
-                  {(q.options ?? []).map(option => (
-                    <label key={option} className="flex items-center gap-3 cursor-pointer group">
+                  {(q.options ?? []).map((option, index) => (
+                    <label key={`${q.id}-${index}-${option}`} className="flex items-center gap-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={(answers[q.id] ?? []).includes(option)}
