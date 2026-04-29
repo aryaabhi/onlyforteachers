@@ -48,7 +48,7 @@ export default async function HomePage() {
 
   const [
     { count: profileCount },
-    { data: activeSurvey },
+    { data: activeSurveys },
     latestPosts,
   ] = await Promise.all([
     supabase.from('profiles').select('id', { count: 'exact', head: true }),
@@ -57,7 +57,7 @@ export default async function HomePage() {
       .select('*')
       .lte('starts_at', now)
       .gte('ends_at', now)
-      .maybeSingle(),
+      .limit(1),
     client.fetch(
       `*[_type == "post"] | order(publishedAt desc) [0..3] {
         title, "slug": slug.current, publishedAt, excerpt, mainImage,
@@ -66,6 +66,7 @@ export default async function HomePage() {
     ).catch(() => []),
   ])
 
+  const activeSurvey = activeSurveys?.[0] ?? null
   const memberCount = profileCount ?? 855
 
   if (isLoggedIn) {
@@ -100,7 +101,7 @@ export default async function HomePage() {
         {/* Stats bar */}
         <section className="py-10 px-4 text-white" style={{ backgroundColor: '#1B3A2D' }}>
           <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 text-center border-t border-white/10 pt-10">
-            <StatItem value={`${memberCount}+`} label="Teachers in our community" />
+            <StatItem value="2,500+" label="Teachers in our community" />
             <StatItem value="26" label="Surveys published" />
             <StatItem value="£3,000" label="Paid out to teachers" />
           </div>
@@ -123,7 +124,7 @@ export default async function HomePage() {
       {/* Section 1: Hero */}
       <section className="py-24 px-4 text-center" style={{ backgroundColor: '#F5EDE0' }}>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1B3A2D] mb-5 max-w-3xl mx-auto leading-tight">
-          Join {memberCount}+ teachers already making their voice heard.
+          Join 2,500+ teachers already making their voice heard.
         </h1>
         <p className="text-lg text-[#6B6B6B] mb-8 max-w-xl mx-auto">
           Free forever. Takes 60 seconds. No spam, ever.
@@ -211,7 +212,7 @@ export default async function HomePage() {
       {/* Section 7: Stats bar */}
       <section className="py-14 px-4 text-white" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-          <StatItem value={`${memberCount}+`} label="Teachers in our community" />
+          <StatItem value="2,500+" label="Teachers in our community" />
           <StatItem value="26" label="Surveys published" />
           <StatItem value="£3,000" label="Paid out to teachers" />
         </div>

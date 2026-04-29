@@ -60,6 +60,33 @@ export default function OffersList({ offers, totalPoints }) {
           </div>
         </div>
 
+        {/* How to earn points */}
+        <div className="bg-white rounded-2xl border mb-8 overflow-hidden" style={{ borderColor: '#E8DDD0' }}>
+          <div className="px-6 py-4 border-b" style={{ borderColor: '#E8DDD0' }}>
+            <h2 className="text-base font-bold text-[#1B3A2D]">How to earn points</h2>
+          </div>
+          {[
+            { action: 'Complete weekly survey', points: '+100 pts', note: 'variable based on survey' },
+            { action: 'Maintain 10-week streak', points: '+500 bonus', note: null },
+            { action: 'Refer a colleague', points: '+100 pts', note: null },
+            { action: 'Be referred by a colleague', points: '+100 pts', note: null },
+          ].map((item, i, arr) => (
+            <div
+              key={item.action}
+              className="flex items-center justify-between px-6 py-4"
+              style={{ borderBottom: i < arr.length - 1 ? '1px solid #E8DDD0' : 'none' }}
+            >
+              <div>
+                <span className="text-sm font-medium text-[#2C2C2C]">{item.action}</span>
+                {item.note && (
+                  <span className="ml-2 text-xs text-[#6B6B6B]">({item.note})</span>
+                )}
+              </div>
+              <span className="text-sm font-bold" style={{ color: '#C94F2C' }}>{item.points}</span>
+            </div>
+          ))}
+        </div>
+
         {success && (
           <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm font-medium">
             {success}

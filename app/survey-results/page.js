@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { client, urlFor } from '@/lib/sanity'
+import { client } from '@/lib/sanity'
 
 const CATEGORIES = ['All', 'Assessment', 'Wellbeing', 'Technology', 'CPD', 'Policy']
 
@@ -100,35 +99,29 @@ export default function SurveyResultsPage() {
                 <Link
                   key={post.slug}
                   href={`/survey-results/${post.slug}`}
-                  className="group bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-shadow"
-                  style={{ borderColor: '#E8DDD0', textDecoration: 'none' }}
+                  className="group bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
+                  style={{
+                    borderColor: '#E8DDD0',
+                    textDecoration: 'none',
+                    borderLeft: '4px solid #C94F2C',
+                  }}
                 >
-                  {post.mainImage ? (
-                    <div className="relative h-44 w-full overflow-hidden bg-gray-100">
-                      <Image
-                        src={urlFor(post.mainImage).width(600).height(330).url()}
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                    </div>
-                  ) : (
-                    <div className="h-44 bg-[#F5EDE0]" />
-                  )}
-                  <div className="p-5">
+                  <div className="p-5 flex flex-col flex-1">
                     {post.categories && post.categories.length > 0 && (
                       <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#C94F2C' }}>
                         {post.categories[0]}
                       </span>
                     )}
-                    <h3 className="font-semibold text-[#2C2C2C] mt-1 mb-2 leading-snug group-hover:text-[#C94F2C] transition-colors">
+                    <h3 className="font-bold text-[#2C2C2C] mt-2 mb-2 leading-snug group-hover:text-[#C94F2C] transition-colors">
                       {post.title}
                     </h3>
                     {post.excerpt && (
-                      <p className="text-sm text-[#6B6B6B] line-clamp-2 mb-3">{post.excerpt}</p>
+                      <p className="text-sm text-[#6B6B6B] line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
                     )}
-                    <p className="text-xs text-[#6B6B6B]">{formatDate(post.publishedAt)}</p>
+                    <div className="border-t pt-3 flex items-center justify-between" style={{ borderColor: '#E8DDD0' }}>
+                      <span className="text-xs text-[#6B6B6B]">{formatDate(post.publishedAt)}</span>
+                      <span className="text-xs text-[#6B6B6B]">3 min read</span>
+                    </div>
                   </div>
                 </Link>
               ))}

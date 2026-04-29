@@ -10,12 +10,13 @@ export default async function SurveyPage() {
 
   const now = new Date().toISOString()
 
-  const { data: survey } = await supabase
+  const { data: surveyRows } = await supabase
     .from('surveys')
     .select('*')
     .lte('starts_at', now)
     .gte('ends_at', now)
-    .maybeSingle()
+    .limit(1)
+  const survey = surveyRows?.[0] ?? null
 
   if (!survey) {
     return (
