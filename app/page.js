@@ -256,7 +256,7 @@ function InsightsSection({ posts, showJoin }) {
             {posts.map(post => (
               <Link
                 key={post.slug}
-                href={`/survey-results/${post.slug}`}
+                href={`/${post.slug}`}
                 className="group bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-shadow"
                 style={{ borderColor: '#E8DDD0', textDecoration: 'none' }}
               >

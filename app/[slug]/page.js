@@ -1,0 +1,293 @@
+import { client, urlFor } from '@/lib/sanity'
+import { PortableText } from '@portabletext/react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { notFound } from 'next/navigation'
+
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+  const slugs = await client.fetch(
+    `*[_type == "post"] { "slug": slug.current }`
+  ).catch(() => [])
+  return (slugs ?? []).map(s => ({ slug: s.slug }))
+}
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params
+  const post = await client.fetch(
+    `*[_type == "post" && slug.current == $slug][0] {
+      title, seoTitle, seoDescription, mainImage, publishedAt
+    }`,
+    { slug }
+  ).catch(() => null)
+
+  if (!post) return { title: 'Not Found' }
+
+  return {
+    title: post.seoTitle || `${post.title} | Only For Teachers`,
+    description: post.seoDescription || post.excerpt || '',
+    openGraph: {
+      title: post.seoTitle || post.title,
+      description: post.seoDescription || '',
+      type: 'article',
+      publishedTime: post.publishedAt,
+      images: post.mainImage
+        ? [{ url: urlFor(post.mainImage).width(1200).height(630).url() }]
+        : [],
+    },
+  }
+}
+
+const portableTextComponents = {
+  types: {
+    image: ({ value }) => (
+      <figure className="my-8">
+        <div className="rounded-2xl overflow-hidden">
+          <Image
+            src={urlFor(value).width(800).url()}
+            alt={value.alt || ''}
+            width={800}
+            height={450}
+            className="w-full object-cover"
+          />
+        </div>
+        {value.caption && (
+          <figcaption className="mt-2 text-sm text-center text-[#6B6B6B] italic">
+            {value.caption}
+          </figcaption>
+        )}
+      </figure>
+    ),
+  },
+  block: {
+    h1: ({ children }) => (
+      <h1 className="text-4xl font-bold text-[#1B3A2D] mt-10 mb-4">{children}</h1>
+    ),
+    h2: ({ children }) => (
+      <h2 className="text-2xl font-bold text-[#1B3A2D] mt-8 mb-3">{children}</h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="text-xl font-semibold text-[#1B3A2D] mt-6 mb-2">{children}</h3>
+    ),
+    h4: ({ children }) => (
+      <h4 className="text-lg font-semibold text-[#1B3A2D] mt-5 mb-2">{children}</h4>
+    ),
+    normal: ({ children }) => (
+      <p className="text-[#2C2C2C] leading-relaxed mb-4">{children}</p>
+    ),
+    blockquote: ({ children }) => (
+      <blockquote
+        className="border-l-4 pl-5 my-6 italic text-[#6B6B6B]"
+        style={{ borderColor: '#C94F2C' }}
+      >
+        {children}
+      </blockquote>
+    ),
+  },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="list-disc list-inside space-y-1.5 mb-4 text-[#2C2C2C]">{children}</ul>
+    ),
+    number: ({ children }) => (
+      <ol className="list-decimal list-inside space-y-1.5 mb-4 text-[#2C2C2C]">{children}</ol>
+    ),
+  },
+  marks: {
+    strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+    em: ({ children }) => <em className="italic">{children}</em>,
+    underline: ({ children }) => <span className="underline">{children}</span>,
+    'strike-through': ({ children }) => <span className="line-through">{children}</span>,
+    link: ({ value, children }) => (
+      <a
+        href={value?.href}
+        target={value?.blank ? '_blank' : undefined}
+        rel={value?.blank ? 'noopener noreferrer' : undefined}
+        className="underline hover:opacity-70"
+        style={{ color: '#C94F2C' }}
+      >
+        {children}
+      </a>
+    ),
+  },
+}
+
+function formatDate(iso) {
+  if (!iso) return ''
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  })
+}
+
+export default async function BlogPostPage({ params }) {
+  const { slug } = await params
+
+  const [post, relatedPosts] = await Promise.all([
+    client.fetch(
+      `*[_type == "post" && slug.current == $slug][0] {
+        title, "slug": slug.current, publishedAt, body, mainImage,
+        excerpt, categories, seoTitle, seoDescription
+      }`,
+      { slug }
+    ).catch(() => null),
+    client.fetch(
+      `*[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0..2] {
+        title, "slug": slug.current, publishedAt, excerpt, mainImage
+      }`,
+      { slug }
+    ).catch(() => []),
+  ])
+
+  if (!post) notFound()
+
+  const siteUrl = 'https://onlyforteachers.co.uk'
+  const postUrl = `${siteUrl}/${slug}`
+
+  const shareLinks = {
+    twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(post.title + ' ' + postUrl)}`,
+  }
+
+  return (
+    <main className="min-h-screen bg-white">
+      {/* Featured image */}
+      {post.mainImage && (
+        <div className="relative w-full overflow-hidden bg-gray-100" style={{ maxHeight: '400px', height: '50vw' }}>
+          <Image
+            src={urlFor(post.mainImage).width(1400).height(600).url()}
+            alt={post.title}
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        </div>
+      )}
+
+      <div className="max-w-3xl mx-auto px-4 py-10">
+        <Link
+          href="/survey-results"
+          className="text-sm font-medium hover:underline mb-8 inline-block"
+          style={{ color: '#C94F2C' }}
+        >
+          ← Insights Hub
+        </Link>
+
+        {/* Category + read time */}
+        {post.categories && post.categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {post.categories.map(cat => (
+              <span
+                key={cat}
+                className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                style={{ backgroundColor: '#C94F2C' }}
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Title & meta */}
+        <div className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#1B3A2D] leading-tight mb-3">
+            {post.title}
+          </h1>
+          <p className="text-sm text-[#6B6B6B]">
+            Only for Teachers Research · {formatDate(post.publishedAt)}
+          </p>
+          {post.excerpt && (
+            <p className="mt-4 text-lg text-[#6B6B6B] leading-relaxed">{post.excerpt}</p>
+          )}
+        </div>
+
+        {/* Body */}
+        {post.body && (
+          <div className="leading-relaxed">
+            <PortableText value={post.body} components={portableTextComponents} />
+          </div>
+        )}
+
+        {/* Share */}
+        <div className="mt-10 pt-8 border-t" style={{ borderColor: '#E8DDD0' }}>
+          <p className="text-sm font-medium text-[#2C2C2C] mb-3">Share this report</p>
+          <div className="flex gap-3 flex-wrap">
+            {[
+              { href: shareLinks.twitter, label: 'Share on X' },
+              { href: shareLinks.linkedin, label: 'LinkedIn' },
+              { href: shareLinks.whatsapp, label: 'WhatsApp' },
+            ].map(({ href, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-lg border text-sm font-medium text-[#2C2C2C] hover:bg-[#F5EDE0] transition-colors"
+                style={{ borderColor: '#E8DDD0' }}
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div
+          className="mt-10 rounded-2xl p-8 text-center text-white"
+          style={{ backgroundColor: '#1B3A2D' }}
+        >
+          <h2 className="text-xl font-bold mb-2">
+            Join the community and share your voice
+          </h2>
+          <p className="mb-5 text-sm" style={{ color: '#D4C9B8' }}>
+            Be part of the data. Complete weekly surveys and help shape the UK Teacher Pulse Index.
+          </p>
+          <Link
+            href="/register"
+            className="inline-block px-6 py-3 rounded-full text-white font-semibold text-sm transition-all hover:opacity-90"
+            style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
+          >
+            Join free →
+          </Link>
+        </div>
+
+        {/* Related posts */}
+        {relatedPosts && relatedPosts.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-xl font-bold text-[#1B3A2D] mb-5">More Reports</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {relatedPosts.map(related => (
+                <Link
+                  key={related.slug}
+                  href={`/${related.slug}`}
+                  className="group bg-white rounded-xl border overflow-hidden hover:shadow-md transition-shadow"
+                  style={{ borderColor: '#E8DDD0', textDecoration: 'none' }}
+                >
+                  {related.mainImage && (
+                    <div className="relative h-32 w-full overflow-hidden bg-gray-100">
+                      <Image
+                        src={urlFor(related.mainImage).width(400).height(200).url()}
+                        alt={related.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <p className="text-xs text-[#6B6B6B] mb-1">{formatDate(related.publishedAt)}</p>
+                    <h3 className="text-sm font-semibold text-[#2C2C2C] leading-snug group-hover:text-[#C94F2C] transition-colors">
+                      {related.title}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </main>
+  )
+}

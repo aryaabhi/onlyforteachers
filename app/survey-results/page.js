@@ -90,7 +90,7 @@ export default function SurveyResultsPage() {
               {filteredPosts.map(post => (
                 <Link
                   key={post.slug}
-                  href={`/survey-results/${post.slug}`}
+                  href={`/${post.slug}`}
                   className="group bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
                   style={{
                     borderColor: '#E8DDD0',
