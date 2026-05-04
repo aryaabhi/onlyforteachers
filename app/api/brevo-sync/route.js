@@ -1,36 +1,23 @@
 import { NextResponse } from 'next/server'
-
-const BREVO_BASE = 'https://api.brevo.com/v3'
+import { syncFullProfile } from '@/lib/brevo'
 
 export async function POST(request) {
   try {
-    const { email, firstName, userId } = await request.json()
+    const body = await request.json()
+    const { email, firstName, userId, yearGroups, subjects, emailConsent } = body
 
     if (!email || !userId) {
       return NextResponse.json({ error: 'email and userId are required' }, { status: 400 })
     }
 
-    const res = await fetch(`${BREVO_BASE}/contacts`, {
-      method: 'POST',
-      headers: {
-        'api-key': process.env.BREVO_API_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        attributes: {
-          FIRSTNAME: firstName || '',
-          REFERALID: userId,
-        },
-        updateEnabled: true,
-      }),
+    await syncFullProfile({
+      email,
+      first_name: firstName || '',
+      id: userId,
+      year_groups: yearGroups || [],
+      subjects: subjects || [],
+      email_consent: emailConsent !== false,
     })
-
-    if (!res.ok) {
-      const text = await res.text()
-      console.error('[brevo-sync] API error:', res.status, text)
-      return NextResponse.json({ error: 'Brevo sync failed', detail: text }, { status: 500 })
-    }
 
     return NextResponse.json({ success: true })
   } catch (err) {

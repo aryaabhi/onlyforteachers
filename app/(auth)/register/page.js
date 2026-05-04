@@ -101,7 +101,14 @@ export default function RegisterPage() {
         await fetch('/api/brevo-sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, firstName, userId: data.user.id }),
+          body: JSON.stringify({
+            email,
+            firstName,
+            userId: data.user.id,
+            yearGroups,
+            subjects,
+            emailConsent,
+          }),
         })
       } catch (err) {
         console.error('[register] brevo sync error:', err)

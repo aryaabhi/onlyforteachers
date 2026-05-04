@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
+import { syncFullProfile } from '@/lib/brevo'
 import { redirect } from 'next/navigation'
 
 export async function updateProfile({ firstName, subjects, yearGroups, emailConsent }) {
@@ -20,6 +21,20 @@ export async function updateProfile({ firstName, subjects, yearGroups, emailCons
     .eq('id', user.id)
 
   if (error) return { error: error.message }
+
+  try {
+    await syncFullProfile({
+      email: user.email,
+      first_name: firstName,
+      id: user.id,
+      year_groups: yearGroups,
+      subjects,
+      email_consent: emailConsent,
+    })
+  } catch (err) {
+    console.error('[profile] brevo sync error:', err)
+  }
+
   return { success: true }
 }
 

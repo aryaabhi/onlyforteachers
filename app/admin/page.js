@@ -61,6 +61,16 @@ export default async function AdminPage() {
             title="Monthly Draw"
             description="Run the monthly prize draw for active members."
           />
+          <AdminLink
+            href="/admin/faq"
+            title="Manage FAQs"
+            description="Add, edit, reorder, and publish FAQ items."
+          />
+          <AdminLink
+            href="/admin/tpi"
+            title="TPI Scores"
+            description="Manage Teacher Pulse Index scores for the public index page."
+          />
         </div>
       </div>
     </main>

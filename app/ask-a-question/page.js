@@ -11,15 +11,18 @@ export default async function AskAQuestionPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  let userEmail = ''
+  let profile = null
   if (user) {
-    const { data: profile } = await supabase
+    const { data } = await supabase
       .from('profiles')
       .select('email, first_name')
       .eq('id', user.id)
       .single()
-    userEmail = profile?.email ?? user.email ?? ''
+    profile = data
   }
+
+  const userEmail = profile?.email ?? user?.email ?? ''
+  const userName = profile?.first_name ?? ''
 
   return (
     <main className="min-h-screen bg-white">
@@ -48,41 +51,46 @@ export default async function AskAQuestionPage() {
           </div>
         </section>
 
-        {!user && (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-amber-800">You must be logged in to submit.</p>
-              <p className="text-sm text-amber-700 mt-0.5">Login or register to send your question to the community.</p>
-            </div>
-            <div className="flex gap-3 shrink-0">
+        {!user ? (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center">
+            <div className="text-5xl mb-5">💬</div>
+            <h2 className="text-xl font-bold text-gray-900 mb-3">
+              Members only
+            </h2>
+            <p className="text-gray-500 mb-8 leading-relaxed max-w-sm mx-auto">
+              Please log in or register to submit a question to the community.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/login"
-                className="px-4 py-2 rounded-lg border border-amber-300 text-sm font-semibold text-amber-800 hover:bg-amber-100 transition-colors"
+                className="px-6 py-3 rounded-lg border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Login
+                Log in
               </Link>
               <Link
                 href="/register"
-                className="px-4 py-2 rounded-full text-white text-sm font-semibold transition-opacity hover:opacity-90"
+                className="px-6 py-3 rounded-full text-white text-sm font-semibold transition-opacity hover:opacity-90"
                 style={{ backgroundColor: '#C94F2C' }}
               >
                 Register Free
               </Link>
             </div>
           </div>
+        ) : (
+          <>
+            <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+              <AskForm userEmail={userEmail} userName={userName} />
+            </section>
+
+            <section className="text-sm text-gray-500 leading-relaxed">
+              <p>
+                By submitting a question, you agree that it may be used (in whole or edited form) in
+                a future Only For Teachers survey. We reserve the right to reject or modify submitted
+                questions.
+              </p>
+            </section>
+          </>
         )}
-
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
-          <AskForm initialEmail={userEmail} disabled={!user} />
-        </section>
-
-        <section className="text-sm text-gray-500 leading-relaxed">
-          <p>
-            By submitting a question, you agree that it may be used (in whole or edited form) in
-            a future Only For Teachers survey. We reserve the right to reject or modify submitted
-            questions.
-          </p>
-        </section>
       </div>
     </main>
   )

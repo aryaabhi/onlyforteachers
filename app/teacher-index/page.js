@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { client } from '@/lib/sanity'
+import { createServiceClient } from '@/lib/supabase/service'
 import Link from 'next/link'
 
 export const metadata = {
@@ -16,40 +16,23 @@ function formatDate(iso) {
   })
 }
 
-const LIKERT_OPTIONS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree']
+function TPIBadge({ score }) {
+  let label, cls
+  if (score >= 80) { label = 'Very Positive'; cls = 'bg-green-100 text-green-800' }
+  else if (score >= 60) { label = 'Positive'; cls = 'bg-emerald-100 text-emerald-700' }
+  else if (score >= 40) { label = 'Neutral/Mixed'; cls = 'bg-amber-100 text-amber-700' }
+  else if (score >= 20) { label = 'Negative'; cls = 'bg-orange-100 text-orange-700' }
+  else { label = 'Very Negative'; cls = 'bg-red-100 text-red-700' }
+  return (
+    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${cls}`}>
+      {score} · {label}
+    </span>
+  )
+}
 
-async function getSurveyHighlights(supabase, surveyId) {
-  const [{ data: questions }, { data: responses }] = await Promise.all([
-    supabase.from('questions').select('id, question_text, question_type, options').eq('survey_id', surveyId).order('position').limit(3),
-    supabase.from('responses').select('question_id, answer, answer_array').eq('survey_id', surveyId),
-  ])
-
-  if (!questions || questions.length === 0) return []
-
-  const highlights = []
-  for (const q of questions) {
-    const isAggregate = q.question_type === 'likert_scale' || q.question_type === 'checkbox'
-    if (!isAggregate) continue
-
-    const options = q.question_type === 'likert_scale' ? LIKERT_OPTIONS : (q.options ?? [])
-    const qResponses = responses?.filter(r => r.question_id === q.id) ?? []
-    if (qResponses.length === 0) continue
-
-    const counts = {}
-    for (const opt of options) counts[opt] = 0
-    for (const r of qResponses) {
-      const ans = r.answer_array ?? r.answer
-      if (Array.isArray(ans)) for (const a of ans) { if (a in counts) counts[a]++ }
-      else if (typeof ans === 'string' && ans in counts) counts[ans]++
-    }
-
-    const topOption = Object.entries(counts).sort(([,a],[,b]) => b - a)[0]
-    if (!topOption) continue
-
-    const pct = Math.round((topOption[1] / qResponses.length) * 100)
-    highlights.push({ question: q.question_text, topAnswer: topOption[0], pct, total: qResponses.length })
-  }
-  return highlights
+function avg(arr) {
+  if (!arr.length) return 0
+  return Math.round(arr.reduce((s, v) => s + v, 0) / arr.length)
 }
 
 export default async function TeacherIndexPage() {
@@ -57,200 +40,223 @@ export default async function TeacherIndexPage() {
   const { data: { user } } = await supabase.auth.getUser()
   const isLoggedIn = !!user
 
-  const now = new Date().toISOString()
+  const service = createServiceClient()
+  const { data: scores } = await service
+    .from('tpi_scores')
+    .select('*')
+    .order('survey_date', { ascending: false })
 
-  const [{ data: surveys }, reports] = await Promise.all([
-    supabase
-      .from('surveys')
-      .select('id, title, ends_at, starts_at')
-      .lt('ends_at', now)
-      .order('ends_at', { ascending: false }),
-    client.fetch(
-      `*[_type == "post"] | order(publishedAt desc) {
-        title, "slug": slug.current, publishedAt, excerpt
-      }`
-    ).catch(() => []),
-  ])
+  const { count: totalResponses } = await service
+    .from('survey_completions')
+    .select('id', { count: 'exact', head: true })
 
-  const surveyHighlights = {}
-  if (surveys && surveys.length > 0) {
-    const highlightResults = await Promise.all(
-      surveys.slice(0, 5).map(async s => ({
-        id: s.id,
-        highlights: await getSurveyHighlights(supabase, s.id),
-      }))
-    )
-    for (const { id, highlights } of highlightResults) {
-      surveyHighlights[id] = highlights
-    }
-  }
+  const tpiScores = scores ?? []
+
+  const totalSurveys = tpiScores.length
+  const avgTPI = avg(tpiScores.map(s => s.overall_tpi))
+  const earliestDate = tpiScores.length
+    ? formatDate(tpiScores[tpiScores.length - 1].survey_date)
+    : null
+
+  const avgConf = avg(tpiScores.map(s => s.confidence))
+  const avgWork = avg(tpiScores.map(s => s.workload))
+  const avgSupp = avg(tpiScores.map(s => s.support))
+  const avgOpti = avg(tpiScores.map(s => s.optimism))
 
   return (
     <main className="min-h-screen bg-white">
-      <section className="bg-gray-50 py-16 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">UK Teacher Pulse Index</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          A public record of how UK teachers think and feel about the issues that matter
-          most to their profession. Updated after each weekly survey closes.
-        </p>
+      {/* Hero */}
+      <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
+        <div className="max-w-5xl mx-auto text-center pb-12">
+          <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: '#9A8F82' }}>
+            Powered by Only For Teachers
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+            UK Teacher Pulse Index
+          </h1>
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: '#D4C9B8' }}>
+            A public record of how UK teachers think and feel about the issues that matter most
+            to their profession — updated every time a survey closes.
+          </p>
+        </div>
+
+        {/* Summary stats */}
+        {totalSurveys > 0 && (
+          <div className="max-w-4xl mx-auto border-t" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+              {[
+                { label: 'Surveys scored', value: totalSurveys },
+                { label: 'Teacher responses', value: (totalResponses ?? 0).toLocaleString() },
+                { label: 'Average TPI', value: avgTPI },
+                { label: 'Data from', value: earliestDate },
+              ].map(({ label, value }) => (
+                <div key={label} className="text-center py-6 px-4">
+                  <p className="text-2xl font-bold" style={{ color: '#F5EDE0' }}>{value}</p>
+                  <p className="text-sm mt-1" style={{ color: '#9A8F82' }}>{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="w-full leading-[0] overflow-hidden">
+          <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0,30 C360,0 1080,60 1440,30 L1440,0 L0,0 Z" fill="#1B3A2D" />
+          </svg>
+        </div>
       </section>
 
-      <div className="max-w-4xl mx-auto px-4 py-12 space-y-14">
+      <div className="max-w-5xl mx-auto px-4 py-12 space-y-14">
 
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <ExplainerCard icon="📊" title="What It Measures" description="Workload, wellbeing, pay, curriculum, technology, leadership, and more — tracking teacher sentiment over time." />
-          <ExplainerCard icon="👩‍🏫" title="Who Contributes" description="Verified UK teaching professionals across all school types, year groups, and subject areas." />
-          <ExplainerCard icon="🔓" title="Freely Available" description="All results are publicly accessible. Free to use for journalism, research, and policy — with attribution." />
+        {/* About the Index */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">About the Index</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                icon: '🎯',
+                title: 'Confidence',
+                desc: 'How confident teachers feel about their role, their school leadership, and the direction of education policy.',
+              },
+              {
+                icon: '📋',
+                title: 'Workload',
+                desc: 'A measure of perceived workload sustainability — higher scores mean workload feels more manageable.',
+              },
+              {
+                icon: '🤝',
+                title: 'Support',
+                desc: 'How supported teachers feel by their school, government, and wider society.',
+              },
+              {
+                icon: '🌱',
+                title: 'Optimism',
+                desc: 'How optimistic teachers feel about the future of teaching and the profession.',
+              },
+            ].map(({ icon, title, desc }) => (
+              <div key={title} className="bg-gray-50 rounded-2xl p-5">
+                <div className="text-2xl mb-3">{icon}</div>
+                <h3 className="font-bold text-gray-900 mb-1.5">{title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
         </section>
 
+        {/* Methodology */}
         <section className="bg-gray-50 rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-3">How the Index Works</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-3">How It&apos;s Calculated</h2>
           <div className="space-y-3 text-sm text-gray-600 leading-relaxed">
             <p>
-              The UK Teacher Pulse Index is built from weekly surveys sent to verified UK teachers.
-              Each survey focuses on a specific theme — from workload and wellbeing to pay, curriculum design,
-              and the use of technology in classrooms.
+              Each week, verified UK teachers complete a short survey focused on a specific aspect of
+              school life. Responses are compiled and scored across four dimensions: Confidence,
+              Workload, Support, and Optimism. Each dimension is scored 0–100.
             </p>
             <p>
-              Results are aggregated across all respondents and published here after each survey closes.
-              No individual responses are ever published. Participation is voluntary and anonymous.
+              The Overall TPI is the arithmetic mean of all four dimension scores. A score of 0
+              represents the most negative sentiment possible; 100 represents the most positive.
+              Individual responses are never published — all scores are aggregated across all
+              respondents for that survey.
+            </p>
+            <p>
+              Scores are added to this index after each survey closes. The index is updated weekly
+              and historical data is preserved in full.
             </p>
           </div>
           <Link
             href="/survey-methodology"
-            className="inline-block mt-4 text-sm font-medium hover:opacity-70 transition-opacity"
+            className="inline-block mt-4 text-sm font-medium hover:opacity-70"
             style={{ color: '#C94F2C' }}
           >
-            Read the full methodology →
+            Read the full survey methodology →
           </Link>
         </section>
 
-        {reports && reports.length > 0 && (
+        {/* The full table */}
+        {tpiScores.length > 0 ? (
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Published Survey Reports</h2>
-            <div className="space-y-3">
-              {reports.map(report => (
-                <div
-                  key={report.slug}
-                  className="flex items-start justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors"
-                >
-                  <div>
-                    <p className="font-medium text-gray-900">{report.title}</p>
-                    <p className="text-sm text-gray-500 mt-0.5">{formatDate(report.publishedAt)}</p>
-                    {report.excerpt && (
-                      <p className="text-sm text-gray-400 mt-1 line-clamp-1">{report.excerpt}</p>
-                    )}
-                  </div>
-                  <Link
-                    href={`/survey-results/${report.slug}`}
-                    className="flex-shrink-0 ml-4 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50 whitespace-nowrap"
-                    style={{ color: '#C94F2C' }}
-                  >
-                    Read report →
-                  </Link>
-                </div>
-              ))}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Full Index Data</h2>
+              <a
+                href="/teacher-pulse-index-methodology.pdf"
+                className="text-sm font-medium hover:opacity-70 transition-opacity"
+                style={{ color: '#C94F2C' }}
+              >
+                Download Methodology PDF →
+              </a>
             </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100 bg-gray-50">
+                      <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Date</th>
+                      <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Survey Topic</th>
+                      <th className="text-center px-4 py-3.5 font-semibold text-gray-600">Confidence</th>
+                      <th className="text-center px-4 py-3.5 font-semibold text-gray-600">Workload</th>
+                      <th className="text-center px-4 py-3.5 font-semibold text-gray-600">Support</th>
+                      <th className="text-center px-4 py-3.5 font-semibold text-gray-600">Optimism</th>
+                      <th className="text-center px-5 py-3.5 font-semibold text-gray-600">Overall TPI</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tpiScores.map(s => (
+                      <tr key={s.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
+                        <td className="px-5 py-3.5 text-gray-600 whitespace-nowrap">
+                          {new Date(s.survey_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-5 py-3.5 font-medium text-gray-900">{s.survey_topic}</td>
+                        <td className="px-4 py-3.5 text-center text-gray-700">{s.confidence}</td>
+                        <td className="px-4 py-3.5 text-center text-gray-700">{s.workload}</td>
+                        <td className="px-4 py-3.5 text-center text-gray-700">{s.support}</td>
+                        <td className="px-4 py-3.5 text-center text-gray-700">{s.optimism}</td>
+                        <td className="px-5 py-3.5 text-center">
+                          <TPIBadge score={s.overall_tpi} />
+                        </td>
+                      </tr>
+                    ))}
+
+                    {/* Averages row */}
+                    <tr className="border-t-2 border-gray-200 bg-gray-50 font-semibold">
+                      <td className="px-5 py-3.5 text-gray-700" colSpan={2}>Overall Averages</td>
+                      <td className="px-4 py-3.5 text-center text-gray-900">{avgConf}</td>
+                      <td className="px-4 py-3.5 text-center text-gray-900">{avgWork}</td>
+                      <td className="px-4 py-3.5 text-center text-gray-900">{avgSupp}</td>
+                      <td className="px-4 py-3.5 text-center text-gray-900">{avgOpti}</td>
+                      <td className="px-5 py-3.5 text-center">
+                        <TPIBadge score={avgTPI} />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="text-center py-16 rounded-2xl bg-gray-50">
+            <p className="text-gray-500 text-lg">No TPI data published yet.</p>
+            <p className="text-gray-400 text-sm mt-2">Scores will appear here as surveys complete.</p>
           </section>
         )}
 
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Survey Archive</h2>
-
-          {surveys && surveys.length > 0 ? (
-            <div className="space-y-4">
-              {surveys.map(survey => (
-                <SurveyRow
-                  key={survey.id}
-                  survey={survey}
-                  highlights={surveyHighlights[survey.id] ?? []}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-gray-50 rounded-2xl">
-              <p className="text-gray-500 text-lg mb-2">No completed surveys yet</p>
-              <p className="text-gray-400 text-sm">
-                Results will appear here once surveys close. Check back soon.
-              </p>
-            </div>
-          )}
-        </section>
-
-        <section className="rounded-2xl p-8 text-center" style={{ backgroundColor: '#F5EDE0' }}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {isLoggedIn ? 'Participate in future surveys' : 'Contribute to the index'}
-          </h2>
-          <p className="text-gray-600 max-w-xl mx-auto mb-6">
-            {isLoggedIn
-              ? 'Complete each weekly survey to add your voice to the UK Teacher Pulse Index.'
-              : 'Join Only For Teachers to participate in weekly surveys and help shape the Teacher Pulse Index.'}
-          </p>
-          <Link
-            href={isLoggedIn ? '/survey' : '/register'}
-            className="inline-block px-8 py-3 rounded-full text-white font-semibold transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#1B3A2D' }}
-          >
-            {isLoggedIn ? "Take This Week's Survey" : 'Join Free'}
-          </Link>
-        </section>
-
+        {/* Citation */}
         <section className="border-t border-gray-100 pt-8">
           <p className="text-sm text-gray-500 leading-relaxed">
-            Want to understand how our surveys are designed and how we compile results?{' '}
-            <Link href="/survey-methodology" className="font-medium" style={{ color: '#C94F2C' }}>
-              Read our Survey Methodology
-            </Link>.
+            <strong>Citation:</strong> Only For Teachers (2025). <em>UK Teacher Pulse Index</em>.
+            Retrieved from onlyforteachers.co.uk/teacher-index. Data collected from verified UK
+            teachers via weekly surveys. All scores are aggregated — individual responses are never
+            published. Free to use for journalism, research, and policy with attribution.
+          </p>
+          <p className="text-sm text-gray-400 mt-3">
+            {isLoggedIn ? (
+              <>Want to contribute? <Link href="/survey" className="underline" style={{ color: '#C94F2C' }}>Take this week&apos;s survey →</Link></>
+            ) : (
+              <>Want to contribute? <Link href="/register" className="underline" style={{ color: '#C94F2C' }}>Join free →</Link></>
+            )}
           </p>
         </section>
       </div>
     </main>
-  )
-}
-
-function ExplainerCard({ icon, title, description }) {
-  return (
-    <div className="bg-gray-50 rounded-2xl p-6 text-center">
-      <div className="text-3xl mb-3">{icon}</div>
-      <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
-      <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
-    </div>
-  )
-}
-
-function SurveyRow({ survey, highlights }) {
-  const endDate = new Date(survey.ends_at)
-  const formatted = endDate.toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  })
-
-  return (
-    <div className="rounded-xl border border-gray-100 overflow-hidden hover:border-gray-200 transition-colors">
-      <div className="flex items-center justify-between p-4">
-        <div>
-          <p className="font-medium text-gray-900">{survey.title}</p>
-          <p className="text-sm text-gray-500 mt-0.5">Closed {formatted}</p>
-        </div>
-        <Link
-          href={`/survey-results/data/${survey.id}`}
-          className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50"
-          style={{ color: '#C94F2C' }}
-        >
-          View data →
-        </Link>
-      </div>
-      {highlights.length > 0 && (
-        <div className="px-4 pb-4 pt-0">
-          <div className="bg-gray-50 rounded-lg p-3 space-y-1.5">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Key findings</p>
-            {highlights.map((h, i) => (
-              <div key={i} className="text-sm text-gray-600">
-                <span className="font-medium text-gray-800">{h.pct}%</span> said &ldquo;{h.topAnswer}&rdquo; on: {h.question}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
   )
 }
