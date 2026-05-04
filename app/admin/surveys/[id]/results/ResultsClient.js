@@ -103,8 +103,9 @@ function QuestionResult({ question, responses }) {
 function downloadCSV(survey, questions, responses) {
   const completionGroups = {}
   for (const r of responses) {
-    const key = `${r.user_id}_${r.created_at?.slice(0, 10)}`
-    if (!completionGroups[key]) completionGroups[key] = { date: r.created_at, answers: {} }
+    const ts = r.submitted_at ?? r.created_at ?? ''
+    const key = `${r.user_id}_${ts.slice(0, 10)}`
+    if (!completionGroups[key]) completionGroups[key] = { date: ts, answers: {} }
     const existing = completionGroups[key].answers[r.question_id]
     const rawAns = r.answer_array ?? r.answer
     const ans = Array.isArray(rawAns) ? rawAns.join('; ') : (rawAns ?? '')

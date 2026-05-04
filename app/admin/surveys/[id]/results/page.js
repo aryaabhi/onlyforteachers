@@ -22,17 +22,21 @@ export default async function SurveyResultsAdminPage({ params }) {
   const [
     { data: survey },
     { data: questions },
-    { data: responses },
+    { data: responses, error: responsesError },
     { count: totalSubmissions },
   ] = await Promise.all([
     supabase.from('surveys').select('*').eq('id', id).single(),
     supabase.from('questions').select('*').eq('survey_id', id).order('position'),
-    service.from('responses').select('question_id, answer, answer_array, user_id, created_at').eq('survey_id', id),
+    service.from('responses').select('*').eq('survey_id', id),
     service
       .from('survey_completions')
       .select('id', { count: 'exact', head: true })
       .eq('survey_id', id),
   ])
+
+  if (responsesError) {
+    console.error('[admin/results] responses fetch error:', responsesError.message)
+  }
 
   if (!survey) redirect('/admin/surveys')
 
