@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { addQuestionAction, deleteQuestionAction, setSurveyReadyAction } from '@/app/actions/admin'
+import { addQuestionAction, deleteQuestionAction, setSurveyReadyAction, updateQuestionAction } from '@/app/actions/admin'
 import { useRouter } from 'next/navigation'
 
 const QUESTION_TYPES = [
@@ -17,6 +17,7 @@ export default function QuestionsClient({ survey, initialQuestions }) {
   const [addError, setAddError] = useState('')
   const [readyMsg, setReadyMsg] = useState('')
   const [readyError, setReadyError] = useState('')
+  const [editingId, setEditingId] = useState(null)
   const [isPendingAdd, startAdd] = useTransition()
   const [isPendingReady, startReady] = useTransition()
   const router = useRouter()
@@ -42,6 +43,11 @@ export default function QuestionsClient({ survey, initialQuestions }) {
     if (!result?.error) {
       setQuestions(prev => prev.filter(q => q.id !== questionId))
     }
+  }
+
+  function handleUpdated(updatedQuestion) {
+    setQuestions(prev => prev.map(q => q.id === updatedQuestion.id ? updatedQuestion : q))
+    setEditingId(null)
   }
 
   function handleSetReady() {
@@ -85,26 +91,48 @@ export default function QuestionsClient({ survey, initialQuestions }) {
         {questions.length > 0 && (
           <div className="space-y-2 mb-6">
             {questions.map((q, i) => (
-              <div key={q.id} className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
-                <span className="text-xs font-semibold text-gray-400 mt-0.5 w-6 shrink-0">
-                  {i + 1}.
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-700">{q.question_text}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{q.question_type}</p>
-                </div>
-                <button
-                  onClick={() => handleDelete(q.id)}
-                  className="text-xs text-red-400 hover:text-red-600 transition-colors shrink-0"
-                >
-                  Delete
-                </button>
+              <div key={q.id}>
+                {editingId === q.id ? (
+                  <EditQuestionForm
+                    question={q}
+                    onUpdated={handleUpdated}
+                    onCancel={() => setEditingId(null)}
+                  />
+                ) : (
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-gray-50">
+                    <span className="text-xs font-semibold text-gray-400 mt-0.5 w-6 shrink-0">
+                      {i + 1}.
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-700">{q.question_text}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {q.question_type}
+                        {q.is_required === false ? ' · optional' : ' · required'}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <button
+                        onClick={() => setEditingId(q.id)}
+                        className="text-xs text-blue-500 hover:text-blue-700 transition-colors"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(q.id)}
+                        className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         )}
 
         <form onSubmit={handleAddQuestion} className="space-y-4 border-t border-gray-100 pt-5">
+          <p className="text-sm font-semibold text-gray-700">Add New Question</p>
           <input type="hidden" name="surveyId" value={survey.id} />
           <input type="hidden" name="position" value={questions.length + 1} />
 
@@ -145,6 +173,31 @@ export default function QuestionsClient({ survey, initialQuestions }) {
             </div>
           )}
 
+          {(questionType === 'text' || questionType === 'textarea') && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Default text <span className="text-gray-400 font-normal">(placeholder / example answer)</span>
+              </label>
+              <input
+                name="defaultText"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2"
+                placeholder="e.g. Type your answer here…"
+              />
+            </div>
+          )}
+
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-gray-700">Required</label>
+            <select
+              name="isRequired"
+              defaultValue="true"
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 focus:outline-none bg-white"
+            >
+              <option value="true">Yes (mandatory)</option>
+              <option value="false">No (optional)</option>
+            </select>
+          </div>
+
           {addError && <p className="text-sm text-red-500">{addError}</p>}
 
           <button
@@ -158,5 +211,112 @@ export default function QuestionsClient({ survey, initialQuestions }) {
         </form>
       </div>
     </div>
+  )
+}
+
+function EditQuestionForm({ question, onUpdated, onCancel }) {
+  const [questionType, setQuestionType] = useState(question.question_type)
+  const [error, setError] = useState('')
+  const [isPending, startTransition] = useTransition()
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    const formData = new FormData(e.target)
+    startTransition(async () => {
+      const result = await updateQuestionAction(formData)
+      if (result?.error) {
+        setError(result.error)
+      } else if (result?.question) {
+        onUpdated(result.question)
+      }
+    })
+  }
+
+  const optionsDefault = Array.isArray(question.options) ? question.options.join('\n') : ''
+
+  return (
+    <form onSubmit={handleSubmit} className="p-4 rounded-lg border-2 border-blue-200 bg-blue-50 space-y-3">
+      <input type="hidden" name="questionId" value={question.id} />
+
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">Question Text</label>
+        <input
+          name="questionText"
+          defaultValue={question.question_text}
+          required
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none bg-white"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-1">Question Type</label>
+        <select
+          name="questionType"
+          value={questionType}
+          onChange={e => setQuestionType(e.target.value)}
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none bg-white"
+        >
+          {QUESTION_TYPES.map(t => (
+            <option key={t.value} value={t.value}>{t.label}</option>
+          ))}
+        </select>
+      </div>
+
+      {questionType === 'checkbox' && (
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Options (one per line)</label>
+          <textarea
+            name="options"
+            rows={4}
+            defaultValue={optionsDefault}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none resize-none font-mono bg-white"
+          />
+        </div>
+      )}
+
+      {(questionType === 'text' || questionType === 'textarea') && (
+        <div>
+          <label className="block text-xs font-medium text-gray-700 mb-1">Default text</label>
+          <input
+            name="defaultText"
+            defaultValue={question.default_text ?? ''}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none bg-white"
+          />
+        </div>
+      )}
+
+      <div className="flex items-center gap-3">
+        <label className="text-xs font-medium text-gray-700">Required</label>
+        <select
+          name="isRequired"
+          defaultValue={question.is_required === false ? 'false' : 'true'}
+          className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 focus:outline-none bg-white"
+        >
+          <option value="true">Yes (mandatory)</option>
+          <option value="false">No (optional)</option>
+        </select>
+      </div>
+
+      {error && <p className="text-xs text-red-500">{error}</p>}
+
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          disabled={isPending}
+          className="px-4 py-1.5 rounded-lg text-white text-xs font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+          style={{ backgroundColor: '#CA9662' }}
+        >
+          {isPending ? 'Saving…' : 'Save Changes'}
+        </button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-1.5 rounded-lg text-gray-600 text-xs font-semibold bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   )
 }

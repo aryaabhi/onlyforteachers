@@ -19,14 +19,49 @@ export default async function RewardsPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <section className="bg-gray-50 py-16 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Rewards for Teachers Who Share Their Voice
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Complete weekly surveys, earn points, and redeem them for real rewards — because
-          your professional opinion is valuable.
-        </p>
+      {/* Hero */}
+      <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center gap-8 pb-12">
+          <div className="flex-1 text-center sm:text-left">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+              Rewards <em>&amp;</em> Points
+            </h1>
+            <p className="text-lg mb-8" style={{ color: '#D4C9B8' }}>
+              Your expertise has value. Here&apos;s how we say thank you.
+            </p>
+            {!isLoggedIn && (
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/register"
+                  className="inline-block px-6 py-3 rounded-full text-white font-semibold transition-all hover:opacity-90"
+                  style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
+                >
+                  Join Free &amp; Start Earning
+                </Link>
+                <Link
+                  href="/login"
+                  className="inline-block px-6 py-3 rounded-full font-semibold transition-all hover:bg-white/10"
+                  style={{ color: '#D4C9B8', border: '1px solid rgba(255,255,255,0.3)', textDecoration: 'none' }}
+                >
+                  Already a member? Login →
+                </Link>
+              </div>
+            )}
+          </div>
+          {/* Trophy illustration */}
+          <div
+            className="shrink-0 w-32 h-32 sm:w-40 sm:h-40 rounded-full flex items-center justify-center text-6xl sm:text-7xl"
+            style={{ backgroundColor: 'rgba(201,79,44,0.2)' }}
+          >
+            🏆
+          </div>
+        </div>
+        {/* Wave */}
+        <div className="w-full leading-[0] overflow-hidden">
+          <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0,30 C360,0 1080,60 1440,30 L1440,0 L0,0 Z" fill="#1B3A2D" />
+          </svg>
+        </div>
       </section>
 
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-16">

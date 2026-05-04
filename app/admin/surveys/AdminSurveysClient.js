@@ -199,13 +199,24 @@ export default function AdminSurveysClient({ initialSurveys, completionCounts })
                   <td className="px-6 py-4 text-gray-500">{formatDate(survey.starts_at)}</td>
                   <td className="px-6 py-4 text-gray-500">{formatDate(survey.ends_at)}</td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
-                      survey.status === 'active'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {survey.status ?? 'draft'}
-                    </span>
+                    {(() => {
+                      const now = new Date()
+                      const start = new Date(survey.starts_at)
+                      const end = new Date(survey.ends_at)
+                      let label, cls
+                      if (start > now) {
+                        label = 'scheduled'; cls = 'bg-blue-100 text-blue-700'
+                      } else if (end >= now) {
+                        label = 'active'; cls = 'bg-green-100 text-green-700'
+                      } else {
+                        label = 'closed'; cls = 'bg-gray-100 text-gray-500'
+                      }
+                      return (
+                        <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${cls}`}>
+                          {label}
+                        </span>
+                      )
+                    })()}
                   </td>
                   <td className="px-6 py-4 text-gray-700">
                     {completionCounts[survey.id] ?? 0}
@@ -224,6 +235,13 @@ export default function AdminSurveysClient({ initialSurveys, completionCounts })
                         style={{ color: '#CA9662' }}
                       >
                         Questions
+                      </Link>
+                      <Link
+                        href={`/admin/surveys/${survey.id}/results`}
+                        className="text-sm font-medium hover:opacity-70 transition-opacity"
+                        style={{ color: '#1B3A2D' }}
+                      >
+                        Results
                       </Link>
                     </div>
                   </td>

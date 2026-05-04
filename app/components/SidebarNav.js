@@ -15,14 +15,16 @@ import {
   LogOut,
   Menu,
   X,
+  MessageSquare,
 } from 'lucide-react'
 
 const NAV_LINKS = [
   { href: '/dashboard', label: 'Home', icon: House },
   { href: '/survey', label: "This Week's Survey", icon: ClipboardList },
-  { href: '/survey-results', label: 'Survey History', icon: BarChart },
-  { href: '/offers', label: 'Rewards & Points', icon: Gift },
+  { href: '/my-surveys', label: 'Survey History', icon: BarChart },
   { href: '/survey-results', label: 'Insights Hub', icon: BookOpen },
+  { href: '/offers', label: 'Rewards & Points', icon: Gift },
+  { href: '/ask-a-question', label: 'Ask a Question', icon: MessageSquare },
   { href: '/profile', label: 'Account Settings', icon: Settings },
 ]
 

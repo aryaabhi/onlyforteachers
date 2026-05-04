@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function AskForm({ initialEmail = '' }) {
+export default function AskForm({ initialEmail = '', disabled = false }) {
   const [questionText, setQuestionText] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState(initialEmail)
@@ -13,7 +13,7 @@ export default function AskForm({ initialEmail = '' }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!questionText.trim()) return
+    if (!questionText.trim() || disabled) return
 
     setLoading(true)
     setError(null)
@@ -117,7 +117,7 @@ export default function AskForm({ initialEmail = '' }) {
 
       <button
         type="submit"
-        disabled={loading || !questionText.trim()}
+        disabled={loading || !questionText.trim() || disabled}
         className="w-full sm:w-auto px-8 py-3 rounded-lg text-white font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ backgroundColor: '#CA9662' }}
       >

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
 import { client } from '@/lib/sanity'
 
 const CATEGORIES = ['All', 'Assessment', 'Wellbeing', 'Technology', 'CPD', 'Policy']
@@ -16,24 +15,17 @@ function formatDate(iso) {
 
 export default function SurveyResultsPage() {
   const [posts, setPosts] = useState([])
-  const [pastSurveys, setPastSurveys] = useState([])
   const [activeCategory, setActiveCategory] = useState('All')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
-      const supabase = createClient()
-      const now = new Date().toISOString()
-      const [fetchedPosts, { data: surveys }] = await Promise.all([
-        client.fetch(
-          `*[_type == "post"] | order(publishedAt desc) {
-            title, "slug": slug.current, publishedAt, excerpt, mainImage, categories
-          }`
-        ).catch(() => []),
-        supabase.from('surveys').select('id, title, ends_at').lt('ends_at', now).order('ends_at', { ascending: false }),
-      ])
+      const fetchedPosts = await client.fetch(
+        `*[_type == "post"] | order(publishedAt desc) {
+          title, "slug": slug.current, publishedAt, excerpt, mainImage, categories
+        }`
+      ).catch(() => [])
       setPosts(fetchedPosts ?? [])
-      setPastSurveys(surveys ?? [])
       setLoading(false)
     }
     load()
@@ -136,34 +128,6 @@ export default function SurveyResultsPage() {
             </div>
           )}
         </section>
-
-        {/* Past survey data */}
-        {pastSurveys.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold text-[#1B3A2D] mb-6">Survey Data</h2>
-            <div className="space-y-3">
-              {pastSurveys.map(survey => (
-                <div
-                  key={survey.id}
-                  className="flex items-center justify-between p-4 rounded-xl border hover:shadow-sm transition-all"
-                  style={{ borderColor: '#E8DDD0', backgroundColor: '#fff' }}
-                >
-                  <div>
-                    <p className="font-medium text-[#2C2C2C]">{survey.title}</p>
-                    <p className="text-sm text-[#6B6B6B] mt-0.5">Closed {formatDate(survey.ends_at)}</p>
-                  </div>
-                  <Link
-                    href={`/survey-results/data/${survey.id}`}
-                    className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-[#F5EDE0]"
-                    style={{ color: '#C94F2C' }}
-                  >
-                    View data →
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* CTA */}
         <section className="mt-16 rounded-2xl p-10 text-white text-center" style={{ backgroundColor: '#1B3A2D' }}>

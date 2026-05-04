@@ -67,6 +67,8 @@ export async function addQuestionAction(formData) {
   const question_type = formData.get('questionType')
   const optionsRaw = formData.get('options') ?? ''
   const position = parseInt(formData.get('position') || '1')
+  const default_text = formData.get('defaultText') || null
+  const is_required = formData.get('isRequired') !== 'false'
 
   const options = question_type === 'checkbox'
     ? optionsRaw.split('\n').map(o => o.trim()).filter(Boolean)
@@ -74,7 +76,35 @@ export async function addQuestionAction(formData) {
 
   const { data: question, error } = await supabase
     .from('questions')
-    .insert({ survey_id, question_text, question_type, options, position })
+    .insert({ survey_id, question_text, question_type, options, position, default_text, is_required })
+    .select()
+    .single()
+
+  if (error) return { error: error.message }
+  return { question }
+}
+
+export async function updateQuestionAction(formData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  await requireAdmin(supabase, user)
+
+  const questionId = formData.get('questionId')
+  const question_text = formData.get('questionText')
+  const question_type = formData.get('questionType')
+  const optionsRaw = formData.get('options') ?? ''
+  const default_text = formData.get('defaultText') || null
+  const is_required = formData.get('isRequired') === 'true'
+
+  const options = question_type === 'checkbox'
+    ? optionsRaw.split('\n').map(o => o.trim()).filter(Boolean)
+    : []
+
+  const { data: question, error } = await supabase
+    .from('questions')
+    .update({ question_text, question_type, options, default_text, is_required })
+    .eq('id', questionId)
     .select()
     .single()
 

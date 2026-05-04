@@ -33,7 +33,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('')
   const [yearGroups, setYearGroups] = useState([])
   const [subjects, setSubjects] = useState([])
-  const [emailConsent, setEmailConsent] = useState(false)
+  const [emailConsent, setEmailConsent] = useState(true)
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
@@ -95,6 +95,16 @@ export default function RegisterPage() {
         setErrors({ form: profileError.message })
         setLoading(false)
         return
+      }
+
+      try {
+        await fetch('/api/brevo-sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, firstName, userId: data.user.id }),
+        })
+      } catch (err) {
+        console.error('[register] brevo sync error:', err)
       }
 
       const referrerId = localStorage.getItem('referrer_id')

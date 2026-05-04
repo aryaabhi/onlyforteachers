@@ -59,6 +59,7 @@ export default function Footer() {
               <FooterLink href="/rewards">Rewards</FooterLink>
               <FooterLink href="/survey-results">Insights</FooterLink>
               <FooterLink href="/survey">This week&apos;s survey</FooterLink>
+              <FooterLink href="/teacher-index">Teacher Pulse Index</FooterLink>
             </ul>
           </div>
 

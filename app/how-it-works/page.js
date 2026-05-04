@@ -1,19 +1,96 @@
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import FAQAccordion from './FAQAccordion'
 
 export const metadata = {
   title: 'How It Works | Only For Teachers',
   description: 'Learn how Only For Teachers works — join, take weekly surveys, earn points, and redeem rewards.',
 }
 
-export default function HowItWorksPage() {
+const FALLBACK_FAQS = [
+  {
+    id: 1,
+    question: 'Is it really free?',
+    answer: 'Yes, completely free forever. No hidden costs, no premium tiers.',
+  },
+  {
+    id: 2,
+    question: 'How long do surveys take?',
+    answer: 'Most surveys take around 3 minutes. Never more than 5 questions.',
+  },
+  {
+    id: 3,
+    question: 'Are my responses anonymous?',
+    answer: 'Your individual responses are never published. We only publish aggregated data.',
+  },
+  {
+    id: 4,
+    question: 'How do I claim rewards?',
+    answer: 'Browse available rewards in the Rewards section and redeem using your points balance.',
+  },
+  {
+    id: 5,
+    question: 'Who can join?',
+    answer: 'Any teacher working in a UK school or educational institution.',
+  },
+  {
+    id: 6,
+    question: 'When is the monthly prize draw?',
+    answer: 'The draw runs on the last day of each month. Every survey completion = one entry.',
+  },
+]
+
+export default async function HowItWorksPage() {
+  const supabase = await createClient()
+  let faqs = null
+  try {
+    const result = await supabase
+      .from('faqs')
+      .select('id, question, answer')
+      .eq('is_active', true)
+      .order('position')
+    faqs = result.data
+  } catch {
+    faqs = null
+  }
+
+  const displayFaqs = faqs && faqs.length > 0 ? faqs : FALLBACK_FAQS
+
   return (
     <main className="min-h-screen bg-white">
-      <section className="bg-gray-50 py-16 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Only For Teachers is the UK&apos;s first survey platform built exclusively for teachers.
-          Here&apos;s everything you need to know.
-        </p>
+      {/* Hero */}
+      <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
+        <div className="max-w-4xl mx-auto text-center pb-10">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+            How It <em>Works</em>
+          </h1>
+          <p className="text-lg max-w-xl mx-auto" style={{ color: '#D4C9B8' }}>
+            Three simple steps to start earning rewards for your professional opinion.
+          </p>
+        </div>
+
+        {/* Stats bar */}
+        <div className="max-w-4xl mx-auto border-t pb-0" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x" style={{ divideColor: 'rgba(255,255,255,0.15)' }}>
+            {[
+              { stat: '2,500+', label: 'teachers and growing every week' },
+              { stat: '~3 min', label: 'average survey length' },
+              { stat: '£50 × 5', label: 'winners every month' },
+            ].map(({ stat, label }) => (
+              <div key={stat} className="text-center py-6 px-4">
+                <p className="text-2xl font-bold" style={{ color: '#F5EDE0' }}>{stat}</p>
+                <p className="text-sm mt-1" style={{ color: '#9A8F82' }}>{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Wave */}
+        <div className="w-full leading-[0] overflow-hidden">
+          <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0,30 C360,0 1080,60 1440,30 L1440,0 L0,0 Z" fill="#1B3A2D" />
+          </svg>
+        </div>
       </section>
 
       <div className="max-w-3xl mx-auto px-4 py-12 space-y-16">
@@ -45,7 +122,7 @@ export default function HowItWorksPage() {
           </p>
           <p className="text-gray-600 leading-relaxed">
             Your responses are anonymised and compiled into the{' '}
-            <Link href="/teacher-index" className="font-medium" style={{ color: '#CA9662' }}>
+            <Link href="/teacher-index" className="font-medium" style={{ color: '#C94F2C' }}>
               UK Teacher Pulse Index
             </Link>
             {' '}— a public record of how UK teachers feel about the issues that matter most.
@@ -57,26 +134,10 @@ export default function HowItWorksPage() {
           <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Earn Points</h2>
           <p className="text-gray-600 leading-relaxed mb-4">You earn points in four ways:</p>
           <ul className="space-y-4">
-            <PointsItem
-              icon="📋"
-              label="Survey completion"
-              description="Earn 100–500 points each time you complete a survey"
-            />
-            <PointsItem
-              icon="👫"
-              label="Refer a teacher"
-              description="Earn 100 points for every teacher you refer who joins"
-            />
-            <PointsItem
-              icon="🎁"
-              label="Join via referral"
-              description="Earn 100 points when you join through a friend's referral link"
-            />
-            <PointsItem
-              icon="🔥"
-              label="10 week streak bonus"
-              description="Complete 10 surveys in a row and earn a 500 point bonus"
-            />
+            <PointsItem icon="📋" label="Survey completion" description="Earn 100–500 points each time you complete a survey" />
+            <PointsItem icon="👫" label="Refer a teacher" description="Earn 100 points for every teacher you refer who joins" />
+            <PointsItem icon="🎁" label="Join via referral" description="Earn 100 points when you join through a friend's referral link" />
+            <PointsItem icon="🔥" label="10 week streak bonus" description="Complete 10 surveys in a row and earn a 500 point bonus" />
           </ul>
         </section>
 
@@ -85,7 +146,7 @@ export default function HowItWorksPage() {
           <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Redeem Rewards</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             Your points can be redeemed for real rewards through our{' '}
-            <Link href="/rewards" className="font-medium" style={{ color: '#CA9662' }}>
+            <Link href="/rewards" className="font-medium" style={{ color: '#C94F2C' }}>
               rewards catalogue
             </Link>
             {' '}— including partner offers and discounts relevant to teachers.
@@ -116,10 +177,16 @@ export default function HowItWorksPage() {
           <Link
             href="/teacher-index"
             className="inline-block px-6 py-3 rounded-lg text-white font-semibold transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#CA9662' }}
+            style={{ backgroundColor: '#1B3A2D' }}
           >
             View the Teacher Pulse Index
           </Link>
+        </section>
+
+        {/* FAQ Section */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
+          <FAQAccordion faqs={displayFaqs} />
         </section>
 
         <section className="text-center py-8 border-t border-gray-100">
@@ -127,8 +194,8 @@ export default function HowItWorksPage() {
           <p className="text-gray-600 mb-6">Join UK teachers sharing their voice and earning rewards.</p>
           <Link
             href="/register"
-            className="inline-block px-8 py-3.5 rounded-lg text-white font-semibold text-lg transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#CA9662' }}
+            className="inline-block px-8 py-3.5 rounded-full text-white font-semibold text-lg transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#C94F2C' }}
           >
             Join Free Today
           </Link>
@@ -142,7 +209,7 @@ function SectionNumber({ number }) {
   return (
     <div
       className="w-10 h-10 rounded-full text-white font-bold text-lg flex items-center justify-center"
-      style={{ backgroundColor: '#CA9662' }}
+      style={{ backgroundColor: '#C94F2C' }}
     >
       {number}
     </div>

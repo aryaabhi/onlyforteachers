@@ -29,6 +29,7 @@ export default function Navbar({ user }) {
           <NavLink href="/how-it-works">How it works</NavLink>
           <NavLink href="/rewards">Rewards</NavLink>
           <NavLink href="/survey-results">Insights</NavLink>
+          <NavLink href="/teacher-index">Index</NavLink>
           <NavLink href="/survey">Survey</NavLink>
           <NavLink href="/login">Log in</NavLink>
           <Link

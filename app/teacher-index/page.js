@@ -16,6 +16,42 @@ function formatDate(iso) {
   })
 }
 
+const LIKERT_OPTIONS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree']
+
+async function getSurveyHighlights(supabase, surveyId) {
+  const [{ data: questions }, { data: responses }] = await Promise.all([
+    supabase.from('questions').select('id, question_text, question_type, options').eq('survey_id', surveyId).order('position').limit(3),
+    supabase.from('responses').select('question_id, answer, answer_array').eq('survey_id', surveyId),
+  ])
+
+  if (!questions || questions.length === 0) return []
+
+  const highlights = []
+  for (const q of questions) {
+    const isAggregate = q.question_type === 'likert_scale' || q.question_type === 'checkbox'
+    if (!isAggregate) continue
+
+    const options = q.question_type === 'likert_scale' ? LIKERT_OPTIONS : (q.options ?? [])
+    const qResponses = responses?.filter(r => r.question_id === q.id) ?? []
+    if (qResponses.length === 0) continue
+
+    const counts = {}
+    for (const opt of options) counts[opt] = 0
+    for (const r of qResponses) {
+      const ans = r.answer_array ?? r.answer
+      if (Array.isArray(ans)) for (const a of ans) { if (a in counts) counts[a]++ }
+      else if (typeof ans === 'string' && ans in counts) counts[ans]++
+    }
+
+    const topOption = Object.entries(counts).sort(([,a],[,b]) => b - a)[0]
+    if (!topOption) continue
+
+    const pct = Math.round((topOption[1] / qResponses.length) * 100)
+    highlights.push({ question: q.question_text, topAnswer: topOption[0], pct, total: qResponses.length })
+  }
+  return highlights
+}
+
 export default async function TeacherIndexPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -36,6 +72,19 @@ export default async function TeacherIndexPage() {
     ).catch(() => []),
   ])
 
+  const surveyHighlights = {}
+  if (surveys && surveys.length > 0) {
+    const highlightResults = await Promise.all(
+      surveys.slice(0, 5).map(async s => ({
+        id: s.id,
+        highlights: await getSurveyHighlights(supabase, s.id),
+      }))
+    )
+    for (const { id, highlights } of highlightResults) {
+      surveyHighlights[id] = highlights
+    }
+  }
+
   return (
     <main className="min-h-screen bg-white">
       <section className="bg-gray-50 py-16 px-4 text-center">
@@ -49,24 +98,11 @@ export default async function TeacherIndexPage() {
       <div className="max-w-4xl mx-auto px-4 py-12 space-y-14">
 
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <ExplainerCard
-            icon="📊"
-            title="What It Measures"
-            description="Workload, wellbeing, pay, curriculum, technology, leadership, and more — tracking teacher sentiment over time."
-          />
-          <ExplainerCard
-            icon="👩‍🏫"
-            title="Who Contributes"
-            description="Verified UK teaching professionals across all school types, year groups, and subject areas."
-          />
-          <ExplainerCard
-            icon="🔓"
-            title="Freely Available"
-            description="All results are publicly accessible. Free to use for journalism, research, and policy — with attribution."
-          />
+          <ExplainerCard icon="📊" title="What It Measures" description="Workload, wellbeing, pay, curriculum, technology, leadership, and more — tracking teacher sentiment over time." />
+          <ExplainerCard icon="👩‍🏫" title="Who Contributes" description="Verified UK teaching professionals across all school types, year groups, and subject areas." />
+          <ExplainerCard icon="🔓" title="Freely Available" description="All results are publicly accessible. Free to use for journalism, research, and policy — with attribution." />
         </section>
 
-        {/* Methodology summary */}
         <section className="bg-gray-50 rounded-2xl p-8">
           <h2 className="text-xl font-bold text-gray-900 mb-3">How the Index Works</h2>
           <div className="space-y-3 text-sm text-gray-600 leading-relaxed">
@@ -79,21 +115,16 @@ export default async function TeacherIndexPage() {
               Results are aggregated across all respondents and published here after each survey closes.
               No individual responses are ever published. Participation is voluntary and anonymous.
             </p>
-            <p>
-              The index is updated weekly as new surveys complete. Historical data is preserved so
-              trends can be tracked over time.
-            </p>
           </div>
           <Link
             href="/survey-methodology"
             className="inline-block mt-4 text-sm font-medium hover:opacity-70 transition-opacity"
-            style={{ color: '#CA9662' }}
+            style={{ color: '#C94F2C' }}
           >
             Read the full methodology →
           </Link>
         </section>
 
-        {/* Survey Reports (Sanity) */}
         {reports && reports.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Published Survey Reports</h2>
@@ -113,7 +144,7 @@ export default async function TeacherIndexPage() {
                   <Link
                     href={`/survey-results/${report.slug}`}
                     className="flex-shrink-0 ml-4 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50 whitespace-nowrap"
-                    style={{ color: '#CA9662' }}
+                    style={{ color: '#C94F2C' }}
                   >
                     Read report →
                   </Link>
@@ -123,14 +154,17 @@ export default async function TeacherIndexPage() {
           </section>
         )}
 
-        {/* Past Surveys */}
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Survey Archive</h2>
 
           {surveys && surveys.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {surveys.map(survey => (
-                <SurveyRow key={survey.id} survey={survey} />
+                <SurveyRow
+                  key={survey.id}
+                  survey={survey}
+                  highlights={surveyHighlights[survey.id] ?? []}
+                />
               ))}
             </div>
           ) : (
@@ -143,7 +177,7 @@ export default async function TeacherIndexPage() {
           )}
         </section>
 
-        <section className="rounded-2xl p-8 text-center" style={{ backgroundColor: '#FDF8F3' }}>
+        <section className="rounded-2xl p-8 text-center" style={{ backgroundColor: '#F5EDE0' }}>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             {isLoggedIn ? 'Participate in future surveys' : 'Contribute to the index'}
           </h2>
@@ -154,8 +188,8 @@ export default async function TeacherIndexPage() {
           </p>
           <Link
             href={isLoggedIn ? '/survey' : '/register'}
-            className="inline-block px-8 py-3 rounded-lg text-white font-semibold transition-opacity hover:opacity-90"
-            style={{ backgroundColor: '#CA9662' }}
+            className="inline-block px-8 py-3 rounded-full text-white font-semibold transition-opacity hover:opacity-90"
+            style={{ backgroundColor: '#1B3A2D' }}
           >
             {isLoggedIn ? "Take This Week's Survey" : 'Join Free'}
           </Link>
@@ -164,7 +198,7 @@ export default async function TeacherIndexPage() {
         <section className="border-t border-gray-100 pt-8">
           <p className="text-sm text-gray-500 leading-relaxed">
             Want to understand how our surveys are designed and how we compile results?{' '}
-            <Link href="/survey-methodology" className="font-medium" style={{ color: '#CA9662' }}>
+            <Link href="/survey-methodology" className="font-medium" style={{ color: '#C94F2C' }}>
               Read our Survey Methodology
             </Link>.
           </p>
@@ -184,25 +218,39 @@ function ExplainerCard({ icon, title, description }) {
   )
 }
 
-function SurveyRow({ survey }) {
+function SurveyRow({ survey, highlights }) {
   const endDate = new Date(survey.ends_at)
   const formatted = endDate.toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
   })
 
   return (
-    <div className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
-      <div>
-        <p className="font-medium text-gray-900">{survey.title}</p>
-        <p className="text-sm text-gray-500 mt-0.5">Closed {formatted}</p>
+    <div className="rounded-xl border border-gray-100 overflow-hidden hover:border-gray-200 transition-colors">
+      <div className="flex items-center justify-between p-4">
+        <div>
+          <p className="font-medium text-gray-900">{survey.title}</p>
+          <p className="text-sm text-gray-500 mt-0.5">Closed {formatted}</p>
+        </div>
+        <Link
+          href={`/survey-results/data/${survey.id}`}
+          className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50"
+          style={{ color: '#C94F2C' }}
+        >
+          View data →
+        </Link>
       </div>
-      <Link
-        href={`/survey-results/data/${survey.id}`}
-        className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-gray-50"
-        style={{ color: '#CA9662' }}
-      >
-        View data →
-      </Link>
+      {highlights.length > 0 && (
+        <div className="px-4 pb-4 pt-0">
+          <div className="bg-gray-50 rounded-lg p-3 space-y-1.5">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Key findings</p>
+            {highlights.map((h, i) => (
+              <div key={i} className="text-sm text-gray-600">
+                <span className="font-medium text-gray-800">{h.pct}%</span> said &ldquo;{h.topAnswer}&rdquo; on: {h.question}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

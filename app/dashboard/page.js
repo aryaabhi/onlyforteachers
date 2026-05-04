@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import CopyButton from './CopyButton'
-import { Star, Flame, Trophy, ClipboardList, BookOpen, Gift } from 'lucide-react'
+import { Star, Flame, Trophy, ClipboardList, BookOpen, Gift, MessageSquare } from 'lucide-react'
 
 const EVENT_LABELS = {
   survey_completion: 'Survey Completed',
@@ -212,8 +212,30 @@ export default async function DashboardPage({ searchParams }) {
         {/* Quick links */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <QuickLink href="/survey-results" icon={<BookOpen className="w-5 h-5" />} label="Insights Hub" />
-          <QuickLink href="/survey-results" icon={<ClipboardList className="w-5 h-5" />} label="Survey History" />
+          <QuickLink href="/my-surveys" icon={<ClipboardList className="w-5 h-5" />} label="Survey History" />
           <QuickLink href="/offers" icon={<Gift className="w-5 h-5" />} label="Rewards" />
+        </div>
+
+        {/* Ask a Question */}
+        <div className="bg-white rounded-2xl border p-6 mb-6" style={{ borderColor: '#E8DDD0' }}>
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: '#F5EDE0' }}>
+              <MessageSquare className="w-5 h-5" style={{ color: '#C94F2C' }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-semibold text-[#1B3A2D] mb-1">Ask the Community</h2>
+              <p className="text-sm text-[#6B6B6B] mb-4">
+                Have a question you&apos;d like fellow teachers to answer? Submit it for our next survey.
+              </p>
+              <Link
+                href="/ask-a-question"
+                className="inline-block px-5 py-2 rounded-full text-sm font-semibold text-white transition-all hover:opacity-90"
+                style={{ backgroundColor: '#C94F2C' }}
+              >
+                Ask a Question →
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Referral */}
