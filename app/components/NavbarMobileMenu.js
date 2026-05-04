@@ -35,6 +35,7 @@ export default function NavbarMobileMenu({ isLoggedIn }) {
             <MobileLink href="/survey-results" onClick={close}>Insights</MobileLink>
             <MobileLink href="/teacher-index" onClick={close}>Teacher Pulse Index</MobileLink>
             <MobileLink href="/survey" onClick={close}>Survey</MobileLink>
+            <MobileLink href="/ask-a-question" onClick={close}>Ask a Question</MobileLink>
             <div className="my-1.5 border-t border-[#E8DDD0]" />
             <MobileLink href="/login" onClick={close}>Log in</MobileLink>
             <Link
