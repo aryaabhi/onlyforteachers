@@ -13,6 +13,13 @@ function formatDate(iso) {
   })
 }
 
+function formatShortDate(iso) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  })
+}
+
 export default function SurveyResultsPage() {
   const [posts, setPosts] = useState([])
   const [activeCategory, setActiveCategory] = useState('All')
@@ -63,8 +70,8 @@ export default function SurveyResultsPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-12">
 
-        {/* Category filters */}
-        <div className="flex flex-wrap gap-2 mb-10 justify-center">
+        {/* Category filters — hidden until posts are categorised */}
+        {/* <div className="flex flex-wrap gap-2 mb-10 justify-center">
           {CATEGORIES.map(cat => (
             <button
               key={cat}
@@ -79,7 +86,7 @@ export default function SurveyResultsPage() {
               {cat}
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* Posts grid */}
         <section className="mb-16">
@@ -99,19 +106,14 @@ export default function SurveyResultsPage() {
                   }}
                 >
                   <div className="p-5 flex flex-col flex-1">
-                    {post.categories && post.categories.length > 0 && (
-                      <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#C94F2C' }}>
-                        {post.categories[0]}
-                      </span>
-                    )}
+                    <span className="text-xs text-[#9A8F82]">{formatShortDate(post.publishedAt)}</span>
                     <h3 className="font-bold text-[#2C2C2C] mt-2 mb-2 leading-snug group-hover:text-[#C94F2C] transition-colors">
                       {post.title}
                     </h3>
                     {post.excerpt && (
                       <p className="text-sm text-[#6B6B6B] line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
                     )}
-                    <div className="border-t pt-3 flex items-center justify-between" style={{ borderColor: '#E8DDD0' }}>
-                      <span className="text-xs text-[#6B6B6B]">{formatDate(post.publishedAt)}</span>
+                    <div className="border-t pt-3 flex items-center justify-end" style={{ borderColor: '#E8DDD0' }}>
                       <span className="text-xs text-[#6B6B6B]">3 min read</span>
                     </div>
                   </div>
