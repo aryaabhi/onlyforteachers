@@ -86,7 +86,7 @@ export default function SidebarNav({ user }) {
           <nav className="relative w-[260px] bg-[#1B3A2D] flex flex-col h-full overflow-y-auto">
             <div className="p-5 border-b border-white/10">
               <Image
-                src="/logo.png"
+                src="/logo-white.png"
                 alt="Only for Teachers"
                 width={160}
                 height={40}
@@ -138,7 +138,7 @@ export default function SidebarNav({ user }) {
         <div className="p-5 pt-6 pb-4">
           <Link href="/dashboard">
             <Image
-              src="/logo.png"
+              src="/logo-white.png"
               alt="Only for Teachers"
               width={160}
               height={40}
