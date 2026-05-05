@@ -4,6 +4,7 @@ import { useState } from 'react'
 import ProfileForm from './ProfileForm'
 import PasswordChange from './PasswordChange'
 import DeleteAccount from './DeleteAccount'
+import LinkGoogle from './LinkGoogle'
 
 const TABS = [
   { id: 'profile', label: 'Profile' },
@@ -40,6 +41,7 @@ export default function ProfilePageContent({ profile }) {
         <div>
           <h2 className="text-base font-semibold text-[#1B3A2D] mb-4">Delete account</h2>
           <DeleteAccount />
+          <LinkGoogle />
         </div>
       )}
     </div>

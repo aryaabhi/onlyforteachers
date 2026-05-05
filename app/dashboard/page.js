@@ -89,6 +89,21 @@ export default async function DashboardPage({ searchParams }) {
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
 
+      {(!profile?.year_groups || profile.year_groups.length === 0) && (
+        <div className="px-4 sm:px-6 py-3 flex items-center justify-between gap-4" style={{ backgroundColor: '#FEF3C7', borderBottom: '1px solid #FDE68A' }}>
+          <p className="text-sm text-amber-800">
+            Please complete your profile to get the most from Only for Teachers.
+          </p>
+          <Link
+            href="/complete-profile"
+            className="shrink-0 text-sm font-semibold hover:underline"
+            style={{ color: '#C94F2C' }}
+          >
+            Complete profile →
+          </Link>
+        </div>
+      )}
+
       {surveyCompleted && (
         <div className="px-4 sm:px-6 py-3 text-center text-sm font-medium text-white" style={{ backgroundColor: '#16a34a' }}>
           Thank you! Your survey response has been saved and your points have been added.

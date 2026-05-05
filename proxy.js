@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 
-const protectedRoutes = ['/dashboard', '/survey', '/profile', '/offers']
+const protectedRoutes = ['/dashboard', '/survey', '/profile', '/offers', '/complete-profile']
 const authRoutes = ['/login', '/register']
 
 export async function proxy(request) {
@@ -40,6 +40,19 @@ export async function proxy(request) {
 
   if (isAuthRoute && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
+  // /complete-profile: redirect to /dashboard if profile is already complete
+  if (user && pathname.startsWith('/complete-profile')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('year_groups')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.year_groups?.length > 0) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
   }
 
   return supabaseResponse
