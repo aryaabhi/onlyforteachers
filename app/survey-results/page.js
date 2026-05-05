@@ -88,6 +88,13 @@ export default function SurveyResultsPage() {
           ))}
         </div> */}
 
+        {/* Intro */}
+        <p className="text-gray-600 leading-relaxed text-lg max-w-3xl mx-auto text-center mb-10">
+          Every week, Only For Teachers publishes research drawn from our community of UK teachers.
+          Each survey produces a data-driven report — giving teachers, school leaders, and
+          policymakers an honest picture of life in UK classrooms.
+        </p>
+
         {/* Posts grid */}
         <section className="mb-16">
           {loading ? (

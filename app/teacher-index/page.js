@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
+import { client as sanityClient } from '@/lib/sanity'
 import Link from 'next/link'
 
 export const metadata = {
@@ -44,6 +45,12 @@ export default async function TeacherIndexPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const isLoggedIn = !!user
+
+  const recentPosts = await sanityClient.fetch(
+    `*[_type == "post"] | order(publishedAt desc) [0...3] {
+      title, "slug": slug.current, publishedAt, excerpt
+    }`
+  ).catch(() => [])
 
   const service = createServiceClient()
   const { data: scores } = await service
@@ -242,6 +249,44 @@ export default async function TeacherIndexPage() {
           <section className="text-center py-16 rounded-2xl bg-gray-50">
             <p className="text-gray-500 text-lg">No TPI data published yet.</p>
             <p className="text-gray-400 text-sm mt-2">Scores will appear here as surveys complete.</p>
+          </section>
+        )}
+
+        {/* Latest insights */}
+        {recentPosts && recentPosts.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest Survey Insights</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {recentPosts.map(post => (
+                <Link
+                  key={post.slug}
+                  href={`/${post.slug}`}
+                  className="block bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition-colors"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <p className="text-xs text-gray-400 mb-2">
+                    {post.publishedAt
+                      ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                      : ''}
+                  </p>
+                  <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-2 hover:text-[#C94F2C] transition-colors">
+                    {post.title}
+                  </h3>
+                  {post.excerpt && (
+                    <p className="text-xs text-gray-500 line-clamp-2">{post.excerpt}</p>
+                  )}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4 text-right">
+              <Link
+                href="/survey-results"
+                className="text-sm font-medium hover:opacity-70 transition-opacity"
+                style={{ color: '#C94F2C' }}
+              >
+                View all insights →
+              </Link>
+            </div>
           </section>
         )}
 

@@ -47,15 +47,25 @@ export default function SurveyMethodologyPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Survey Duration and Access</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Who Can Respond</h2>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            Only For Teachers surveys are open exclusively to verified UK teaching professionals.
+            Membership is restricted to teachers currently working in UK schools or educational
+            institutions — including primary, secondary, further education, and special educational
+            needs settings. We do not accept responses from student teachers, teaching assistants,
+            or non-teaching school staff, though we may run separate surveys for these groups in
+            future.
+          </p>
           <p className="text-gray-600 leading-relaxed mb-4">
             Each survey is live for exactly <strong>one week</strong>, opening on Monday and closing
             the following Sunday. Registered members are notified by email when a new survey opens.
+            Each member can complete each survey only once — enforced at the database level to
+            prevent duplicate submissions.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Surveys are only accessible to registered members of Only For Teachers. This ensures
-            that responses come exclusively from verified UK teaching professionals, maintaining
-            the integrity and relevance of our data.
+            By restricting access to verified members, we ensure that all responses come from
+            genuine UK teaching professionals. This makes our data more meaningful and relevant
+            for school leaders, policymakers, journalists, and researchers who use our findings.
           </p>
         </section>
 
@@ -101,16 +111,36 @@ export default function SurveyMethodologyPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Integrity</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Privacy</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            We implement the following measures to protect the integrity of our survey data:
+            We take teacher data privacy seriously. Individual survey responses are never published
+            or shared with third parties. All published results are aggregated — meaning only
+            summary statistics (percentages, averages, and distributions) appear in public reports.
+            No individual teacher can ever be identified from our published data.
           </p>
-          <ul className="space-y-3 text-gray-600">
+          <p className="text-gray-600 leading-relaxed mb-4">
+            We implement the following technical measures to protect data integrity and privacy:
+          </p>
+          <ul className="space-y-3 text-gray-600 mb-4">
             <IntegrityItem text="Each member can complete each survey only once, enforced at the database level" />
             <IntegrityItem text="All responses are timestamped and logged with metadata to detect anomalous patterns" />
             <IntegrityItem text="Survey access is restricted to authenticated members — no anonymous submissions are accepted" />
             <IntegrityItem text="We monitor for and remove duplicate accounts that attempt to game the system" />
+            <IntegrityItem text="All data is stored securely with access controls limiting who can view individual responses" />
           </ul>
+          <p className="text-gray-600 leading-relaxed">
+            Members can request deletion of their account and all associated data at any time by
+            contacting us at{' '}
+            <a
+              href="mailto:contact@onlyforteachers.co.uk"
+              className="font-medium"
+              style={{ color: '#CA9662' }}
+            >
+              contact@onlyforteachers.co.uk
+            </a>
+            . We retain anonymised, aggregated survey responses even after account deletion, as
+            these form part of the historical record and cannot be traced back to any individual.
+          </p>
         </section>
 
         <section>

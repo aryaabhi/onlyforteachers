@@ -67,10 +67,12 @@ export default async function HowItWorksPage() {
       <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-4xl mx-auto text-center pb-10">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
-            How It <em>Works</em>
+            How Only For Teachers <em>Works</em>
           </h1>
-          <p className="text-lg max-w-xl mx-auto" style={{ color: '#D4C9B8' }}>
-            Three simple steps to start earning rewards for your professional opinion.
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: '#D4C9B8' }}>
+            Only For Teachers is a free UK teacher community where you share your professional
+            opinion through quick weekly surveys — and get rewarded for it. Here&apos;s how it
+            works in three simple steps.
           </p>
         </div>
 

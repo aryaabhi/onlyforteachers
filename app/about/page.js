@@ -23,36 +23,70 @@ export default function AboutPage() {
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
           <p
-            className="text-gray-600 leading-relaxed text-lg border-l-4 pl-6 italic"
+            className="text-gray-600 leading-relaxed text-lg border-l-4 pl-6 italic mb-4"
             style={{ borderColor: '#CA9662' }}
           >
             &ldquo;We exist to give UK teachers a voice and reward them for sharing their professional opinions.&rdquo;
+          </p>
+          <p className="text-gray-600 leading-relaxed">
+            Teaching is one of the most demanding and consequential professions in the country, yet
+            the teacher voice is too often absent from the decisions that shape it. Only For Teachers
+            was built to change that — by creating a space where UK teachers can share their genuine,
+            unfiltered views on the issues that matter most to them, and where those views are published
+            openly for everyone to see.
           </p>
         </section>
 
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">What We Do</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Only For Teachers is the UK&apos;s first survey platform built exclusively for teaching
-            professionals. We run weekly surveys on the topics that matter most in education —
-            workload, wellbeing, curriculum, leadership, technology, and more.
+            Only For Teachers is the UK&apos;s first teacher survey platform built exclusively for
+            teaching professionals. Every week, we run a short 5-question teacher survey on the
+            topics that matter most in education — workload, wellbeing, curriculum, leadership,
+            technology, and more. Surveys take around 3 minutes and are available only to verified
+            UK teachers.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Every teacher who completes a survey earns points that can be redeemed for real rewards.
-            Every month, we draw 5 winners who each receive £50.
+            Every teacher who completes a teacher survey earns points that can be redeemed for real
+            rewards — including Amazon vouchers, TES Resources subscriptions, and other offers
+            relevant to teaching professionals. Every month, we draw 5 winners who each receive £50.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            The results of each survey are published in the{' '}
+            The results of each teacher survey are published in the{' '}
             <Link href="/teacher-index" className="font-medium" style={{ color: '#CA9662' }}>
               UK Teacher Pulse Index
             </Link>
             {' '}— a public record of how teachers across the UK think and feel about the issues
-            that affect their profession.
+            that affect their profession. The index is free to use for journalism, research, and
+            policy, with attribution.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Our Commitment</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Who We Are</h2>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            Only For Teachers was founded by educators who were frustrated with being left out of
+            the national conversation. Despite years of classroom experience, UK teachers are
+            rarely consulted directly on the decisions that shape their working lives. Policy is
+            made, curricula are redesigned, and school leadership decisions are taken — often
+            without authentic teacher voice at the centre.
+          </p>
+          <p className="text-gray-600 leading-relaxed mb-4">
+            We are an independent UK teacher community — not a trade union, government body, or
+            lobbying organisation. Our team brings decades of combined classroom experience spanning
+            primary, secondary, and further education. Every feature we build, every survey we
+            design, and every reward we offer is shaped by what genuine teaching professionals
+            tell us they want and need.
+          </p>
+          <p className="text-gray-600 leading-relaxed">
+            Our goal is to make teacher voice matter by collecting honest, anonymous data from
+            UK teaching professionals, publishing it openly, and rewarding teachers fairly for
+            their time. We believe that when teachers speak, the whole education system benefits.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Our Commitment to Teachers</h2>
           <div className="space-y-4">
             <CommitmentCard
               title="Your Privacy Comes First"

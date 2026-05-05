@@ -71,6 +71,19 @@ export default async function RewardsPage() {
 
       <div className="max-w-5xl mx-auto px-4 py-12 space-y-16">
 
+        {/* Intro */}
+        <section>
+          <p className="text-gray-600 leading-relaxed text-lg max-w-3xl mx-auto text-center">
+            Only For Teachers rewards UK teachers for sharing their professional opinions. Every
+            week you complete a survey, you earn points. Those points can be redeemed for real
+            rewards — from Amazon vouchers to TES Resources subscriptions. Plus, every survey
+            gives you an entry into our monthly £50 prize draw.{' '}
+            <Link href="/how-it-works" className="font-medium" style={{ color: '#C94F2C' }}>
+              Learn how it works →
+            </Link>
+          </p>
+        </section>
+
         {/* Points system */}
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">How You Earn Points</h2>
