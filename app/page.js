@@ -7,7 +7,12 @@ import MagazineForm from '@/app/components/MagazineForm'
 
 export const metadata = {
   title: 'Only For Teachers — The UK Teacher Community That Rewards You',
-  description: 'Take weekly surveys, earn points, and get rewarded for sharing your professional opinion as a UK teacher.',
+  description: 'Join OnlyForTeachers — a free community where UK teachers share insights through quick surveys, see results, and win rewards every week.',
+  openGraph: {
+    title: 'Only For Teachers — The UK Teacher Community That Rewards You',
+    description: 'Join OnlyForTeachers — a free community where UK teachers share insights through quick surveys, see results, and win rewards every week.',
+    url: 'https://onlyforteachers.co.uk',
+  },
 }
 
 export const revalidate = 3600

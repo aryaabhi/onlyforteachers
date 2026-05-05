@@ -3,8 +3,13 @@ import { createClient } from '@/lib/supabase/server'
 import FAQAccordion from './FAQAccordion'
 
 export const metadata = {
-  title: 'How It Works | Only For Teachers',
-  description: 'Learn how Only For Teachers works — join, take weekly surveys, earn points, and redeem rewards.',
+  title: 'How It Works — Earn Rewards for Your Teacher Opinion',
+  description: 'Learn how Only For Teachers works. Sign up free, take weekly surveys, earn points and redeem real rewards. Takes just 3 minutes a week.',
+  openGraph: {
+    title: 'How It Works — Earn Rewards for Your Teacher Opinion',
+    description: 'Sign up free, take weekly surveys, earn points and redeem real rewards.',
+    url: 'https://onlyforteachers.co.uk/how-it-works',
+  },
 }
 
 const FALLBACK_FAQS = [

@@ -1,8 +1,13 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'About | Only For Teachers',
-  description: 'Learn about Only For Teachers — our mission to give UK teachers a voice and reward them for sharing their professional opinions.',
+  title: 'About Us — Only For Teachers',
+  description: 'Only For Teachers exists to give UK teachers a voice and reward them for sharing their professional opinions. Learn about our mission.',
+  openGraph: {
+    title: 'About Us — Only For Teachers',
+    description: 'We exist to give UK teachers a voice and reward them for sharing their professional opinions.',
+    url: 'https://onlyforteachers.co.uk/about',
+  },
 }
 
 export default function AboutPage() {

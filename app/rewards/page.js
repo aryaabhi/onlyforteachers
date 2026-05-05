@@ -2,8 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Rewards | Only For Teachers',
-  description: 'Earn points by completing weekly surveys and redeem them for real rewards. Monthly £50 prize draw for UK teachers.',
+  title: 'Rewards & Points — Only For Teachers',
+  description: 'Earn points for completing weekly teacher surveys. Redeem for Amazon vouchers, TES Resources and more. Monthly £50 prize draw.',
+  openGraph: {
+    title: 'Rewards & Points — Only For Teachers',
+    description: 'Earn points for surveys and redeem for real rewards.',
+    url: 'https://onlyforteachers.co.uk/rewards',
+  },
 }
 
 export default async function RewardsPage() {

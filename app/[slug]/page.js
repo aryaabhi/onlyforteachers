@@ -17,24 +17,36 @@ export async function generateMetadata({ params }) {
   const { slug } = await params
   const post = await client.fetch(
     `*[_type == "post" && slug.current == $slug][0] {
-      title, seoTitle, seoDescription, mainImage, publishedAt
+      title, excerpt, seoTitle, seoDescription, mainImage, publishedAt,
+      "slug": slug.current
     }`,
     { slug }
   ).catch(() => null)
 
   if (!post) return { title: 'Not Found' }
 
+  const title = post.seoTitle || post.title
+  const description = post.seoDescription || post.excerpt || ''
+  const imageUrl = post.mainImage
+    ? urlFor(post.mainImage).width(1200).height(630).url()
+    : '/og-image.png'
+
   return {
-    title: post.seoTitle || `${post.title} | Only For Teachers`,
-    description: post.seoDescription || post.excerpt || '',
+    title,
+    description,
     openGraph: {
-      title: post.seoTitle || post.title,
-      description: post.seoDescription || '',
+      title,
+      description,
       type: 'article',
       publishedTime: post.publishedAt,
-      images: post.mainImage
-        ? [{ url: urlFor(post.mainImage).width(1200).height(630).url() }]
-        : [],
+      url: `https://onlyforteachers.co.uk/${post.slug}`,
+      images: [{ url: imageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [imageUrl],
     },
   }
 }
@@ -143,6 +155,33 @@ export default async function BlogPostPage({ params }) {
   const siteUrl = 'https://onlyforteachers.co.uk'
   const postUrl = `${siteUrl}/${slug}`
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt || '',
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      '@type': 'Organization',
+      name: 'Only For Teachers',
+      url: siteUrl,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Only For Teachers',
+      url: siteUrl,
+      logo: { '@type': 'ImageObject', url: `${siteUrl}/logo.png` },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': postUrl,
+    },
+    ...(post.mainImage && {
+      image: urlFor(post.mainImage).width(1200).height(630).url(),
+    }),
+  }
+
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`,
@@ -151,6 +190,10 @@ export default async function BlogPostPage({ params }) {
 
   return (
     <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Featured image */}
       {post.mainImage && (
         <div className="relative w-full overflow-hidden bg-gray-100" style={{ maxHeight: '400px', height: '50vw' }}>

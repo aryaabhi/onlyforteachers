@@ -1,8 +1,13 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Survey Methodology | Only For Teachers',
-  description: 'How Only For Teachers creates, runs, and compiles its weekly teacher surveys and the UK Teacher Pulse Index.',
+  title: 'Survey Methodology — Only For Teachers',
+  description: 'Learn how Only For Teachers creates and runs weekly teacher surveys. Our methodology ensures accurate, representative data from UK teachers.',
+  openGraph: {
+    title: 'Survey Methodology — Only For Teachers',
+    description: 'How we create and run weekly teacher surveys.',
+    url: 'https://onlyforteachers.co.uk/survey-methodology',
+  },
 }
 
 export default function SurveyMethodologyPage() {

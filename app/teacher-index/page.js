@@ -3,8 +3,13 @@ import { createServiceClient } from '@/lib/supabase/service'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'UK Teacher Pulse Index | Only For Teachers',
-  description: 'The UK Teacher Pulse Index — a public record of how UK teachers think and feel about the issues that matter most to their profession.',
+  title: 'UK Teacher Pulse Index — Teacher Sentiment Tracker',
+  description: 'The UK Teacher Pulse Index tracks teacher sentiment across confidence, workload, support and optimism — drawn from weekly surveys of UK teachers.',
+  openGraph: {
+    title: 'UK Teacher Pulse Index — Teacher Sentiment Tracker',
+    description: 'Track UK teacher sentiment across confidence, workload, support and optimism.',
+    url: 'https://onlyforteachers.co.uk/teacher-index',
+  },
 }
 
 export const revalidate = 3600

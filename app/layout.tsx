@@ -18,9 +18,54 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Only For Teachers — The UK Teacher Community That Rewards You",
-  description: "The UK teacher community that rewards you for sharing your professional opinion. Free forever.",
+  metadataBase: new URL('https://onlyforteachers.co.uk'),
+  title: {
+    default: 'Only For Teachers — The UK Teacher Community',
+    template: '%s | Only For Teachers',
+  },
+  description: 'Join the free UK teacher community. Take weekly surveys, earn points and rewards for sharing your professional opinion.',
+  keywords: ['teachers', 'UK teachers', 'teacher survey', 'teacher community', 'teacher rewards'],
+  authors: [{ name: 'Only For Teachers' }],
+  creator: 'Only For Teachers',
+  openGraph: {
+    type: 'website',
+    locale: 'en_GB',
+    url: 'https://onlyforteachers.co.uk',
+    siteName: 'Only For Teachers',
+    title: 'Only For Teachers — The UK Teacher Community',
+    description: 'Join the free UK teacher community. Take weekly surveys, earn points and rewards for sharing your professional opinion.',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Only For Teachers' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Only For Teachers — The UK Teacher Community',
+    description: 'Join the free UK teacher community. Take weekly surveys, earn points and rewards.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
+
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Only For Teachers',
+  url: 'https://onlyforteachers.co.uk',
+  logo: 'https://onlyforteachers.co.uk/logo.png',
+  description: 'Free UK teacher community for weekly surveys and rewards',
+  sameAs: [
+    'https://www.instagram.com/onlyforteachers.co.uk',
+    'https://www.linkedin.com/company/only-for-teachers',
+  ],
+}
 
 export default async function RootLayout({
   children,
@@ -38,6 +83,10 @@ export default async function RootLayout({
       className={`${playfair.variable} ${inter.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-[#F5EDE0] font-sans text-[#2C2C2C]">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
         <Navbar user={user} />
         <div className={`flex flex-col flex-1 ${user ? "md:ml-[260px]" : ""}`}>
           <div className="flex-1">

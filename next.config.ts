@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: '/teacher-survey', destination: '/survey-results', permanent: true },
+      { source: '/teacher-survey/:path*', destination: '/survey-results', permanent: true },
+      { source: '/userregistration-2', destination: '/register', permanent: true },
+      { source: '/login-form', destination: '/login', permanent: true },
+      { source: '/this-weeks-survey', destination: '/survey', permanent: true },
+      { source: '/about-us', destination: '/about', permanent: true },
+      { source: '/userregistration', destination: '/register', permanent: true },
+      { source: '/teacher-pulse-index', destination: '/teacher-index', permanent: true },
+    ]
+  },
 };
 
 export default nextConfig;
