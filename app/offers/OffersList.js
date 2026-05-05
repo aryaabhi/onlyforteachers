@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { redeemOffer } from '@/app/actions/offers'
-import { Star } from 'lucide-react'
+import { Star, Lock } from 'lucide-react'
 
 export default function OffersList({ offers, totalPoints }) {
   const [balance, setBalance] = useState(totalPoints)
@@ -99,56 +99,52 @@ export default function OffersList({ offers, totalPoints }) {
           </div>
         )}
 
-        {offers.length === 0 ? (
-          <div className="bg-white rounded-2xl border p-12 text-center text-[#6B6B6B]" style={{ borderColor: '#E8DDD0' }}>
-            No rewards available right now - check back soon!
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {offers.map(offer => {
-              const canAfford = balance >= offer.points_cost
-              const outOfStock = offer.stock !== null && offer.stock <= 0
-              return (
-                <div
-                  key={offer.id}
-                  className="bg-white rounded-2xl border p-6 flex flex-col gap-4 hover:shadow-md transition-shadow"
-                  style={{ borderColor: '#E8DDD0' }}
-                >
-                  <div className="flex-1">
-                    <h2 className="text-base font-semibold text-[#1B3A2D] mb-1">{offer.title}</h2>
-                    {offer.description && (
-                      <p className="text-sm text-[#6B6B6B]">{offer.description}</p>
-                    )}
-                    {offer.stock !== null && (
-                      <p className="text-xs text-[#6B6B6B] mt-2">{offer.stock} remaining</p>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold" style={{ color: '#C94F2C' }}>
-                      {offer.points_cost.toLocaleString()} points
-                    </span>
-                    {outOfStock ? (
-                      <span className="text-sm text-[#6B6B6B]">Out of stock</span>
-                    ) : canAfford ? (
-                      <button
-                        onClick={() => handleRedeem(offer)}
-                        disabled={isPending}
-                        className="px-4 py-2 rounded-full text-white text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-60"
-                        style={{ backgroundColor: '#C94F2C' }}
-                      >
-                        Redeem
-                      </button>
-                    ) : (
-                      <span className="text-xs text-[#6B6B6B]">
-                        Need {(offer.points_cost - balance).toLocaleString()} more pts
-                      </span>
-                    )}
-                  </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {offers.map(offer => {
+            const canAfford = balance >= offer.points_cost
+            const outOfStock = offer.stock !== null && offer.stock <= 0
+            return (
+              <div
+                key={offer.id}
+                className="bg-white rounded-2xl border p-6 flex flex-col gap-4 hover:shadow-md transition-shadow"
+                style={{ borderColor: '#E8DDD0' }}
+              >
+                <div className="flex-1">
+                  <h2 className="text-base font-semibold text-[#1B3A2D] mb-1">{offer.title}</h2>
+                  {offer.description && (
+                    <p className="text-sm text-[#6B6B6B]">{offer.description}</p>
+                  )}
+                  {offer.stock !== null && (
+                    <p className="text-xs text-[#6B6B6B] mt-2">{offer.stock} remaining</p>
+                  )}
                 </div>
-              )
-            })}
-          </div>
-        )}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold" style={{ color: '#C94F2C' }}>
+                    {offer.points_cost.toLocaleString()} points
+                  </span>
+                  {outOfStock ? (
+                    <span className="text-sm text-[#6B6B6B]">Out of stock</span>
+                  ) : canAfford ? (
+                    <button
+                      onClick={() => handleRedeem(offer)}
+                      disabled={isPending}
+                      className="px-4 py-2 rounded-full text-white text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-60"
+                      style={{ backgroundColor: '#C94F2C' }}
+                    >
+                      Redeem
+                    </button>
+                  ) : (
+                    <span className="text-xs text-[#6B6B6B]">
+                      Need {(offer.points_cost - balance).toLocaleString()} more pts
+                    </span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+          <ComingSoonCard />
+          <ComingSoonCard />
+        </div>
       </div>
 
       {/* Confirmation modal */}
@@ -184,5 +180,20 @@ export default function OffersList({ offers, totalPoints }) {
         </div>
       )}
     </main>
+  )
+}
+
+function ComingSoonCard() {
+  return (
+    <div
+      className="rounded-2xl border p-6 flex flex-col items-center justify-center gap-3 text-center"
+      style={{ backgroundColor: '#F5F5F5', borderColor: '#E8DDD0', opacity: 0.7 }}
+    >
+      <Lock className="w-7 h-7" style={{ color: '#B0B0B0' }} />
+      <div>
+        <p className="text-sm font-semibold" style={{ color: '#9A9A9A' }}>Coming soon</p>
+        <p className="text-xs mt-0.5" style={{ color: '#B8B8B8' }}>New reward being sourced</p>
+      </div>
+    </div>
   )
 }

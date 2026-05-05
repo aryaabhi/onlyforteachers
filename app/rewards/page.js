@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { Lock } from 'lucide-react'
 
 export const metadata = {
   title: 'Rewards & Points - Only for Teachers',
@@ -134,31 +135,31 @@ export default async function RewardsPage() {
         </section>
 
         {/* Available offers */}
-        {offers && offers.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">Available rewards</h2>
-            <p className="text-gray-600 text-center mb-8">Redeem your points for these exclusive offers</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {offers.map(offer => (
-                <div
-                  key={offer.id}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">Available rewards</h2>
+          <p className="text-gray-600 text-center mb-8">Redeem your points for these exclusive offers</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {(offers ?? []).map(offer => (
+              <div
+                key={offer.id}
+                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6"
+              >
+                <h3 className="font-bold text-gray-900 mb-2">{offer.title}</h3>
+                {offer.description && (
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">{offer.description}</p>
+                )}
+                <span
+                  className="inline-block px-3 py-1 rounded-full text-white text-sm font-semibold"
+                  style={{ backgroundColor: '#CA9662' }}
                 >
-                  <h3 className="font-bold text-gray-900 mb-2">{offer.title}</h3>
-                  {offer.description && (
-                    <p className="text-sm text-gray-600 mb-4 leading-relaxed">{offer.description}</p>
-                  )}
-                  <span
-                    className="inline-block px-3 py-1 rounded-full text-white text-sm font-semibold"
-                    style={{ backgroundColor: '#CA9662' }}
-                  >
-                    {offer.points_cost.toLocaleString()} points
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                  {offer.points_cost.toLocaleString()} points
+                </span>
+              </div>
+            ))}
+            <RewardsComingSoonCard />
+            <RewardsComingSoonCard />
+          </div>
+        </section>
 
         {/* CTA */}
         <section className="text-center py-8 border-t border-gray-100">
@@ -198,6 +199,21 @@ function PointsCard({ icon, title, points, description }) {
           </span>
         </div>
         <p className="text-sm text-gray-600">{description}</p>
+      </div>
+    </div>
+  )
+}
+
+function RewardsComingSoonCard() {
+  return (
+    <div
+      className="rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col items-center justify-center gap-3 text-center"
+      style={{ backgroundColor: '#F5F5F5', opacity: 0.7 }}
+    >
+      <Lock className="w-7 h-7" style={{ color: '#B0B0B0' }} />
+      <div>
+        <p className="text-sm font-semibold" style={{ color: '#9A9A9A' }}>Coming soon</p>
+        <p className="text-xs mt-0.5" style={{ color: '#B8B8B8' }}>New reward being sourced</p>
       </div>
     </div>
   )
