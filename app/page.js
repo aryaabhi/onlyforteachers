@@ -279,12 +279,7 @@ function InsightsSection({ posts, showJoin }) {
                   <div className="h-40 bg-[#F5EDE0]" />
                 )}
                 <div className="p-4">
-                  {post.categories && post.categories.length > 0 && (
-                    <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#C94F2C' }}>
-                      {post.categories[0]}
-                    </span>
-                  )}
-                  <h3 className="font-semibold text-[#2C2C2C] mt-1 mb-2 leading-snug text-sm group-hover:text-[#C94F2C] transition-colors">
+                  <h3 className="font-semibold text-[#2C2C2C] mb-2 leading-snug text-sm group-hover:text-[#C94F2C] transition-colors">
                     {post.title}
                   </h3>
                   <p className="text-xs text-[#6B6B6B]">
