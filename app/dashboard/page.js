@@ -118,7 +118,7 @@ export default async function DashboardPage({ searchParams }) {
                 </div>
                 <div>
                   <p className="font-semibold italic">{survey.title}</p>
-                  <p className="text-sm opacity-60 mt-0.5">Completed — well done!</p>
+                  <p className="text-sm opacity-60 mt-0.5">Completed - well done!</p>
                 </div>
               </div>
             ) : (
@@ -140,7 +140,7 @@ export default async function DashboardPage({ searchParams }) {
         {!survey && (
           <div className="rounded-2xl p-6 mb-6 border" style={{ backgroundColor: '#fff', borderColor: '#E8DDD0' }}>
             <p className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#C94F2C' }}>This Week&apos;s Survey</p>
-            <p className="text-[#6B6B6B] text-sm">No active survey right now — check back soon!</p>
+            <p className="text-[#6B6B6B] text-sm">No active survey right now - check back soon!</p>
           </div>
         )}
 
@@ -154,7 +154,7 @@ export default async function DashboardPage({ searchParams }) {
           />
           <StatCard
             label="Current Streak"
-            value={`${streakCount}w`}
+            value={streakCount === 1 ? '1 week' : `${streakCount} weeks`}
             icon={<Flame className="w-5 h-5" style={{ color: '#C94F2C' }} />}
             valueColor="#C94F2C"
           />
@@ -204,7 +204,7 @@ export default async function DashboardPage({ searchParams }) {
             </div>
           ) : (
             <p className="text-sm text-[#6B6B6B] py-4 text-center">
-              No points activity yet — complete a survey to earn your first points!
+              No points activity yet - complete a survey to earn your first points!
             </p>
           )}
         </div>

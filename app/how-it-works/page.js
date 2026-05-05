@@ -3,10 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import FAQAccordion from './FAQAccordion'
 
 export const metadata = {
-  title: 'How It Works — Earn Rewards for Your Teacher Opinion',
-  description: 'Learn how Only For Teachers works. Sign up free, take weekly surveys, earn points and redeem real rewards. Takes just 3 minutes a week.',
+  title: 'How It Works - Earn Rewards for Your Teacher Opinion',
+  description: 'Learn how Only for Teachers works. Sign up free, take weekly surveys, earn points and redeem real rewards. Takes just 3 minutes a week.',
   openGraph: {
-    title: 'How It Works — Earn Rewards for Your Teacher Opinion',
+    title: 'How It Works - Earn Rewards for Your Teacher Opinion',
     description: 'Sign up free, take weekly surveys, earn points and redeem real rewards.',
     url: 'https://onlyforteachers.co.uk/how-it-works',
   },
@@ -66,12 +66,12 @@ export default async function HowItWorksPage() {
       {/* Hero */}
       <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-4xl mx-auto text-center pb-10">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
-            How Only For Teachers <em>Works</em>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garant', serif" }}>
+            How it <em>works</em>
           </h1>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: '#D4C9B8' }}>
-            Only For Teachers is a free UK teacher community where you share your professional
-            opinion through quick weekly surveys — and get rewarded for it. Here&apos;s how it
+            Only for Teachers is a free UK teacher community where you share your professional
+            opinion through quick weekly surveys - and get rewarded for it. Here&apos;s how it
             works in three simple steps.
           </p>
         </div>
@@ -107,41 +107,41 @@ export default async function HowItWorksPage() {
           <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Join</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             Registration is completely free and takes just a few minutes. Create your account with your
-            name, email address, and some basic information about your teaching role — your subjects,
+            name, email address, and some basic information about your teaching role - your subjects,
             year groups, and school type.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            Only For Teachers is available to UK teachers only. There are no hidden costs, no subscription
-            fees, and no credit card required — ever.
+            Only for Teachers is available to UK teachers only. There are no hidden costs, no subscription
+            fees, and no credit card required - ever.
           </p>
         </section>
 
         <section>
           <SectionNumber number="2" />
-          <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Take Weekly Surveys</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Take weekly surveys</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             Every week, a new 5-question survey goes live. Each survey focuses on a topic relevant to
-            teaching — from workload and wellbeing to curriculum changes and technology in the classroom.
+            teaching - from workload and wellbeing to curriculum changes and technology in the classroom.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Surveys run for one week. You&apos;ll be notified when a new survey opens. Each survey takes
-            around 2–3 minutes to complete.
+            Surveys run for one week and you&apos;ll be notified when a new survey opens. Each survey takes
+            around 2-3 minutes to complete.
           </p>
           <p className="text-gray-600 leading-relaxed">
             Your responses are anonymised and compiled into the{' '}
             <Link href="/teacher-index" className="font-medium" style={{ color: '#C94F2C' }}>
               UK Teacher Pulse Index
             </Link>
-            {' '}— a public record of how UK teachers feel about the issues that matter most.
+            {' '}- a public record of how UK teachers feel about the issues that matter most.
           </p>
         </section>
 
         <section>
           <SectionNumber number="3" />
-          <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Earn Points</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Earn points</h2>
           <p className="text-gray-600 leading-relaxed mb-4">You earn points in four ways:</p>
           <ul className="space-y-4">
-            <PointsItem icon="📋" label="Survey completion" description="Earn 100–500 points each time you complete a survey" />
+            <PointsItem icon="📋" label="Survey completion" description="Earn 100-500 points each time you complete a survey" />
             <PointsItem icon="👫" label="Refer a teacher" description="Earn 100 points for every teacher you refer who joins" />
             <PointsItem icon="🎁" label="Join via referral" description="Earn 100 points when you join through a friend's referral link" />
             <PointsItem icon="🔥" label="10 week streak bonus" description="Complete 10 surveys in a row and earn a 500 point bonus" />
@@ -150,13 +150,13 @@ export default async function HowItWorksPage() {
 
         <section>
           <SectionNumber number="4" />
-          <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Redeem Rewards</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mt-4 mb-3">Redeem rewards</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             Your points can be redeemed for real rewards through our{' '}
             <Link href="/rewards" className="font-medium" style={{ color: '#C94F2C' }}>
               rewards catalogue
             </Link>
-            {' '}— including partner offers and discounts relevant to teachers.
+            {' '}- including partner offers and discounts relevant to teachers.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
             Every month, we draw <strong>5 winners</strong> who each receive <strong>£50</strong>.
@@ -204,7 +204,7 @@ export default async function HowItWorksPage() {
             className="inline-block px-8 py-3.5 rounded-full text-white font-semibold text-lg transition-opacity hover:opacity-90"
             style={{ backgroundColor: '#C94F2C' }}
           >
-            Join Free Today
+            Join for free
           </Link>
         </section>
       </div>
@@ -229,7 +229,7 @@ function PointsItem({ icon, label, description }) {
       <span className="text-xl mt-0.5">{icon}</span>
       <span className="text-gray-600">
         <strong className="text-gray-900">{label}</strong>
-        {' — '}
+        {' - '}
         {description}
       </span>
     </li>

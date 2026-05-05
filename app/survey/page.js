@@ -22,7 +22,7 @@ export default async function SurveyPage() {
     return (
       <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
         <div className="py-20 px-4 text-center" style={{ backgroundColor: '#1B3A2D' }}>
-          <h1 className="text-3xl font-bold text-white">This Week&apos;s Survey</h1>
+          <h1 className="text-3xl font-bold text-white">This week&apos;s survey</h1>
         </div>
         <div className="flex items-center justify-center px-4 py-20">
           <div className="bg-white rounded-2xl border p-10 max-w-md w-full text-center shadow-sm" style={{ borderColor: '#E8DDD0' }}>
@@ -55,7 +55,7 @@ export default async function SurveyPage() {
     return (
       <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
         <div className="py-20 px-4 text-center" style={{ backgroundColor: '#1B3A2D' }}>
-          <h1 className="text-3xl font-bold text-white">This Week&apos;s Survey</h1>
+          <h1 className="text-3xl font-bold text-white">This week&apos;s survey</h1>
         </div>
         <div className="flex items-center justify-center px-4 py-20">
           <div className="bg-white rounded-2xl border p-10 max-w-md w-full text-center shadow-sm" style={{ borderColor: '#E8DDD0' }}>

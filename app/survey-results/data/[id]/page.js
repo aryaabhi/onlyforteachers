@@ -18,10 +18,10 @@ export async function generateMetadata({ params }) {
   if (!survey) return { title: 'Survey Not Found' }
 
   return {
-    title: `${survey.title} — Results | Only For Teachers`,
+    title: `${survey.title} — Results | Only for Teachers`,
     description: survey.description || `Aggregate results from the "${survey.title}" survey of UK teachers.`,
     openGraph: {
-      title: `${survey.title} — Results | Only For Teachers`,
+      title: `${survey.title} — Results | Only for Teachers`,
       description: survey.description || 'UK teacher survey aggregate results.',
       type: 'article',
     },

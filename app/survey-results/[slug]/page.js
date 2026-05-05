@@ -25,7 +25,7 @@ export async function generateMetadata({ params }) {
   if (!post) return { title: 'Not Found' }
 
   return {
-    title: post.seoTitle || `${post.title} | Only For Teachers`,
+    title: post.seoTitle || `${post.title} | Only for Teachers`,
     description: post.seoDescription || post.excerpt || '',
     openGraph: {
       title: post.seoTitle || post.title,

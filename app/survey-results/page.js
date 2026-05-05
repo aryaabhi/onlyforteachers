@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { client } from '@/lib/sanity'
+import { createClient } from '@/lib/supabase/client'
 
 const CATEGORIES = ['All', 'Assessment', 'Wellbeing', 'Technology', 'CPD', 'Policy']
 
@@ -24,15 +25,20 @@ export default function SurveyResultsPage() {
   const [posts, setPosts] = useState([])
   const [activeCategory, setActiveCategory] = useState('All')
   const [loading, setLoading] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     async function load() {
-      const fetchedPosts = await client.fetch(
-        `*[_type == "post"] | order(publishedAt desc) {
-          title, "slug": slug.current, publishedAt, excerpt, mainImage, categories
-        }`
-      ).catch(() => [])
+      const [fetchedPosts, supabaseUser] = await Promise.all([
+        client.fetch(
+          `*[_type == "post"] | order(publishedAt desc) {
+            title, "slug": slug.current, publishedAt, excerpt, mainImage, categories
+          }`
+        ).catch(() => []),
+        createClient().auth.getUser(),
+      ])
       setPosts(fetchedPosts ?? [])
+      setIsLoggedIn(!!supabaseUser?.data?.user)
       setLoading(false)
     }
     load()
@@ -58,7 +64,7 @@ export default function SurveyResultsPage() {
             className="text-sm hover:underline"
             style={{ color: '#9A8F82' }}
           >
-            All insights follow our published survey methodology — read how →
+            All insights follow our published survey methodology - read how →
           </Link>
         </div>
         <div className="w-full leading-[0] overflow-hidden">
@@ -70,7 +76,7 @@ export default function SurveyResultsPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-12">
 
-        {/* Category filters — hidden until posts are categorised */}
+        {/* Category filters - hidden until posts are categorised */}
         {/* <div className="flex flex-wrap gap-2 mb-10 justify-center">
           {CATEGORIES.map(cat => (
             <button
@@ -90,8 +96,8 @@ export default function SurveyResultsPage() {
 
         {/* Intro */}
         <p className="text-gray-600 leading-relaxed text-lg max-w-3xl mx-auto text-center mb-10">
-          Every week, Only For Teachers publishes research drawn from our community of UK teachers.
-          Each survey produces a data-driven report — giving teachers, school leaders, and
+          Every week, Only for Teachers publishes research drawn from our community of UK teachers.
+          Each survey produces a data-driven report - giving teachers, school leaders, and
           policymakers an honest picture of life in UK classrooms.
         </p>
 
@@ -138,20 +144,22 @@ export default function SurveyResultsPage() {
           )}
         </section>
 
-        {/* CTA */}
-        <section className="mt-16 rounded-2xl p-10 text-white text-center" style={{ backgroundColor: '#1B3A2D' }}>
-          <h2 className="text-2xl font-bold mb-3">Add your voice to the data</h2>
-          <p className="mb-6 max-w-xl mx-auto" style={{ color: '#D4C9B8' }}>
-            Join UK teachers who share their professional opinion in weekly surveys. Free forever, and you earn points for every survey you complete.
-          </p>
-          <Link
-            href="/register"
-            className="inline-block px-8 py-3.5 rounded-full text-white font-semibold transition-all hover:opacity-90"
-            style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
-          >
-            Join free →
-          </Link>
-        </section>
+        {/* CTA - only shown to logged-out users */}
+        {!isLoggedIn && (
+          <section className="mt-16 rounded-2xl p-10 text-white text-center" style={{ backgroundColor: '#1B3A2D' }}>
+            <h2 className="text-2xl font-bold mb-3">Add your voice to the data</h2>
+            <p className="mb-6 max-w-xl mx-auto" style={{ color: '#D4C9B8' }}>
+              Join UK teachers who share their professional opinion in weekly surveys. Free forever, and you earn points for every survey you complete.
+            </p>
+            <Link
+              href="/register"
+              className="inline-block px-8 py-3.5 rounded-full text-white font-semibold transition-all hover:opacity-90"
+              style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
+            >
+              Join for free →
+            </Link>
+          </section>
+        )}
       </div>
     </main>
   )

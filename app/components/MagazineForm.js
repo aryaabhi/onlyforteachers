@@ -31,6 +31,7 @@ export default function MagazineForm() {
         onChange={e => setEmail(e.target.value)}
         required
         className="flex-1 px-4 py-3 rounded-full text-[#2C2C2C] text-sm focus:outline-none"
+        style={{ backgroundColor: '#ffffff', border: '2px solid #C94F2C', color: '#2C2C2C' }}
       />
       <button
         type="submit"

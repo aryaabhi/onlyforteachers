@@ -129,7 +129,7 @@ export default function MySurveysClient({ completions, userId }) {
                   color: isExpanded ? '#1B3A2D' : '#fff',
                 }}
               >
-                {isExpanded ? 'Hide Results' : 'View My Results'}
+                {isExpanded ? 'Hide results' : 'My results'}
               </button>
             </div>
 

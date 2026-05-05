@@ -4,12 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -46,7 +48,7 @@ export default function LoginPage() {
             <Link href="/" className="inline-block mb-8">
               <Image
                 src="/logo.png"
-                alt="Only For Teachers"
+                alt="Only for Teachers"
                 width={160}
                 height={40}
                 className="h-10 w-auto object-contain"
@@ -87,16 +89,26 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <input
-                  id="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border px-4 py-3 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
-                  style={{ borderColor: '#E8DDD0', '--tw-ring-color': '#C94F2C' }}
-                />
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full rounded-xl border px-4 py-3 pr-11 text-sm text-[#2C2C2C] focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
+                    style={{ borderColor: '#E8DDD0', '--tw-ring-color': '#C94F2C' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B6B6B] hover:text-[#2C2C2C] transition-colors"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
 
               {error && (
@@ -116,7 +128,7 @@ export default function LoginPage() {
             <p className="mt-6 text-center text-sm text-[#6B6B6B]">
               Don&apos;t have an account?{' '}
               <Link href="/register" className="font-semibold hover:underline" style={{ color: '#C94F2C' }}>
-                Join free
+                Join for free
               </Link>
             </p>
           </div>
@@ -126,15 +138,15 @@ export default function LoginPage() {
       {/* Right: decorative panel */}
       <div className="hidden lg:flex flex-1 flex-col items-center justify-center px-12" style={{ backgroundColor: '#1B3A2D' }}>
         <Image
-          src="/logo.png"
-          alt="Only For Teachers"
+          src="/logo-white.png"
+          alt="Only for Teachers"
           width={200}
           height={50}
           className="h-12 w-auto object-contain mb-8"
         />
         <blockquote className="text-center max-w-sm">
           <p className="text-xl font-bold italic leading-relaxed mb-6" style={{ color: '#F5EDE0' }}>
-            &ldquo;Finally — a voice for UK teachers that actually matters.&rdquo;
+            &ldquo;Finally - a voice for UK teachers that actually matters.&rdquo;
           </p>
           <p className="text-sm" style={{ color: '#9A8F82' }}>— Only for Teachers member</p>
         </blockquote>

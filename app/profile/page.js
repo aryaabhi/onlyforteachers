@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ProfilePageContent from './ProfilePageContent'
 
-export const metadata = { title: 'Account Settings — Only For Teachers' }
+export const metadata = { title: 'Account Settings — Only for Teachers' }
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -18,7 +18,7 @@ export default async function ProfilePage() {
   return (
     <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
       <div className="py-12 px-4 text-center text-white" style={{ backgroundColor: '#1B3A2D' }}>
-        <h1 className="text-3xl font-bold">Account Settings</h1>
+        <h1 className="text-3xl font-bold">Account settings</h1>
         <p className="mt-1 text-sm opacity-70">Manage your profile and account details</p>
       </div>
 

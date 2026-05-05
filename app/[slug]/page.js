@@ -164,12 +164,12 @@ export default async function BlogPostPage({ params }) {
     dateModified: post.publishedAt,
     author: {
       '@type': 'Organization',
-      name: 'Only For Teachers',
+      name: 'Only for Teachers',
       url: siteUrl,
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Only For Teachers',
+      name: 'Only for Teachers',
       url: siteUrl,
       logo: { '@type': 'ImageObject', url: `${siteUrl}/logo.png` },
     },

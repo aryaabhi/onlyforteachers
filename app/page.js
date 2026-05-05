@@ -6,11 +6,11 @@ import { Calendar } from 'lucide-react'
 import MagazineForm from '@/app/components/MagazineForm'
 
 export const metadata = {
-  title: 'Only For Teachers — The UK Teacher Community That Rewards You',
-  description: 'Join OnlyForTeachers — a free community where UK teachers share insights through quick surveys, see results, and win rewards every week.',
+  title: 'Only for Teachers - The UK Teacher Community That Rewards You',
+  description: 'Join Only for Teachers - a free community where UK teachers share insights through quick surveys, see results, and win rewards every week.',
   openGraph: {
-    title: 'Only For Teachers — The UK Teacher Community That Rewards You',
-    description: 'Join OnlyForTeachers — a free community where UK teachers share insights through quick surveys, see results, and win rewards every week.',
+    title: 'Only for Teachers - The UK Teacher Community That Rewards You',
+    description: 'Join Only for Teachers - a free community where UK teachers share insights through quick surveys, see results, and win rewards every week.',
     url: 'https://onlyforteachers.co.uk',
   },
 }
@@ -83,7 +83,7 @@ export default async function HomePage() {
             The community where teachers<br />find their people.
           </h1>
           <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
-            Contribute, be heard, and get rewarded — every week.
+            Contribute, be heard, and get rewarded - every week.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -139,7 +139,7 @@ export default async function HomePage() {
           className="inline-block px-8 py-3.5 rounded-full text-white font-semibold text-base transition-all hover:opacity-90 hover:shadow-lg"
           style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
         >
-          Join free →
+          Join for free →
         </Link>
         <p className="mt-4 text-sm text-[#6B6B6B]">
           Already a member?{' '}
@@ -192,7 +192,7 @@ export default async function HomePage() {
             Simple. Rewarding. <em>Yours.</em>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <StepCard number="1" title="Sign up for free" description="Create your account in under 60 seconds. No credit card, no hidden fees — free forever." />
+            <StepCard number="1" title="Sign up for free" description="Create your account in under 60 seconds. No credit card, no hidden fees - free forever." />
             <StepCard number="2" title="Take the weekly survey" description="5 short questions each week on topics that matter to UK teachers. Takes under 3 minutes." />
             <StepCard number="3" title="Earn points and rewards" description="Collect points for every survey, redeem them for real rewards, and enter the monthly prize draw." />
           </div>
@@ -202,7 +202,7 @@ export default async function HomePage() {
               className="inline-block px-8 py-3.5 rounded-full text-white font-semibold text-base transition-all hover:opacity-90 hover:shadow-lg"
               style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
             >
-              Join free
+              Join for free
             </Link>
           </div>
         </div>
@@ -233,7 +233,7 @@ export default async function HomePage() {
           className="inline-block px-8 py-3.5 rounded-full text-white font-semibold text-base transition-all hover:opacity-90 hover:shadow-lg"
           style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
         >
-          Join free →
+          Join for free →
         </Link>
       </section>
     </main>
@@ -252,7 +252,7 @@ function InsightsSection({ posts, showJoin }) {
             Real insights, published every week.
           </h2>
           <p className="text-[#6B6B6B] max-w-2xl mx-auto">
-            Every survey produces published research — written, designed, and shared with the UK education community.
+            Every survey produces published research - written, designed, and shared with the UK education community.
           </p>
         </div>
 
@@ -315,19 +315,16 @@ function InsightsSection({ posts, showJoin }) {
 function TestimonialsSection() {
   const testimonials = [
     {
-      quote: "Only for Teachers provides a platform which is beneficial for teachers and the sector. Finally — a voice for us.",
-      name: "Veerle K.",
-      role: "FE teacher, West Midlands",
+      quote: "Only for Teachers provides a platform which is beneficial for teachers and the sector. Finally - a voice for us.",
+      name: "Veerle",
     },
     {
       quote: "A great survey to complete weekly, supporting the challenges teachers encounter on a very regular basis.",
-      name: "Sarah T.",
-      role: "Secondary teacher, Yorkshire",
+      name: "Sarah",
     },
     {
       quote: "A refreshing and trustworthy platform, providing teachers with the ability to share experiences and opportunities, whilst also voicing concerns.",
-      name: "Daniel M.",
-      role: "Primary teacher, London",
+      name: "Daniel",
     },
   ]
 
@@ -335,7 +332,7 @@ function TestimonialsSection() {
     <section className="py-20 px-4" style={{ backgroundColor: '#E8DDD0' }}>
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-[#1B3A2D] text-center mb-12">
-          What our members say
+          What our members say.
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
@@ -344,7 +341,6 @@ function TestimonialsSection() {
               <p className="text-sm text-[#2C2C2C] leading-relaxed mt-2 mb-4">{t.quote}</p>
               <div>
                 <p className="text-sm font-semibold text-[#1B3A2D]">{t.name}</p>
-                <p className="text-xs text-[#6B6B6B]">{t.role}</p>
               </div>
             </div>
           ))}
@@ -365,7 +361,7 @@ function MagazineSection() {
           Our new teacher magazine
         </h2>
         <p className="mb-8 max-w-2xl mx-auto leading-relaxed" style={{ color: '#C4B9A8' }}>
-          We turn our community&apos;s survey responses into a professionally published magazine — sent to schools, shared with policymakers, and read by teachers across the UK. Your voice, in print.
+          We turn our community&apos;s survey responses into a digital magazine - shared with policymakers and read by teachers across the UK.
         </p>
         <MagazineForm />
         <div>

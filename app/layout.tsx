@@ -1,15 +1,9 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
-
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,25 +14,28 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://onlyforteachers.co.uk'),
   title: {
-    default: 'Only For Teachers — The UK Teacher Community',
-    template: '%s | Only For Teachers',
+    default: 'Only for Teachers - The UK Teacher Community',
+    template: '%s | Only for Teachers',
   },
   description: 'Join the free UK teacher community. Take weekly surveys, earn points and rewards for sharing your professional opinion.',
   keywords: ['teachers', 'UK teachers', 'teacher survey', 'teacher community', 'teacher rewards'],
-  authors: [{ name: 'Only For Teachers' }],
-  creator: 'Only For Teachers',
+  authors: [{ name: 'Only for Teachers' }],
+  creator: 'Only for Teachers',
+  icons: {
+    apple: '/logo.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_GB',
     url: 'https://onlyforteachers.co.uk',
-    siteName: 'Only For Teachers',
-    title: 'Only For Teachers — The UK Teacher Community',
+    siteName: 'Only for Teachers',
+    title: 'Only for Teachers - The UK Teacher Community',
     description: 'Join the free UK teacher community. Take weekly surveys, earn points and rewards for sharing your professional opinion.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Only For Teachers' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Only for Teachers' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Only For Teachers — The UK Teacher Community',
+    title: 'Only for Teachers - The UK Teacher Community',
     description: 'Join the free UK teacher community. Take weekly surveys, earn points and rewards.',
     images: ['/og-image.png'],
   },
@@ -57,7 +54,7 @@ export const metadata: Metadata = {
 const orgJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Only For Teachers',
+  name: 'Only for Teachers',
   url: 'https://onlyforteachers.co.uk',
   logo: 'https://onlyforteachers.co.uk/logo.png',
   description: 'Free UK teacher community for weekly surveys and rewards',
@@ -80,7 +77,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${inter.variable} h-full`}
+      className={`${inter.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-[#F5EDE0] font-sans text-[#2C2C2C]">
         <script

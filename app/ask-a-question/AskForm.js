@@ -82,7 +82,7 @@ export default function AskForm({ userEmail = '', userName = '' }) {
         className="w-full sm:w-auto px-8 py-3 rounded-full text-white font-semibold transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ backgroundColor: '#C94F2C' }}
       >
-        {loading ? 'Submitting…' : 'Submit Question'}
+        {loading ? 'Submitting…' : 'Ask a question'}
       </button>
     </form>
   )

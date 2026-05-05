@@ -20,12 +20,12 @@ import {
 
 const NAV_LINKS = [
   { href: '/dashboard', label: 'Home', icon: House },
-  { href: '/survey', label: "This Week's Survey", icon: ClipboardList },
-  { href: '/my-surveys', label: 'Survey History', icon: BarChart },
-  { href: '/survey-results', label: 'Insights Hub', icon: BookOpen },
-  { href: '/offers', label: 'Rewards & Points', icon: Gift },
-  { href: '/ask-a-question', label: 'Ask a Question', icon: MessageSquare },
-  { href: '/profile', label: 'Account Settings', icon: Settings },
+  { href: '/survey', label: "This week's survey", icon: ClipboardList },
+  { href: '/my-surveys', label: 'Survey history', icon: BarChart },
+  { href: '/survey-results', label: 'Insights hub', icon: BookOpen },
+  { href: '/offers', label: 'Rewards & points', icon: Gift },
+  { href: '/ask-a-question', label: 'Ask a question', icon: MessageSquare },
+  { href: '/profile', label: 'Account settings', icon: Settings },
 ]
 
 export default function SidebarNav({ user }) {
@@ -57,8 +57,8 @@ export default function SidebarNav({ user }) {
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 h-16 flex items-center justify-between px-4 bg-[#1B3A2D]">
         <Link href="/dashboard">
           <Image
-            src="/logo.png"
-            alt="Only For Teachers"
+            src="/logo-white.png"
+            alt="Only for Teachers"
             width={160}
             height={40}
             className="h-9 w-auto object-contain"
@@ -87,7 +87,7 @@ export default function SidebarNav({ user }) {
             <div className="p-5 border-b border-white/10">
               <Image
                 src="/logo.png"
-                alt="Only For Teachers"
+                alt="Only for Teachers"
                 width={160}
                 height={40}
                 className="h-9 w-auto object-contain"
@@ -139,7 +139,7 @@ export default function SidebarNav({ user }) {
           <Link href="/dashboard">
             <Image
               src="/logo.png"
-              alt="Only For Teachers"
+              alt="Only for Teachers"
               width={160}
               height={40}
               className="h-9 w-auto object-contain"

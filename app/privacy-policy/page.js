@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Privacy Policy | Only For Teachers',
-  description: 'Privacy policy for Only For Teachers UK — how we collect, use, and protect your personal data.',
+  title: 'Privacy Policy | Only for Teachers',
+  description: 'Privacy policy for Only for Teachers UK — how we collect, use, and protect your personal data.',
 }
 
 export default function PrivacyPolicyPage() {
@@ -15,14 +15,14 @@ export default function PrivacyPolicyPage() {
 
         <PolicySection title="1. Who We Are">
           <p>
-            Only For Teachers UK (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) operates the website onlyforteachers.co.uk.
+            Only for Teachers UK (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) operates the website onlyforteachers.co.uk.
             We are committed to protecting your personal data and complying with the UK General Data
             Protection Regulation (UK GDPR) and the Data Protection Act 2018.
           </p>
           <p>
             For data protection enquiries, please contact us at{' '}
-            <a href="mailto:contact@onlyforteachers.co.uk" style={{ color: '#CA9662' }}>
-              contact@onlyforteachers.co.uk
+            <a href="mailto:hello@onlyforteachers.co.uk" style={{ color: '#CA9662' }}>
+              hello@onlyforteachers.co.uk
             </a>.
           </p>
         </PolicySection>
@@ -91,8 +91,8 @@ export default function PrivacyPolicyPage() {
           </ul>
           <p>
             To exercise any of these rights, please email us at{' '}
-            <a href="mailto:contact@onlyforteachers.co.uk" style={{ color: '#CA9662' }}>
-              contact@onlyforteachers.co.uk
+            <a href="mailto:hello@onlyforteachers.co.uk" style={{ color: '#CA9662' }}>
+              hello@onlyforteachers.co.uk
             </a>.
             {' '}We will respond within 30 days. You also have the right to lodge a complaint with the
             Information Commissioner&apos;s Office (ICO) at ico.org.uk.
@@ -148,8 +148,8 @@ export default function PrivacyPolicyPage() {
           <p>
             For any questions about this privacy policy or how we handle your data, please contact
             us at{' '}
-            <a href="mailto:contact@onlyforteachers.co.uk" style={{ color: '#CA9662' }}>
-              contact@onlyforteachers.co.uk
+            <a href="mailto:hello@onlyforteachers.co.uk" style={{ color: '#CA9662' }}>
+              hello@onlyforteachers.co.uk
             </a>.
           </p>
         </PolicySection>

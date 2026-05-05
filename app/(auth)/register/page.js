@@ -147,7 +147,7 @@ export default function RegisterPage() {
             <Link href="/" className="inline-block mb-8">
               <Image
                 src="/logo.png"
-                alt="Only For Teachers"
+                alt="Only for Teachers"
                 width={160}
                 height={40}
                 className="h-10 w-auto object-contain"
@@ -264,18 +264,23 @@ export default function RegisterPage() {
               </div>
 
               {/* Email consent */}
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={emailConsent}
-                  onChange={(e) => setEmailConsent(e.target.checked)}
-                  className="mt-0.5 rounded border-gray-300 w-4 h-4 shrink-0"
-                  style={{ accentColor: '#C94F2C' }}
-                />
-                <span className="text-sm text-[#6B6B6B]">
-                  Yes, I&apos;d like to receive updates, news, and prize alerts by email from Only for Teachers
-                </span>
-              </label>
+              <div>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={emailConsent}
+                    onChange={(e) => setEmailConsent(e.target.checked)}
+                    className="mt-0.5 rounded border-gray-300 w-4 h-4 shrink-0"
+                    style={{ accentColor: '#C94F2C' }}
+                  />
+                  <span className="text-sm text-[#6B6B6B]">
+                    Yes, I&apos;d like to receive updates, news, and prize alerts by email from Only for Teachers
+                  </span>
+                </label>
+                <p className="mt-1.5 ml-7 text-xs text-[#6B6B6B]">
+                  We respect your privacy. You can unsubscribe at any time.
+                </p>
+              </div>
 
               {errors.form && (
                 <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5">{errors.form}</p>
@@ -304,15 +309,15 @@ export default function RegisterPage() {
       {/* Right: decorative panel */}
       <div className="hidden lg:flex flex-1 flex-col items-center justify-center px-12" style={{ backgroundColor: '#1B3A2D' }}>
         <Image
-          src="/logo.png"
-          alt="Only For Teachers"
+          src="/logo-white.png"
+          alt="Only for Teachers"
           width={200}
           height={50}
           className="h-12 w-auto object-contain mb-8"
         />
         <div className="text-center max-w-sm space-y-6">
           <div className="text-left space-y-4">
-            {['Free forever — no hidden fees', 'Takes under 60 seconds to join', 'Earn points for every survey', 'Enter monthly prize draws'].map((point) => (
+            {['Free forever - no hidden fees', 'Takes under 60 seconds to join', 'Earn points for every survey', 'Enter monthly prize draws'].map((point) => (
               <div key={point} className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: '#C94F2C' }}>
                   <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -39,7 +39,7 @@ export default function OffersList({ offers, totalPoints }) {
     <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
       {/* Page header */}
       <div className="py-14 px-4 text-center text-white" style={{ backgroundColor: '#1B3A2D' }}>
-        <h1 className="text-3xl sm:text-4xl font-bold">Rewards &amp; Points</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold">Rewards &amp; points</h1>
         <p className="mt-2 text-sm opacity-70">Redeem your hard-earned points for great rewards</p>
       </div>
       <div className="w-full leading-[0] overflow-hidden" style={{ marginTop: '-1px' }}>
@@ -101,7 +101,7 @@ export default function OffersList({ offers, totalPoints }) {
 
         {offers.length === 0 ? (
           <div className="bg-white rounded-2xl border p-12 text-center text-[#6B6B6B]" style={{ borderColor: '#E8DDD0' }}>
-            No rewards available right now — check back soon!
+            No rewards available right now - check back soon!
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

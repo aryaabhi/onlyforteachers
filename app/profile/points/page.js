@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-export const metadata = { title: 'Points History — Only For Teachers' }
+export const metadata = { title: 'Points History - Only for Teachers' }
 
 const PAGE_SIZE = 20
 

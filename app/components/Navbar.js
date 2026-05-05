@@ -17,10 +17,11 @@ export default function Navbar({ user }) {
         <Link href="/" className="flex items-center shrink-0">
           <Image
             src="/logo.png"
-            alt="Only For Teachers"
-            width={160}
-            height={40}
-            className="h-10 w-auto object-contain"
+            alt="Only for Teachers"
+            width={208}
+            height={52}
+            className="h-[52px] w-auto object-contain"
+            unoptimized
           />
         </Link>
 

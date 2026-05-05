@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Survey Methodology — Only For Teachers',
-  description: 'Learn how Only For Teachers creates and runs weekly teacher surveys. Our methodology ensures accurate, representative data from UK teachers.',
+  title: 'Survey Methodology - Only for Teachers',
+  description: 'Learn how Only for Teachers creates and runs weekly teacher surveys. Our methodology ensures accurate, representative data from UK teachers.',
   openGraph: {
-    title: 'Survey Methodology — Only For Teachers',
+    title: 'Survey Methodology - Only for Teachers',
     description: 'How we create and run weekly teacher surveys.',
     url: 'https://onlyforteachers.co.uk/survey-methodology',
   },
@@ -14,9 +14,9 @@ export default function SurveyMethodologyPage() {
   return (
     <main className="min-h-screen bg-white">
       <section className="bg-gray-50 py-16 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Survey Methodology</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Survey methodology</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          How we create, run, and compile our weekly teacher surveys — and how we ensure
+          How we create, run, and compile our weekly teacher surveys - and how we ensure
           the results are meaningful and trustworthy.
         </p>
       </section>
@@ -24,9 +24,9 @@ export default function SurveyMethodologyPage() {
       <div className="max-w-3xl mx-auto px-4 py-12 space-y-12">
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">How Surveys Are Created</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">How surveys are created</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Each weekly survey is created by the Only For Teachers editorial team. Topics are chosen
+            Each weekly survey is created by the Only for Teachers editorial team. Topics are chosen
             based on current issues in UK education, news events affecting teachers, and suggestions
             submitted by the community through our{' '}
             <Link href="/ask-a-question" style={{ color: '#CA9662' }} className="font-medium">
@@ -36,7 +36,7 @@ export default function SurveyMethodologyPage() {
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
             Every survey contains exactly <strong>5 questions</strong>. Questions are reviewed to
-            ensure they are clear, unbiased, and relevant to the full range of UK teaching professionals —
+            ensure they are clear, unbiased, and relevant to the full range of UK teaching professionals -
             from primary to secondary, state to independent, early career to senior leadership.
           </p>
           <p className="text-gray-600 leading-relaxed">
@@ -47,11 +47,11 @@ export default function SurveyMethodologyPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Who Can Respond</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Who can respond</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Only For Teachers surveys are open exclusively to verified UK teaching professionals.
+            Only for Teachers surveys are open exclusively to verified UK teaching professionals.
             Membership is restricted to teachers currently working in UK schools or educational
-            institutions — including primary, secondary, further education, and special educational
+            institutions - including primary, secondary, further education, and special educational
             needs settings. We do not accept responses from student teachers, teaching assistants,
             or non-teaching school staff, though we may run separate surveys for these groups in
             future.
@@ -59,7 +59,7 @@ export default function SurveyMethodologyPage() {
           <p className="text-gray-600 leading-relaxed mb-4">
             Each survey is live for exactly <strong>one week</strong>, opening on Monday and closing
             the following Sunday. Registered members are notified by email when a new survey opens.
-            Each member can complete each survey only once — enforced at the database level to
+            Each member can complete each survey only once - enforced at the database level to
             prevent duplicate submissions.
           </p>
           <p className="text-gray-600 leading-relaxed">
@@ -70,7 +70,7 @@ export default function SurveyMethodologyPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sample Sizes and Representation</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sample sizes and representation</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             We report the number of respondents for each survey alongside the results. We aim to
             achieve a minimum of 100 responses before publishing results, though we will always
@@ -83,14 +83,14 @@ export default function SurveyMethodologyPage() {
             in context.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            We acknowledge that our sample is self-selected — members have chosen to join the
-            platform — which may introduce some bias. We are transparent about this limitation in
+            We acknowledge that our sample is self-selected - members have chosen to join the
+            platform - which may introduce some bias. We are transparent about this limitation in
             all published results.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">How Results Are Compiled</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">How results are compiled</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             After a survey closes, responses are aggregated and anonymised. Individual responses
             are never published. Results are presented as percentages, averages, and distributions
@@ -111,10 +111,10 @@ export default function SurveyMethodologyPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Privacy</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Data privacy</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
             We take teacher data privacy seriously. Individual survey responses are never published
-            or shared with third parties. All published results are aggregated — meaning only
+            or shared with third parties. All published results are aggregated - meaning only
             summary statistics (percentages, averages, and distributions) appear in public reports.
             No individual teacher can ever be identified from our published data.
           </p>
@@ -124,7 +124,7 @@ export default function SurveyMethodologyPage() {
           <ul className="space-y-3 text-gray-600 mb-4">
             <IntegrityItem text="Each member can complete each survey only once, enforced at the database level" />
             <IntegrityItem text="All responses are timestamped and logged with metadata to detect anomalous patterns" />
-            <IntegrityItem text="Survey access is restricted to authenticated members — no anonymous submissions are accepted" />
+            <IntegrityItem text="Survey access is restricted to authenticated members - no anonymous submissions are accepted" />
             <IntegrityItem text="We monitor for and remove duplicate accounts that attempt to game the system" />
             <IntegrityItem text="All data is stored securely with access controls limiting who can view individual responses" />
           </ul>
@@ -132,11 +132,11 @@ export default function SurveyMethodologyPage() {
             Members can request deletion of their account and all associated data at any time by
             contacting us at{' '}
             <a
-              href="mailto:contact@onlyforteachers.co.uk"
+              href="mailto:hello@onlyforteachers.co.uk"
               className="font-medium"
               style={{ color: '#CA9662' }}
             >
-              contact@onlyforteachers.co.uk
+              hello@onlyforteachers.co.uk
             </a>
             . We retain anonymised, aggregated survey responses even after account deletion, as
             these form part of the historical record and cannot be traced back to any individual.
@@ -148,16 +148,16 @@ export default function SurveyMethodologyPage() {
           <p className="text-gray-600 leading-relaxed mb-4">
             The UK Teacher Pulse Index is a cumulative record of how teachers across the UK are
             thinking and feeling about their profession. It is compiled from the results of all
-            closed surveys run on the Only For Teachers platform.
+            closed surveys run on the Only for Teachers platform.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
             The index does not attempt to create a single composite score. Instead, it presents
-            survey-by-survey results across key themes — workload, wellbeing, pay, curriculum,
-            leadership, and technology — allowing trends to be tracked over time.
+            survey-by-survey results across key themes - workload, wellbeing, pay, curriculum,
+            leadership, and technology - allowing trends to be tracked over time.
           </p>
           <p className="text-gray-600 leading-relaxed mb-6">
             The index is publicly accessible and free to use for journalistic, research, and
-            policy purposes, provided that Only For Teachers UK is credited as the source and
+            policy purposes, provided that Only for Teachers UK is credited as the source and
             the sample size and methodology are disclosed.
           </p>
           <Link
@@ -170,15 +170,15 @@ export default function SurveyMethodologyPage() {
         </section>
 
         <section className="border-t border-gray-100 pt-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-3">Questions About Our Methodology?</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-3">Questions about our methodology?</h2>
           <p className="text-gray-600">
             If you have questions about how we run our surveys or use our data, please contact us at{' '}
             <a
-              href="mailto:contact@onlyforteachers.co.uk"
+              href="mailto:hello@onlyforteachers.co.uk"
               className="font-medium"
               style={{ color: '#CA9662' }}
             >
-              contact@onlyforteachers.co.uk
+              hello@onlyforteachers.co.uk
             </a>.
           </p>
         </section>

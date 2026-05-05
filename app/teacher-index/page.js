@@ -4,10 +4,10 @@ import { client as sanityClient } from '@/lib/sanity'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'UK Teacher Pulse Index — Teacher Sentiment Tracker',
-  description: 'The UK Teacher Pulse Index tracks teacher sentiment across confidence, workload, support and optimism — drawn from weekly surveys of UK teachers.',
+  title: 'UK Teacher Pulse Index - Teacher Sentiment Tracker',
+  description: 'The UK Teacher Pulse Index tracks teacher sentiment across confidence, workload, support and optimism - drawn from weekly surveys of UK teachers.',
   openGraph: {
-    title: 'UK Teacher Pulse Index — Teacher Sentiment Tracker',
+    title: 'UK Teacher Pulse Index - Teacher Sentiment Tracker',
     description: 'Track UK teacher sentiment across confidence, workload, support and optimism.',
     url: 'https://onlyforteachers.co.uk/teacher-index',
   },
@@ -81,14 +81,15 @@ export default async function TeacherIndexPage() {
       <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-5xl mx-auto text-center pb-12">
           <p className="text-xs font-semibold tracking-widest uppercase mb-4" style={{ color: '#9A8F82' }}>
-            Powered by Only For Teachers
+            Powered by Only for Teachers
           </p>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garant', serif" }}>
             UK Teacher Pulse Index
           </h1>
+          <p className="text-sm font-semibold mb-3" style={{ color: '#9A8F82' }}>Data from 2025</p>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: '#D4C9B8' }}>
             A public record of how UK teachers think and feel about the issues that matter most
-            to their profession — updated every time a survey closes.
+            to their profession - updated every time a survey closes.
           </p>
         </div>
 
@@ -122,7 +123,7 @@ export default async function TeacherIndexPage() {
 
         {/* About the Index */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">About the Index</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">About the index</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
@@ -133,7 +134,7 @@ export default async function TeacherIndexPage() {
               {
                 icon: '📋',
                 title: 'Workload',
-                desc: 'A measure of perceived workload sustainability — higher scores mean workload feels more manageable.',
+                desc: 'A measure of perceived workload sustainability - higher scores mean workload feels more manageable.',
               },
               {
                 icon: '🤝',
@@ -157,7 +158,7 @@ export default async function TeacherIndexPage() {
 
         {/* Methodology */}
         <section className="bg-gray-50 rounded-2xl p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-3">How It&apos;s Calculated</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-3">How it&apos;s calculated</h2>
           <div className="space-y-3 text-sm text-gray-600 leading-relaxed">
             <p>
               Each week, verified UK teachers complete a short survey focused on a specific aspect of
@@ -167,7 +168,7 @@ export default async function TeacherIndexPage() {
             <p>
               The Overall TPI is the arithmetic mean of all four dimension scores. A score of 0
               represents the most negative sentiment possible; 100 represents the most positive.
-              Individual responses are never published — all scores are aggregated across all
+              Individual responses are never published - all scores are aggregated across all
               respondents for that survey.
             </p>
             <p>
@@ -188,9 +189,9 @@ export default async function TeacherIndexPage() {
         {tpiScores.length > 0 ? (
           <section>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Full Index Data</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Full index data</h2>
               <a
-                href="/teacher-pulse-index-methodology.pdf"
+                href="/teacher-pulse-index-summary.pdf"
                 className="text-sm font-medium hover:opacity-70 transition-opacity"
                 style={{ color: '#C94F2C' }}
               >
@@ -255,7 +256,7 @@ export default async function TeacherIndexPage() {
         {/* Latest insights */}
         {recentPosts && recentPosts.length > 0 && (
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest Survey Insights</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest survey insights</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {recentPosts.map(post => (
                 <Link
@@ -293,9 +294,9 @@ export default async function TeacherIndexPage() {
         {/* Citation */}
         <section className="border-t border-gray-100 pt-8">
           <p className="text-sm text-gray-500 leading-relaxed">
-            <strong>Citation:</strong> Only For Teachers (2025). <em>UK Teacher Pulse Index</em>.
+            <strong>Citation:</strong> Only for Teachers (2025). <em>UK Teacher Pulse Index</em>.
             Retrieved from onlyforteachers.co.uk/teacher-index. Data collected from verified UK
-            teachers via weekly surveys. All scores are aggregated — individual responses are never
+            teachers via weekly surveys. All scores are aggregated - individual responses are never
             published. Free to use for journalism, research, and policy with attribution.
           </p>
           <p className="text-sm text-gray-400 mt-3">

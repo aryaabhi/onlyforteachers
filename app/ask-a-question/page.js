@@ -3,8 +3,8 @@ import Link from 'next/link'
 import AskForm from './AskForm'
 
 export const metadata = {
-  title: 'Ask The Teaching Community | Only For Teachers',
-  description: 'Submit a question you want asked to UK teachers in a future Only For Teachers weekly survey.',
+  title: 'Ask The Teaching Community | Only for Teachers',
+  description: 'Submit a question you want asked to UK teachers in a future Only for Teachers weekly survey.',
 }
 
 export default async function AskAQuestionPage() {
@@ -27,7 +27,7 @@ export default async function AskAQuestionPage() {
   return (
     <main className="min-h-screen bg-white">
       <section className="bg-gray-50 py-16 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Ask The Teaching Community</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Ask the teaching community</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Is there a question you wish someone would ask UK teachers? Submit it here
           and we&apos;ll consider it for a future weekly survey.
@@ -72,7 +72,7 @@ export default async function AskAQuestionPage() {
                 className="px-6 py-3 rounded-full text-white text-sm font-semibold transition-opacity hover:opacity-90"
                 style={{ backgroundColor: '#C94F2C' }}
               >
-                Register Free
+                Join for free
               </Link>
             </div>
           </div>
@@ -85,7 +85,7 @@ export default async function AskAQuestionPage() {
             <section className="text-sm text-gray-500 leading-relaxed">
               <p>
                 By submitting a question, you agree that it may be used (in whole or edited form) in
-                a future Only For Teachers survey. We reserve the right to reject or modify submitted
+                a future Only for Teachers survey. We reserve the right to reject or modify submitted
                 questions.
               </p>
             </section>

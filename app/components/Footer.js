@@ -11,15 +11,15 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block">
               <Image
-                src="/logo.png"
-                alt="Only For Teachers"
+                src="/logo-white.png"
+                alt="Only for Teachers"
                 width={180}
                 height={48}
                 className="h-12 w-auto object-contain"
               />
             </Link>
             <p className="mt-4 text-sm leading-relaxed max-w-xs" style={{ color: '#D4C9B8' }}>
-              A premium community where UK teachers share, shape, and get rewarded.
+              A trusted community where UK teachers share, shape, and get rewarded.
             </p>
             <div className="flex gap-4 mt-5">
               <a
@@ -56,6 +56,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2.5">
               <FooterLink href="/how-it-works">How it works</FooterLink>
+              <FooterLink href="/about">About us</FooterLink>
               <FooterLink href="/rewards">Rewards</FooterLink>
               <FooterLink href="/survey-results">Insights</FooterLink>
               <FooterLink href="/survey">This week&apos;s survey</FooterLink>
@@ -76,8 +77,8 @@ export default function Footer() {
               Legal
             </h3>
             <ul className="space-y-2.5">
-              <FooterLink href="/privacy-policy">Privacy Policy</FooterLink>
-              <FooterLink href="/survey-methodology">Survey Methodology</FooterLink>
+              <FooterLink href="/privacy-policy">Privacy policy</FooterLink>
+              <FooterLink href="/survey-methodology">Survey methodology</FooterLink>
             </ul>
           </div>
         </div>
@@ -91,11 +92,11 @@ export default function Footer() {
           </p>
           <p className="text-xs">
             <a
-              href="mailto:contact@onlyforteachers.co.uk"
+              href="mailto:hello@onlyforteachers.co.uk"
               className="hover:text-white transition-colors"
               style={{ color: '#9A8F82' }}
             >
-              contact@onlyforteachers.co.uk
+              hello@onlyforteachers.co.uk
             </a>
           </p>
         </div>

@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'About Us — Only For Teachers',
-  description: 'Only For Teachers exists to give UK teachers a voice and reward them for sharing their professional opinions. Learn about our mission.',
+  title: 'About Us - Only for Teachers',
+  description: 'Only for Teachers exists to give UK teachers a voice and reward them for sharing their professional opinions. Learn about our mission.',
   openGraph: {
-    title: 'About Us — Only For Teachers',
+    title: 'About Us - Only for Teachers',
     description: 'We exist to give UK teachers a voice and reward them for sharing their professional opinions.',
     url: 'https://onlyforteachers.co.uk/about',
   },
@@ -14,7 +14,7 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-white">
       <section className="bg-gray-50 py-16 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">About Only For Teachers</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">About Only for Teachers</h1>
         <p className="text-lg text-gray-600 max-w-xl mx-auto">Built by educators, for educators.</p>
       </section>
 
@@ -30,8 +30,8 @@ export default function AboutPage() {
           </p>
           <p className="text-gray-600 leading-relaxed">
             Teaching is one of the most demanding and consequential professions in the country, yet
-            the teacher voice is too often absent from the decisions that shape it. Only For Teachers
-            was built to change that — by creating a space where UK teachers can share their genuine,
+            the teacher voice is too often absent from the decisions that shape it. Only for Teachers
+            was built to change that - by creating a space where UK teachers can share their genuine,
             unfiltered views on the issues that matter most to them, and where those views are published
             openly for everyone to see.
           </p>
@@ -40,15 +40,15 @@ export default function AboutPage() {
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">What We Do</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Only For Teachers is the UK&apos;s first teacher survey platform built exclusively for
+            Only for Teachers is the UK&apos;s first teacher survey platform built exclusively for
             teaching professionals. Every week, we run a short 5-question teacher survey on the
-            topics that matter most in education — workload, wellbeing, curriculum, leadership,
+            topics that matter most in education - workload, wellbeing, curriculum, leadership,
             technology, and more. Surveys take around 3 minutes and are available only to verified
             UK teachers.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
             Every teacher who completes a teacher survey earns points that can be redeemed for real
-            rewards — including Amazon vouchers, TES Resources subscriptions, and other offers
+            rewards - including Amazon vouchers, TES Resources subscriptions, and other offers
             relevant to teaching professionals. Every month, we draw 5 winners who each receive £50.
           </p>
           <p className="text-gray-600 leading-relaxed">
@@ -56,7 +56,7 @@ export default function AboutPage() {
             <Link href="/teacher-index" className="font-medium" style={{ color: '#CA9662' }}>
               UK Teacher Pulse Index
             </Link>
-            {' '}— a public record of how teachers across the UK think and feel about the issues
+            {' '}- a public record of how teachers across the UK think and feel about the issues
             that affect their profession. The index is free to use for journalism, research, and
             policy, with attribution.
           </p>
@@ -65,14 +65,14 @@ export default function AboutPage() {
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Who We Are</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            Only For Teachers was founded by educators who were frustrated with being left out of
+            Only for Teachers was founded by educators who were frustrated with being left out of
             the national conversation. Despite years of classroom experience, UK teachers are
             rarely consulted directly on the decisions that shape their working lives. Policy is
-            made, curricula are redesigned, and school leadership decisions are taken — often
+            made, curricula are redesigned, and school leadership decisions are taken - often
             without authentic teacher voice at the centre.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
-            We are an independent UK teacher community — not a trade union, government body, or
+            We are an independent UK teacher community - not a trade union, government body, or
             lobbying organisation. Our team brings decades of combined classroom experience spanning
             primary, secondary, and further education. Every feature we build, every survey we
             design, and every reward we offer is shaped by what genuine teaching professionals
@@ -102,7 +102,7 @@ export default function AboutPage() {
             />
             <CommitmentCard
               title="Free Forever"
-              description="Only For Teachers will always be free to join and use. There are no subscription fees, no hidden costs, and no premium tiers."
+              description="Only for Teachers will always be free to join and use. There are no subscription fees, no hidden costs, and no premium tiers."
             />
           </div>
         </section>
@@ -110,17 +110,17 @@ export default function AboutPage() {
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Get in Touch</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            We&apos;d love to hear from you — whether you have a question, a suggestion, or you&apos;d
+            We&apos;d love to hear from you - whether you have a question, a suggestion, or you&apos;d
             like to collaborate with us.
           </p>
           <p className="text-gray-600">
             Email us at{' '}
             <a
-              href="mailto:contact@onlyforteachers.co.uk"
+              href="mailto:hello@onlyforteachers.co.uk"
               className="font-medium"
               style={{ color: '#CA9662' }}
             >
-              contact@onlyforteachers.co.uk
+              hello@onlyforteachers.co.uk
             </a>
           </p>
         </section>

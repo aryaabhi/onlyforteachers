@@ -2,10 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Rewards & Points — Only For Teachers',
+  title: 'Rewards & Points - Only for Teachers',
   description: 'Earn points for completing weekly teacher surveys. Redeem for Amazon vouchers, TES Resources and more. Monthly £50 prize draw.',
   openGraph: {
-    title: 'Rewards & Points — Only For Teachers',
+    title: 'Rewards & Points - Only for Teachers',
     description: 'Earn points for surveys and redeem for real rewards.',
     url: 'https://onlyforteachers.co.uk/rewards',
   },
@@ -28,7 +28,7 @@ export default async function RewardsPage() {
       <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center gap-8 pb-12">
           <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: 'var(--font-playfair)' }}>
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garant', serif" }}>
               Rewards <em>&amp;</em> Points
             </h1>
             <p className="text-lg mb-8" style={{ color: '#D4C9B8' }}>
@@ -41,7 +41,7 @@ export default async function RewardsPage() {
                   className="inline-block px-6 py-3 rounded-full text-white font-semibold transition-all hover:opacity-90"
                   style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
                 >
-                  Join Free &amp; Start Earning
+                  Join for free
                 </Link>
                 <Link
                   href="/login"
@@ -74,9 +74,9 @@ export default async function RewardsPage() {
         {/* Intro */}
         <section>
           <p className="text-gray-600 leading-relaxed text-lg max-w-3xl mx-auto text-center">
-            Only For Teachers rewards UK teachers for sharing their professional opinions. Every
+            Only for Teachers rewards UK teachers for sharing their professional opinions. Every
             week you complete a survey, you earn points. Those points can be redeemed for real
-            rewards — from Amazon vouchers to TES Resources subscriptions. Plus, every survey
+            rewards - from Amazon vouchers to a Teachit subscription. Plus, every survey
             gives you an entry into our monthly £50 prize draw.{' '}
             <Link href="/how-it-works" className="font-medium" style={{ color: '#C94F2C' }}>
               Learn how it works →
@@ -86,30 +86,30 @@ export default async function RewardsPage() {
 
         {/* Points system */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">How You Earn Points</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">How you earn points</h2>
           <p className="text-gray-600 text-center mb-8">Four ways to build up your points balance</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <PointsCard
               icon="📋"
-              title="Survey Completion"
-              points="100–500 pts"
+              title="Survey completion"
+              points="100-500 pts"
               description="Earn points every time you complete a weekly survey"
             />
             <PointsCard
               icon="👫"
-              title="Refer a Teacher"
+              title="Refer a teacher"
               points="100 pts"
               description="Earn points for every teacher you refer who joins"
             />
             <PointsCard
               icon="🎁"
-              title="Join via Referral"
+              title="Join via referral"
               points="100 pts"
               description="Get bonus points when you join through a friend's link"
             />
             <PointsCard
               icon="🔥"
-              title="10 Week Streak"
+              title="10 week streak"
               points="500 pts"
               description="Complete 10 surveys in a row for a big streak bonus"
             />
@@ -122,7 +122,7 @@ export default async function RewardsPage() {
           style={{ backgroundColor: '#FDF8F3' }}
         >
           <div className="text-5xl mb-4">🏆</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Monthly £50 Prize Draw</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Monthly £50 prize draw</h2>
           <p className="text-gray-600 max-w-2xl mx-auto mb-4 leading-relaxed">
             Every survey you complete gives you <strong>one entry</strong> into the monthly prize draw.
             Each month, we select <strong>5 winners</strong> who each receive <strong>£50</strong>.
@@ -136,7 +136,7 @@ export default async function RewardsPage() {
         {/* Available offers */}
         {offers && offers.length > 0 && (
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">Available Rewards</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3 text-center">Available rewards</h2>
             <p className="text-gray-600 text-center mb-8">Redeem your points for these exclusive offers</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {offers.map(offer => (
@@ -175,7 +175,7 @@ export default async function RewardsPage() {
             className="inline-block px-8 py-3.5 rounded-lg text-white font-semibold text-lg transition-opacity hover:opacity-90"
             style={{ backgroundColor: '#CA9662' }}
           >
-            {isLoggedIn ? 'Go to Rewards' : 'Join Now'}
+            {isLoggedIn ? 'Go to rewards' : 'Join for free'}
           </Link>
         </section>
       </div>
