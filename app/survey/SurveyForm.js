@@ -18,6 +18,7 @@ export default function SurveyForm({ survey, questions }) {
   const [isPending, startTransition] = useTransition()
 
   const total = questions.length
+  const requiredIds = new Set(questions.filter(q => q.is_required !== false).map(q => q.id))
 
   function isAnswered(questionId) {
     const q = questions.find(q => q.id === questionId)
@@ -51,10 +52,10 @@ export default function SurveyForm({ survey, questions }) {
   }
 
   function handleSubmit() {
-    const missing = new Set(questions.filter(q => !isAnswered(q.id)).map(q => q.id))
+    const missing = new Set(questions.filter(q => requiredIds.has(q.id) && !isAnswered(q.id)).map(q => q.id))
     if (missing.size > 0) {
       setUnanswered(missing)
-      setSubmitError('Please answer all questions before submitting.')
+      setSubmitError('Please answer all required questions before submitting.')
       const firstMissing = questions.find(q => missing.has(q.id))
       if (firstMissing) {
         document.getElementById(`q-${firstMissing.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -116,6 +117,9 @@ export default function SurveyForm({ survey, questions }) {
               </p>
               <p className="text-base font-semibold text-[#1B3A2D] mb-4">
                 {q.question_text}
+                {q.is_required === false && (
+                  <span className="ml-2 text-xs font-normal text-[#9A8F82]">(optional)</span>
+                )}
               </p>
 
               {q.question_type === 'checkbox' && (
@@ -177,7 +181,7 @@ export default function SurveyForm({ survey, questions }) {
               )}
 
               {unanswered.has(q.id) && (
-                <p className="mt-2 text-sm text-red-500">Please answer this question.</p>
+                <p className="mt-2 text-sm text-red-500">This question is required.</p>
               )}
             </div>
           ))}

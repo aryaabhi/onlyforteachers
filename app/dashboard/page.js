@@ -47,7 +47,7 @@ export default async function DashboardPage({ searchParams }) {
   const [
     { data: profile },
     { data: pointsData },
-    { count: streakCount },
+    { data: streakData, error: streakError },
     { data: survey },
     { data: completions },
     { data: recentActivity },
@@ -55,7 +55,7 @@ export default async function DashboardPage({ searchParams }) {
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('points_ledger').select('points, point_type').eq('user_id', user.id),
-    supabase.from('streak_weeks').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+    supabase.from('streak_weeks').select('id').eq('user_id', user.id),
     supabase
       .from('surveys')
       .select('*')
@@ -78,9 +78,10 @@ export default async function DashboardPage({ searchParams }) {
       .eq('user_id', user.id),
   ])
 
+  console.log('[streak] user:', user.id, 'rows:', streakData?.length, 'error:', streakError?.message ?? null)
   const firstName = profile?.first_name || user.user_metadata?.first_name || user.email?.split('@')[0] || 'Teacher'
   const totalPoints = (pointsData ?? []).reduce((sum, r) => sum + (r.points ?? 0), 0)
-  const currentStreak = streakCount ?? 0
+  const currentStreak = (streakData ?? []).length
   const hasCompletedSurvey = survey
     ? (completions ?? []).some(c => c.survey_id === survey.id)
     : false
