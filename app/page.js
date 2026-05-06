@@ -156,7 +156,7 @@ export default async function HomePage() {
             <p className="text-xs font-semibold tracking-widest uppercase mb-3 opacity-80">
               This Week&apos;s Survey
             </p>
-            <h2 className="text-3xl font-bold italic mb-3 leading-snug">
+            <h2 className="text-3xl font-bold mb-3 leading-snug">
               {activeSurvey.title}
             </h2>
             <p className="text-white/80 mb-4">
@@ -189,7 +189,7 @@ export default async function HomePage() {
             How it works
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-[#1B3A2D] mb-14">
-            Simple. Rewarding. <em>Yours.</em>
+            Simple. Rewarding. Yours.
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <StepCard number="1" title="Sign up for free" description="Create your account in under 60 seconds. No credit card, no hidden fees - free forever." />

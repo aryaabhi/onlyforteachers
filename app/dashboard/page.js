@@ -47,7 +47,7 @@ export default async function DashboardPage({ searchParams }) {
   const [
     { data: profile },
     { data: pointsData },
-    { data: streakData },
+    { count: streakCount },
     { data: survey },
     { data: completions },
     { data: recentActivity },
@@ -55,7 +55,7 @@ export default async function DashboardPage({ searchParams }) {
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('points_ledger').select('points, point_type').eq('user_id', user.id),
-    supabase.from('streak_weeks').select('id').eq('user_id', user.id),
+    supabase.from('streak_weeks').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
     supabase
       .from('surveys')
       .select('*')
@@ -80,7 +80,7 @@ export default async function DashboardPage({ searchParams }) {
 
   const firstName = profile?.first_name || user.user_metadata?.first_name || user.email?.split('@')[0] || 'Teacher'
   const totalPoints = (pointsData ?? []).reduce((sum, r) => sum + (r.points ?? 0), 0)
-  const streakCount = (streakData ?? []).length
+  const currentStreak = streakCount ?? 0
   const hasCompletedSurvey = survey
     ? (completions ?? []).some(c => c.survey_id === survey.id)
     : false
@@ -132,13 +132,13 @@ export default async function DashboardPage({ searchParams }) {
                   ✓
                 </div>
                 <div>
-                  <p className="font-semibold italic">{survey.title}</p>
+                  <p className="font-semibold">{survey.title}</p>
                   <p className="text-sm opacity-60 mt-0.5">Completed - well done!</p>
                 </div>
               </div>
             ) : (
               <>
-                <h2 className="text-xl font-bold italic mb-1">{survey.title}</h2>
+                <h2 className="text-xl font-bold mb-1">{survey.title}</h2>
                 <p className="text-sm opacity-60 mb-4">Takes ~3 minutes · {survey.points_value ?? 100} points</p>
                 <Link
                   href="/survey"
@@ -169,7 +169,7 @@ export default async function DashboardPage({ searchParams }) {
           />
           <StatCard
             label="Current streak"
-            value={streakCount === 1 ? '1 week' : `${streakCount} weeks`}
+            value={currentStreak === 1 ? '1 week' : `${currentStreak} weeks`}
             icon={<Flame className="w-5 h-5" style={{ color: '#C94F2C' }} />}
             valueColor="#C94F2C"
           />

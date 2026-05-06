@@ -54,7 +54,7 @@ export default function SurveyResultsPage() {
       <section className="pt-16 pb-0 px-4 text-white" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-4xl mx-auto text-center pb-16">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Insights <em>hub</em>
+            Insights hub
           </h1>
           <p className="text-lg mb-4" style={{ color: '#D4C9B8' }}>
             Data-driven stories from the UK teaching community.

@@ -67,7 +67,7 @@ export default async function HowItWorksPage() {
       <section className="text-white px-4 pt-16 pb-0" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-4xl mx-auto text-center pb-10">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garant', serif" }}>
-            How it <em>works</em>
+            How it works
           </h1>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: '#D4C9B8' }}>
             Only for Teachers is a free UK teacher community where you share your professional

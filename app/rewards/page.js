@@ -30,7 +30,7 @@ export default async function RewardsPage() {
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center gap-8 pb-12">
           <div className="flex-1 text-center sm:text-left">
             <h1 className="text-4xl sm:text-5xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garant', serif" }}>
-              Rewards <em>&amp;</em> Points
+              Rewards &amp; Points
             </h1>
             <p className="text-lg mb-8" style={{ color: '#D4C9B8' }}>
               Your expertise has value. Here&apos;s how we say thank you.
