@@ -1,8 +1,34 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import CopyButton from './CopyButton'
 import { Star, Flame, Trophy, ClipboardList, BookOpen, Gift, MessageSquare } from 'lucide-react'
+
+function weekKeyToAbsoluteWeek(key) {
+  const [yearStr, weekStr] = key.split('-W')
+  const year = parseInt(yearStr, 10)
+  const week = parseInt(weekStr, 10)
+  const jan4 = new Date(Date.UTC(year, 0, 4))
+  const dayOfWeek = jan4.getUTCDay() || 7
+  const mondayW1 = new Date(jan4)
+  mondayW1.setUTCDate(jan4.getUTCDate() - (dayOfWeek - 1))
+  const weekDate = new Date(mondayW1)
+  weekDate.setUTCDate(mondayW1.getUTCDate() + (week - 1) * 7)
+  return Math.floor(weekDate.getTime() / (7 * 24 * 60 * 60 * 1000))
+}
+
+function calculateConsecutiveStreak(rows) {
+  if (!rows || rows.length === 0) return 0
+  const sorted = [...rows].map(r => r.week_key).sort((a, b) => b.localeCompare(a))
+  const absolutes = sorted.map(weekKeyToAbsoluteWeek)
+  let streak = 1
+  for (let i = 1; i < absolutes.length; i++) {
+    if (absolutes[i - 1] - absolutes[i] === 1) streak++
+    else break
+  }
+  return streak
+}
 
 const EVENT_LABELS = {
   survey_completion: 'Survey Completed',
@@ -42,6 +68,7 @@ export default async function DashboardPage({ searchParams }) {
 
   if (!user) redirect('/login')
 
+  const service = createServiceClient()
   const now = new Date().toISOString()
 
   const [
@@ -55,7 +82,7 @@ export default async function DashboardPage({ searchParams }) {
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', user.id).single(),
     supabase.from('points_ledger').select('points, point_type').eq('user_id', user.id),
-    supabase.from('streak_weeks').select('id').eq('user_id', user.id),
+    service.from('streak_weeks').select('week_key').eq('user_id', user.id).order('week_key', { ascending: false }),
     supabase
       .from('surveys')
       .select('*')
@@ -78,10 +105,10 @@ export default async function DashboardPage({ searchParams }) {
       .eq('user_id', user.id),
   ])
 
-  console.log('[streak] user:', user.id, 'rows:', streakData?.length, 'error:', streakError?.message ?? null)
+  console.log('[streak] user:', user.id, 'week_keys:', streakData?.map(r => r.week_key), 'error:', streakError?.message ?? null)
   const firstName = profile?.first_name || user.user_metadata?.first_name || user.email?.split('@')[0] || 'Teacher'
   const totalPoints = (pointsData ?? []).reduce((sum, r) => sum + (r.points ?? 0), 0)
-  const currentStreak = (streakData ?? []).length
+  const currentStreak = calculateConsecutiveStreak(streakData)
   const hasCompletedSurvey = survey
     ? (completions ?? []).some(c => c.survey_id === survey.id)
     : false
