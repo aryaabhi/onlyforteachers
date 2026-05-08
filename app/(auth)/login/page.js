@@ -154,6 +154,9 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+                <p className="mt-1.5 text-xs text-[#6B6B6B]">
+                  Note: if you previously signed in with Google, use the &lsquo;Continue with Google&rsquo; button above.
+                </p>
               </div>
 
               {error && (

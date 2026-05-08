@@ -4,12 +4,18 @@ import { NextResponse } from 'next/server'
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const type = searchParams.get('type')
 
   if (code) {
     const supabase = await createClient()
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error && data.user) {
+      // Password reset — always send to update-password regardless of OAuth status
+      if (type === 'recovery') {
+        return NextResponse.redirect(`${origin}/update-password`)
+      }
+
       const user = data.user
 
       const { data: existingProfile } = await supabase
@@ -38,6 +44,14 @@ export async function GET(request) {
         }
 
         return NextResponse.redirect(`${origin}/complete-profile`)
+      }
+
+      if (type === 'signup') {
+        const yearGroups = existingProfile.year_groups
+        if (!yearGroups || yearGroups.length === 0) {
+          return NextResponse.redirect(`${origin}/complete-profile`)
+        }
+        return NextResponse.redirect(`${origin}/dashboard`)
       }
 
       const yearGroups = existingProfile.year_groups
