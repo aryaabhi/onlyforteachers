@@ -3,8 +3,22 @@ import { NextResponse } from 'next/server'
 
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url)
+  console.log('Callback params:', Object.fromEntries(searchParams.entries()))
+
   const code = searchParams.get('code')
+  const tokenHash = searchParams.get('token_hash') || searchParams.get('token')
   const type = searchParams.get('type')
+
+  // PKCE recovery emails send token_hash/token instead of code
+  if (tokenHash && type === 'recovery') {
+    const supabase = await createClient()
+    const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' })
+    if (!error) {
+      return NextResponse.redirect(`${origin}/update-password`)
+    }
+    console.error('[auth/callback] verifyOtp error:', error)
+    return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`)
+  }
 
   if (code) {
     const supabase = await createClient()
