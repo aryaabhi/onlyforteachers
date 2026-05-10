@@ -4,6 +4,7 @@ import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -84,6 +85,20 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-QB8MZV2H75"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-QB8MZV2H75', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
         <Navbar user={user} />
         <div className={`flex flex-col flex-1 ${user ? "md:ml-[260px]" : ""}`}>
           <div className="flex-1">
