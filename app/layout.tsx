@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Script from "next/script";
+import CookieBanner from "@/app/components/CookieBanner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -94,6 +95,13 @@ export default async function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
+            gtag('consent', 'default', { analytics_storage: 'denied' });
+            var consent = localStorage.getItem('cookie_consent');
+            if (consent === 'accepted') {
+              gtag('consent', 'update', { analytics_storage: 'granted' });
+            } else if (consent === 'essential') {
+              window['ga-disable-G-QB8MZV2H75'] = true;
+            }
             gtag('config', 'G-QB8MZV2H75', {
               page_path: window.location.pathname,
             });
@@ -106,6 +114,7 @@ export default async function RootLayout({
           </div>
           <Footer />
         </div>
+        <CookieBanner />
       </body>
     </html>
   );
