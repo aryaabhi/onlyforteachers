@@ -10,6 +10,13 @@ function formatDate(iso) {
   })
 }
 
+function formatWeekKey(weekKey) {
+  if (!weekKey) return null
+  const [yearStr, weekStr] = weekKey.split('-W')
+  if (!yearStr || !weekStr) return null
+  return `Week ${parseInt(weekStr)}, ${yearStr}`
+}
+
 function BarChart({ options, counts, total }) {
   return (
     <div className="space-y-2 mt-2">
@@ -84,6 +91,8 @@ export default function MySurveysClient({ completions, userId }) {
     setLoading(null)
   }
 
+  const totalPoints = completions.reduce((sum, c) => sum + (c.points_awarded ?? 0), 0)
+
   if (completions.length === 0) {
     return (
       <div className="bg-white rounded-2xl border p-10 text-center" style={{ borderColor: '#E8DDD0' }}>
@@ -101,11 +110,26 @@ export default function MySurveysClient({ completions, userId }) {
 
   return (
     <div className="space-y-4">
+      <div className="flex gap-4 mb-2">
+        <div className="bg-white rounded-xl border px-5 py-4 flex-1 text-center" style={{ borderColor: '#E8DDD0' }}>
+          <p className="text-2xl font-bold text-[#1B3A2D]">{completions.length}</p>
+          <p className="text-xs text-[#6B6B6B] mt-0.5">Surveys completed</p>
+        </div>
+        <div className="bg-white rounded-xl border px-5 py-4 flex-1 text-center" style={{ borderColor: '#E8DDD0' }}>
+          <p className="text-2xl font-bold text-[#1B3A2D]">{totalPoints}</p>
+          <p className="text-xs text-[#6B6B6B] mt-0.5">Points earned</p>
+        </div>
+      </div>
+
       {completions.map(c => {
         const survey = c.surveys
         const surveyId = c.survey_id
+        const hasResults = !!survey
         const isExpanded = expandedId === surveyId
         const data = resultsCache[surveyId]
+
+        const weekLabel = formatWeekKey(c.week_key)
+        const displayTitle = survey?.title ?? (weekLabel ? `Survey - ${weekLabel}` : 'Survey')
 
         return (
           <div
@@ -115,25 +139,35 @@ export default function MySurveysClient({ completions, userId }) {
           >
             <div className="flex items-center justify-between p-5 gap-4">
               <div className="min-w-0">
-                <p className="font-semibold text-[#1B3A2D] truncate">{survey?.title ?? 'Survey'}</p>
+                <p className="font-semibold text-[#1B3A2D] truncate">{displayTitle}</p>
                 <p className="text-sm text-[#6B6B6B] mt-0.5">
                   Completed {formatDate(c.completed_at)}
                   {c.points_awarded ? ` · +${c.points_awarded} points` : ''}
                 </p>
               </div>
-              <button
-                onClick={() => loadResults(surveyId)}
-                className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:opacity-80"
-                style={{
-                  backgroundColor: isExpanded ? '#F5EDE0' : '#C94F2C',
-                  color: isExpanded ? '#1B3A2D' : '#fff',
-                }}
-              >
-                {isExpanded ? 'Hide results' : 'My results'}
-              </button>
+              {hasResults ? (
+                <button
+                  onClick={() => loadResults(surveyId)}
+                  className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all hover:opacity-80"
+                  style={{
+                    backgroundColor: isExpanded ? '#F5EDE0' : '#C94F2C',
+                    color: isExpanded ? '#1B3A2D' : '#fff',
+                  }}
+                >
+                  {isExpanded ? 'Hide results' : 'My results'}
+                </button>
+              ) : (
+                <span
+                  className="shrink-0 px-4 py-2 rounded-full text-sm text-[#9B9B9B] cursor-default"
+                  style={{ backgroundColor: '#F5F5F5' }}
+                  title="Results from surveys before May 2026 are not available on this platform"
+                >
+                  Results not available
+                </span>
+              )}
             </div>
 
-            {isExpanded && (
+            {hasResults && isExpanded && (
               <div className="border-t px-5 py-5 space-y-6" style={{ borderColor: '#F5EDE0' }}>
                 {loading === surveyId && (
                   <p className="text-sm text-[#6B6B6B]">Loading results…</p>

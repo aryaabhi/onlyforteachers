@@ -15,7 +15,7 @@ export default async function MySurveysPage() {
 
   const { data: completions } = await supabase
     .from('survey_completions')
-    .select('id, survey_id, completed_at, points_awarded, surveys(id, title)')
+    .select('id, survey_id, week_key, completed_at, points_awarded, surveys(id, title)')
     .eq('user_id', user.id)
     .order('completed_at', { ascending: false })
 
@@ -25,6 +25,17 @@ export default async function MySurveysPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#1B3A2D]">Survey history</h1>
           <p className="mt-1 text-[#6B6B6B]">Surveys you&apos;ve completed and your answers.</p>
+        </div>
+
+        <div
+          className="flex items-start gap-3 rounded-xl px-4 py-3 mb-6 text-sm"
+          style={{ backgroundColor: '#FDF6EC', border: '1px solid #E8DDD0', color: '#5A4A3A' }}
+        >
+          <span className="mt-0.5 shrink-0 text-base" aria-hidden="true">ℹ️</span>
+          <p>
+            Your survey history has been migrated from our previous platform. Results from surveys
+            completed before May 2026 are not available to view, but your points have been preserved.
+          </p>
         </div>
 
         <MySurveysClient completions={completions ?? []} userId={user.id} />
