@@ -6,6 +6,7 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Script from "next/script";
 import CookieBanner from "@/app/components/CookieBanner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -115,6 +116,7 @@ export default async function RootLayout({
           <Footer />
         </div>
         <CookieBanner />
+        <SpeedInsights />
       </body>
     </html>
   );
