@@ -18,16 +18,23 @@ export default async function AdminSurveysPage({ searchParams }) {
 
   if (profile?.role !== 'admin') redirect('/dashboard')
 
-  const serviceSupabase = createServiceClient()
-  const [{ data: surveys }, { data: completions }] = await Promise.all([
-    supabase.from('surveys').select('*').order('created_at', { ascending: false }),
-    serviceSupabase.from('survey_completions').select('survey_id'),
-  ])
+  const supabaseAdmin = createServiceClient()
+  const { data: surveys } = await supabaseAdmin
+    .from('surveys')
+    .select('*')
+    .order('created_at', { ascending: false })
 
-  const completionCounts = {}
-  for (const c of completions ?? []) {
-    completionCounts[c.survey_id] = (completionCounts[c.survey_id] ?? 0) + 1
-  }
+  const surveysWithCounts = await Promise.all(
+    (surveys ?? []).map(async (survey) => {
+      const { count } = await supabaseAdmin
+        .from('survey_completions')
+        .select('*', { count: 'exact', head: true })
+        .eq('survey_id', survey.id)
+      return { ...survey, response_count: count || 0 }
+    })
+  )
+
+  console.log('Surveys with counts:', surveysWithCounts)
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -44,8 +51,7 @@ export default async function AdminSurveysPage({ searchParams }) {
       )}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         <AdminSurveysClient
-          initialSurveys={surveys ?? []}
-          completionCounts={completionCounts}
+          initialSurveys={surveysWithCounts}
         />
       </div>
     </main>

@@ -20,7 +20,7 @@ function formatDate(iso) {
   })
 }
 
-export default function AdminSurveysClient({ initialSurveys, completionCounts }) {
+export default function AdminSurveysClient({ initialSurveys }) {
   const [surveys, setSurveys] = useState(initialSurveys)
   const [activeSurveyId, setActiveSurveyId] = useState(null)
   const [surveyQuestions, setSurveyQuestions] = useState({})
@@ -219,7 +219,7 @@ export default function AdminSurveysClient({ initialSurveys, completionCounts })
                     })()}
                   </td>
                   <td className="px-6 py-4 text-gray-700">
-                    {completionCounts[survey.id] ?? 0}
+                    {survey.response_count ?? 0}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-4">
