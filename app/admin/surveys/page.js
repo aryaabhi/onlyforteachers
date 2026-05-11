@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
 import AdminSurveysClient from './AdminSurveysClient'
 import Link from 'next/link'
@@ -17,9 +18,10 @@ export default async function AdminSurveysPage({ searchParams }) {
 
   if (profile?.role !== 'admin') redirect('/dashboard')
 
+  const serviceSupabase = createServiceClient()
   const [{ data: surveys }, { data: completions }] = await Promise.all([
     supabase.from('surveys').select('*').order('created_at', { ascending: false }),
-    supabase.from('survey_completions').select('survey_id'),
+    serviceSupabase.from('survey_completions').select('survey_id'),
   ])
 
   const completionCounts = {}

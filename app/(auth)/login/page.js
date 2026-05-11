@@ -45,13 +45,15 @@ export default function LoginPage() {
     setLoading(true)
 
     const supabase = createClient()
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (signInError) {
       setError(signInError.message)
       setLoading(false)
       return
     }
+
+    supabase.from('profiles').update({ updated_at: new Date().toISOString() }).eq('id', data.user.id).then(() => {})
 
     fetch('/api/brevo/sync', {
       method: 'POST',

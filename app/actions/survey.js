@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { updateBrevoAttributes } from '@/lib/brevo'
 
 function getISOWeekKey(date = new Date()) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
@@ -93,6 +94,8 @@ export async function submitSurveyAction(surveyId, answers) {
     note: `Survey completed week ${weekKey}`,
     created_at: now,
   })
+
+  await updateBrevoAttributes(user.email, { LASTSURVEY: new Date().toISOString().split('T')[0] })
 
   // Insert streak week — ignore unique constraint violations
   await supabase.from('streak_weeks').insert({ user_id: user.id, week_key: weekKey })

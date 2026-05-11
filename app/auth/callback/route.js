@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { updateBrevoAttributes } from '@/lib/brevo'
 
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url)
@@ -59,6 +60,12 @@ export async function GET(request) {
 
         return NextResponse.redirect(`${origin}/complete-profile`)
       }
+
+      const today = new Date().toISOString().split('T')[0]
+      await Promise.all([
+        supabase.from('profiles').update({ updated_at: new Date().toISOString() }).eq('id', user.id),
+        updateBrevoAttributes(user.email, { LASTLOGIN: today }),
+      ])
 
       if (type === 'signup') {
         const yearGroups = existingProfile.year_groups
