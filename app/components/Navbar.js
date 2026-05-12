@@ -21,6 +21,7 @@ export default function Navbar({ user }) {
             width={208}
             height={52}
             className="h-[52px] w-auto object-contain"
+            priority
             unoptimized
           />
         </Link>

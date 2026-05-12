@@ -193,6 +193,7 @@ export default function LoginPage() {
           width={200}
           height={50}
           className="h-12 w-auto object-contain mb-8"
+          priority
         />
         <blockquote className="text-center max-w-sm">
           <p className="text-xl font-bold italic leading-relaxed mb-6" style={{ color: '#F5EDE0' }}>

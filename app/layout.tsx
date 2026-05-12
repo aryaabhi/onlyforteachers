@@ -82,6 +82,10 @@ export default async function RootLayout({
       lang="en"
       className={`${inter.variable} h-full`}
     >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-full flex flex-col bg-[#F5EDE0] font-sans text-[#2C2C2C]">
         <script
           type="application/ld+json"

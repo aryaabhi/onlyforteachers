@@ -67,7 +67,9 @@ export default async function HomePage() {
       `*[_type == "post"] | order(publishedAt desc) [0..3] {
         title, "slug": slug.current, publishedAt, excerpt, mainImage,
         categories
-      }`
+      }`,
+      {},
+      { next: { revalidate: 3600 } }
     ).catch(() => []),
   ])
 
