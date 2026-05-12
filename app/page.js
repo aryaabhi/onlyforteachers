@@ -15,7 +15,7 @@ export const metadata = {
   },
 }
 
-export const revalidate = 3600
+export const revalidate = 604800
 
 function formatDate(iso) {
   if (!iso) return ''
@@ -69,7 +69,7 @@ export default async function HomePage() {
         categories
       }`,
       {},
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 604800 } }
     ).catch(() => []),
   ])
 

@@ -7,7 +7,7 @@ export const metadata = {
   description: 'The UK Teacher Pulse Index tracks teacher sentiment across confidence, workload, support and optimism - drawn from weekly surveys of UK teachers. 25 surveys, 2,888 responses.',
 }
 
-export const revalidate = 3600
+export const revalidate = 604800
 
 function formatTableDate(iso) {
   if (!iso) return ''

@@ -20,7 +20,8 @@ export async function generateMetadata({ params }) {
       title, excerpt, seoTitle, seoDescription, mainImage, publishedAt,
       "slug": slug.current
     }`,
-    { slug }
+    { slug },
+    { next: { revalidate: 3600 } }
   ).catch(() => null)
 
   if (!post) return { title: 'Not Found' }
@@ -140,13 +141,15 @@ export default async function BlogPostPage({ params }) {
         title, "slug": slug.current, publishedAt, body, mainImage,
         excerpt, categories, seoTitle, seoDescription
       }`,
-      { slug }
+      { slug },
+      { next: { revalidate: 3600 } }
     ).catch(() => null),
     client.fetch(
       `*[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0..2] {
         title, "slug": slug.current, publishedAt, excerpt, mainImage
       }`,
-      { slug }
+      { slug },
+      { next: { revalidate: 3600 } }
     ).catch(() => []),
   ])
 
