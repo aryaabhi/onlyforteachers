@@ -1,18 +1,25 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { client } from '@/lib/sanity'
 import { createClient } from '@/lib/supabase/client'
 
-const CATEGORIES = ['All', 'Assessment', 'Wellbeing', 'Technology', 'CPD', 'Policy']
-
-function formatDate(iso) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  })
-}
+const CATEGORIES = [
+  'All',
+  'Budgets',
+  'Policy and Ofsted',
+  'Wellbeing',
+  'Attainment',
+  'Student Support',
+  'AI',
+  'Resources',
+  'CPD',
+  'Revision and Assessment',
+  'School Trips',
+  'SEND',
+]
 
 function formatShortDate(iso) {
   if (!iso) return '—'
@@ -21,9 +28,12 @@ function formatShortDate(iso) {
   })
 }
 
-export default function SurveyResultsPage() {
+function SurveyResultsContent() {
+  const searchParams = useSearchParams()
+  const initialCategory = CATEGORIES.includes(searchParams.get('category')) ? searchParams.get('category') : 'All'
+
   const [posts, setPosts] = useState([])
-  const [activeCategory, setActiveCategory] = useState('All')
+  const [activeCategory, setActiveCategory] = useState(initialCategory)
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
@@ -31,8 +41,14 @@ export default function SurveyResultsPage() {
     async function load() {
       const [fetchedPosts, supabaseUser] = await Promise.all([
         client.fetch(
-          `*[_type == "post"] | order(publishedAt desc) {
-            title, "slug": slug.current, publishedAt, excerpt, mainImage, categories
+          `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+            _id,
+            title,
+            "slug": slug.current,
+            publishedAt,
+            excerpt,
+            mainImage,
+            "categories": categories[]->title
           }`
         ).catch(() => []),
         createClient().auth.getUser(),
@@ -46,7 +62,7 @@ export default function SurveyResultsPage() {
 
   const filteredPosts = activeCategory === 'All'
     ? posts
-    : posts.filter(p => p.categories && p.categories.some(c => c.toLowerCase() === activeCategory.toLowerCase()))
+    : posts.filter(p => p.categories && p.categories.some(c => c === activeCategory))
 
   return (
     <main className="min-h-screen bg-white">
@@ -76,30 +92,42 @@ export default function SurveyResultsPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-12">
 
-        {/* Category filters - hidden until posts are categorised */}
-        {/* <div className="flex flex-wrap gap-2 mb-10 justify-center">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className="px-4 py-2 rounded-full text-sm font-medium transition-all"
-              style={{
-                backgroundColor: activeCategory === cat ? '#C94F2C' : '#F5EDE0',
-                color: activeCategory === cat ? '#fff' : '#2C2C2C',
-                border: activeCategory === cat ? 'none' : '1px solid #E8DDD0',
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div> */}
+        {/* Category filter bar */}
+        <div
+          className="overflow-x-auto pb-2 mb-8 -mx-4 px-4"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          <div className="flex gap-2 min-w-max">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className="px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap"
+                style={{
+                  backgroundColor: activeCategory === cat ? '#1B3A2D' : '#F5EDE0',
+                  color: activeCategory === cat ? '#F5EDE0' : '#2C2C2C',
+                  border: '1px solid #1B3A2D',
+                }}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Intro */}
-        <p className="text-gray-600 leading-relaxed text-lg max-w-3xl mx-auto text-center mb-10">
+        <p className="text-gray-600 leading-relaxed text-lg max-w-3xl mx-auto text-center mb-4">
           Every week, Only for Teachers publishes research drawn from our community of UK teachers.
           Each survey produces a data-driven report - giving teachers, school leaders, and
           policymakers an honest picture of life in UK classrooms.
         </p>
+
+        {/* Result count */}
+        {!loading && (
+          <p className="text-sm text-center mb-8" style={{ color: '#6B6B6B' }}>
+            Showing {filteredPosts.length} of {posts.length} articles
+          </p>
+        )}
 
         {/* Posts grid */}
         <section className="mb-16">
@@ -107,31 +135,57 @@ export default function SurveyResultsPage() {
             <div className="text-center py-16 text-[#6B6B6B]">Loading insights…</div>
           ) : filteredPosts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPosts.map(post => (
-                <Link
-                  key={post.slug}
-                  href={`/${post.slug}`}
-                  className="group bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
-                  style={{
-                    borderColor: '#E8DDD0',
-                    textDecoration: 'none',
-                    borderLeft: '4px solid #C94F2C',
-                  }}
-                >
-                  <div className="p-5 flex flex-col flex-1">
-                    <span className="text-xs text-[#9A8F82]">{formatShortDate(post.publishedAt)}</span>
-                    <h3 className="font-bold text-[#2C2C2C] mt-2 mb-2 leading-snug group-hover:text-[#C94F2C] transition-colors">
-                      {post.title}
-                    </h3>
-                    {post.excerpt && (
-                      <p className="text-sm text-[#6B6B6B] line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
-                    )}
-                    <div className="border-t pt-3 flex items-center justify-end" style={{ borderColor: '#E8DDD0' }}>
-                      <span className="text-xs text-[#6B6B6B]">3 min read</span>
+              {filteredPosts.map(post => {
+                const cats = (post.categories ?? []).filter(c => c && c !== 'Uncategorised')
+                return (
+                  <Link
+                    key={post.slug}
+                    href={`/${post.slug}`}
+                    className="group bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
+                    style={{
+                      borderColor: '#E8DDD0',
+                      textDecoration: 'none',
+                      borderLeft: '4px solid #C94F2C',
+                    }}
+                  >
+                    <div className="p-5 flex flex-col flex-1">
+                      {/* Category pills at top */}
+                      {cats.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {cats.map(cat => (
+                            <span
+                              key={cat}
+                              className="uppercase"
+                              style={{
+                                backgroundColor: '#F5EDE0',
+                                color: '#C94F2C',
+                                border: '1px solid #C94F2C',
+                                fontSize: '11px',
+                                borderRadius: '4px',
+                                padding: '2px 6px',
+                                lineHeight: '1.4',
+                              }}
+                            >
+                              {cat}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <h3 className="font-bold text-[#2C2C2C] mb-2 leading-snug group-hover:text-[#C94F2C] transition-colors">
+                        {post.title}
+                      </h3>
+                      {post.excerpt && (
+                        <p className="text-sm text-[#6B6B6B] line-clamp-3 mb-4 flex-1">{post.excerpt}</p>
+                      )}
+                      {/* Date at bottom */}
+                      <div className="border-t pt-3 flex items-center justify-between" style={{ borderColor: '#E8DDD0' }}>
+                        <span className="text-xs" style={{ color: '#9A8F82' }}>{formatShortDate(post.publishedAt)}</span>
+                        <span className="text-xs text-[#6B6B6B]">3 min read</span>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                )
+              })}
             </div>
           ) : (
             <div className="text-center py-16 rounded-2xl" style={{ backgroundColor: '#F5EDE0' }}>
@@ -162,5 +216,13 @@ export default function SurveyResultsPage() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function SurveyResultsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <SurveyResultsContent />
+    </Suspense>
   )
 }

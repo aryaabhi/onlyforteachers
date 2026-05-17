@@ -139,7 +139,7 @@ export default async function BlogPostPage({ params }) {
     client.fetch(
       `*[_type == "post" && slug.current == $slug][0] {
         title, "slug": slug.current, publishedAt, body, mainImage,
-        excerpt, categories, seoTitle, seoDescription
+        excerpt, "categories": categories[]->title, seoTitle, seoDescription
       }`,
       { slug },
       { next: { revalidate: 3600 } }
@@ -221,17 +221,28 @@ export default async function BlogPostPage({ params }) {
           ← Insights Hub
         </Link>
 
-        {/* Category + read time */}
-        {post.categories && post.categories.length > 0 && (
+        {/* Categories */}
+        {post.categories && post.categories.filter(c => c && c !== 'Uncategorised').length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {post.categories.map(cat => (
-              <span
+            {post.categories.filter(c => c && c !== 'Uncategorised').map(cat => (
+              <Link
                 key={cat}
-                className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                style={{ backgroundColor: '#C94F2C' }}
+                href={`/survey-results?category=${encodeURIComponent(cat)}`}
+                className="uppercase hover:opacity-80 transition-opacity"
+                style={{
+                  backgroundColor: '#F5EDE0',
+                  color: '#C94F2C',
+                  border: '1px solid #C94F2C',
+                  fontSize: '11px',
+                  borderRadius: '4px',
+                  padding: '2px 8px',
+                  lineHeight: '1.6',
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                }}
               >
                 {cat}
-              </span>
+              </Link>
             ))}
           </div>
         )}
