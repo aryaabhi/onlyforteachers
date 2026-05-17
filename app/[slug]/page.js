@@ -139,7 +139,7 @@ export default async function BlogPostPage({ params }) {
     client.fetch(
       `*[_type == "post" && slug.current == $slug][0] {
         title, "slug": slug.current, publishedAt, body, mainImage,
-        excerpt, "categories": categories[]->title, seoTitle, seoDescription
+        excerpt, categories, seoTitle, seoDescription
       }`,
       { slug },
       { next: { revalidate: 3600 } }

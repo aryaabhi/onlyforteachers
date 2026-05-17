@@ -48,7 +48,7 @@ function SurveyResultsContent() {
             publishedAt,
             excerpt,
             mainImage,
-            "categories": categories[]->title
+            categories
           }`
         ).catch(() => []),
         createClient().auth.getUser(),
@@ -62,7 +62,7 @@ function SurveyResultsContent() {
 
   const filteredPosts = activeCategory === 'All'
     ? posts
-    : posts.filter(p => p.categories && p.categories.some(c => c === activeCategory))
+    : posts.filter(p => p.categories && p.categories.some(c => c?.toLowerCase() === activeCategory.toLowerCase()))
 
   return (
     <main className="min-h-screen bg-white">
@@ -93,26 +93,21 @@ function SurveyResultsContent() {
       <div className="max-w-6xl mx-auto px-4 py-12">
 
         {/* Category filter bar */}
-        <div
-          className="overflow-x-auto pb-2 mb-8 -mx-4 px-4"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          <div className="flex gap-2 min-w-max">
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className="px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap"
-                style={{
-                  backgroundColor: activeCategory === cat ? '#1B3A2D' : '#F5EDE0',
-                  color: activeCategory === cat ? '#F5EDE0' : '#2C2C2C',
-                  border: '1px solid #1B3A2D',
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2 mb-8 justify-center">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="px-4 py-2 rounded-full text-sm font-medium transition-all"
+              style={{
+                backgroundColor: activeCategory === cat ? '#1B3A2D' : '#F5EDE0',
+                color: activeCategory === cat ? '#F5EDE0' : '#2C2C2C',
+                border: '1px solid #1B3A2D',
+              }}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
         {/* Intro */}
