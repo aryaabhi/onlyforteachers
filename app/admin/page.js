@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { PenSquare } from 'lucide-react'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -71,6 +72,12 @@ export default async function AdminPage() {
             title="TPI Scores"
             description="Manage Teacher Pulse Index scores for the public index page."
           />
+          <AdminLink
+            href="/studio"
+            title="Blog Studio"
+            description="Create and edit blog posts and survey reports in Sanity Studio."
+            icon={<PenSquare size={16} />}
+          />
         </div>
       </div>
     </main>
@@ -86,13 +93,14 @@ function StatCard({ label, value }) {
   )
 }
 
-function AdminLink({ href, title, description }) {
+function AdminLink({ href, title, description, icon }) {
   return (
     <Link
       href={href}
       className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow group"
     >
-      <h2 className="text-base font-semibold mb-1 group-hover:opacity-80" style={{ color: '#CA9662' }}>
+      <h2 className="text-base font-semibold mb-1 group-hover:opacity-80 flex items-center gap-1.5" style={{ color: '#CA9662' }}>
+        {icon}
         {title}
       </h2>
       <p className="text-sm text-gray-500">{description}</p>

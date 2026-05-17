@@ -42,6 +42,21 @@ export async function proxy(request) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
+  // /studio: admin-only route
+  if (pathname === '/studio' || pathname.startsWith('/studio/')) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    if (profile?.role !== 'admin') {
+      return NextResponse.redirect(new URL('/dashboard?error=unauthorized', request.url))
+    }
+  }
+
   // /complete-profile: redirect to /dashboard if profile is already complete
   if (user && pathname.startsWith('/complete-profile')) {
     const { data: profile } = await supabase
