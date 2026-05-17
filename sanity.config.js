@@ -5,6 +5,7 @@ import { schemaTypes } from './sanity-studio/schemas/index'
 export default defineConfig({
   name: 'onlyforteachers',
   title: 'Only For Teachers',
+  basePath: '/studio',
   projectId: 'jg82obhk',
   dataset: 'production',
   plugins: [structureTool()],
