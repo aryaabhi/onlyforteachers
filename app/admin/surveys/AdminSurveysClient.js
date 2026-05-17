@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Eye } from 'lucide-react'
 import { createSurveyAction, addQuestionAction } from '@/app/actions/admin'
 
 const QUESTION_TYPES = [
@@ -242,6 +243,14 @@ export default function AdminSurveysClient({ initialSurveys }) {
                         style={{ color: '#1B3A2D' }}
                       >
                         Results
+                      </Link>
+                      <Link
+                        href={`/admin/surveys/${survey.id}/preview`}
+                        className="text-sm font-medium hover:opacity-70 transition-opacity flex items-center gap-1"
+                        style={{ color: '#C94F2C' }}
+                      >
+                        <Eye size={14} />
+                        Preview
                       </Link>
                     </div>
                   </td>
