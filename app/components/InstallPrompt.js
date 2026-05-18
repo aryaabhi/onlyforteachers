@@ -87,19 +87,13 @@ export default function InstallPrompt() {
       ) : (
         <div className="flex items-start gap-3">
           <div className="flex-1">
-            <p className="text-sm font-semibold mb-1" style={{ color: '#F5EDE0' }}>
-              Add Only for Teachers to your home screen
+            <p className="text-sm font-semibold mb-1.5" style={{ color: '#F5EDE0' }}>
+              Add to your home screen for quick access:
             </p>
-            <p className="text-sm flex items-center gap-1.5" style={{ color: '#D4C9B8' }}>
-              Tap
-              <span
-                className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-bold"
-                style={{ backgroundColor: '#2D5C45', color: '#F5EDE0' }}
-                aria-label="Share"
-              >
-                ⬆
-              </span>
-              then &ldquo;Add to Home Screen&rdquo;
+            <p className="text-xs leading-relaxed" style={{ color: '#D4C9B8' }}>
+              Safari: tap ⬆ Share → Add to Home Screen
+              <br />
+              Chrome: tap ••• menu → Share → Add to Home Screen
             </p>
           </div>
           <button
