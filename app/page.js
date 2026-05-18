@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { client, urlFor } from '@/lib/sanity'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -47,6 +48,7 @@ function WaveUp() {
 export default async function HomePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (user) redirect('/dashboard')
   const isLoggedIn = !!user
 
   const now = new Date().toISOString()

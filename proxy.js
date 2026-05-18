@@ -34,6 +34,10 @@ export async function proxy(request) {
   )
   const isAuthRoute = authRoutes.some((route) => pathname === route)
 
+  if (user && pathname === '/') {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
   if (isProtected && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
