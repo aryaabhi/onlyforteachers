@@ -2,7 +2,7 @@
   "name": "Only for Teachers",
   "short_name": "OFT",
   "description": "The UK Teacher Community",
-  "start_url": "/",
+  "start_url": "/login",
   "display": "standalone",
   "background_color": "#1B3A2D",
   "theme_color": "#1B3A2D",
