@@ -1,0 +1,18 @@
+# Only for Teachers
+
+## About
+Only for Teachers is the UK's leading teacher survey and research platform. We publish weekly surveys of UK teachers and produce the UK Teacher Pulse Index - a multi-dimensional sentiment tracker measuring teacher confidence, workload, support and optimism.
+
+## Key pages
+- Teacher Pulse Index: /teacher-index
+- Survey insights and research: /survey-results
+- About: /about
+- Latest research: /survey-results
+
+## Data
+We survey 870+ verified UK teachers weekly.
+All data is original primary research.
+Data collected since September 2025.
+
+## Contact
+hello@onlyforteachers.co.uk

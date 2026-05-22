@@ -10,9 +10,31 @@ export const metadata = {
   },
 }
 
+const researchProjectSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ResearchProject',
+  name: 'Only for Teachers UK Teacher Research',
+  description: 'Weekly surveys of UK teachers producing original primary research on teacher sentiment, workload and professional experience',
+  url: 'https://onlyforteachers.co.uk',
+  founder: {
+    '@type': 'Organization',
+    name: 'Only for Teachers',
+  },
+  foundingDate: '2024',
+  areaServed: 'United Kingdom',
+  audience: {
+    '@type': 'EducationalAudience',
+    educationalRole: 'teacher',
+  },
+}
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(researchProjectSchema) }}
+      />
       <section className="bg-gray-50 py-16 px-4 text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">About Only for Teachers</h1>
         <p className="text-lg text-gray-600 max-w-xl mx-auto">Built by educators, for educators.</p>

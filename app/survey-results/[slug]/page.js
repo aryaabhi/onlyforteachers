@@ -149,8 +149,57 @@ export default async function SurveyReportPage({ params }) {
     whatsapp: `https://wa.me/?text=${encodeURIComponent(post.title + ' ' + postUrl)}`,
   }
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt || post.seoDescription || '',
+    url: postUrl,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      '@type': 'Organization',
+      name: 'Only for Teachers editorial team',
+      url: 'https://onlyforteachers.co.uk',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Only for Teachers',
+      url: 'https://onlyforteachers.co.uk',
+    },
+    keywords: post.categories ? post.categories.join(', ') : '',
+    image: post.mainImage
+      ? urlFor(post.mainImage).width(1200).height(630).url()
+      : undefined,
+  }
+
+  const surveyDatasetSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: post.title,
+    description: post.excerpt || post.seoDescription || '',
+    url: postUrl,
+    datePublished: post.publishedAt,
+    creator: {
+      '@type': 'Organization',
+      name: 'Only for Teachers',
+      url: 'https://onlyforteachers.co.uk',
+    },
+    keywords: post.categories ? post.categories.join(', ') : '',
+    spatialCoverage: 'United Kingdom',
+    license: 'https://onlyforteachers.co.uk/privacy-policy',
+  }
+
   return (
     <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(surveyDatasetSchema) }}
+      />
       {/* Featured image */}
       {post.mainImage && (
         <div className="relative w-full overflow-hidden bg-gray-100" style={{ maxHeight: '400px', height: '50vw' }}>

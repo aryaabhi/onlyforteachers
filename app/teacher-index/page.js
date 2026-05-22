@@ -56,6 +56,30 @@ function TPICell({ score }) {
   )
 }
 
+const datasetSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dataset',
+  name: 'UK Teacher Pulse Index 2025-2026',
+  description: 'A multi-dimensional sentiment tracker measuring UK teacher confidence, workload, support and optimism across 25 weekly surveys',
+  url: 'https://onlyforteachers.co.uk/teacher-index',
+  creator: {
+    '@type': 'Organization',
+    name: 'Only for Teachers',
+    url: 'https://onlyforteachers.co.uk',
+  },
+  datePublished: '2025-09-01',
+  dateModified: '2026-03-22',
+  license: 'https://onlyforteachers.co.uk/privacy-policy',
+  temporalCoverage: '2025-09/2026-03',
+  spatialCoverage: 'United Kingdom',
+  variableMeasured: [
+    'Teacher confidence',
+    'Teacher workload',
+    'Teacher support',
+    'Teacher optimism',
+  ],
+}
+
 export default async function TeacherIndexPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -83,6 +107,10 @@ export default async function TeacherIndexPage() {
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }}
+      />
 
       {/* 1. HERO */}
       <section style={{ backgroundColor: '#1B3A2D' }}>
