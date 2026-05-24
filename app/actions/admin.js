@@ -238,3 +238,18 @@ export async function runMonthlyDrawAction(drawMonth) {
 
   return { success: true, winner: { name: winner.first_name, email: winner.email } }
 }
+
+export async function markRedemptionFulfilledAction(redemptionId) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  await requireAdmin(supabase, user)
+
+  const { error } = await supabase
+    .from('redemptions')
+    .update({ status: 'fulfilled', fulfilled_at: new Date().toISOString() })
+    .eq('id', redemptionId)
+
+  if (error) return { error: error.message }
+  return { success: true, fulfilled_at: new Date().toISOString() }
+}

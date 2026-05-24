@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { PenSquare } from 'lucide-react'
+import { PenSquare, Gift } from 'lucide-react'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -20,11 +20,13 @@ export default async function AdminPage() {
     { count: totalSurveys },
     { count: totalCompletions },
     { data: pointsData },
+    { count: pendingRedemptions },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('surveys').select('*', { count: 'exact', head: true }),
     supabase.from('survey_completions').select('*', { count: 'exact', head: true }),
     supabase.from('points_ledger').select('points').gt('points', 0),
+    supabase.from('redemptions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
   ])
 
   const totalPointsAwarded = (pointsData ?? []).reduce((sum, r) => sum + (r.points ?? 0), 0)
@@ -73,6 +75,13 @@ export default async function AdminPage() {
             description="Manage Teacher Pulse Index scores for the public index page."
           />
           <AdminLink
+            href="/admin/redemptions"
+            title="Redemptions"
+            description="View and fulfil teacher reward redemptions."
+            icon={<Gift size={16} />}
+            badge={pendingRedemptions > 0 ? pendingRedemptions : null}
+          />
+          <AdminLink
             href="/studio"
             title="Blog Studio"
             description="Create and edit blog posts and survey reports in Sanity Studio."
@@ -93,7 +102,7 @@ function StatCard({ label, value }) {
   )
 }
 
-function AdminLink({ href, title, description, icon }) {
+function AdminLink({ href, title, description, icon, badge }) {
   return (
     <Link
       href={href}
@@ -102,6 +111,11 @@ function AdminLink({ href, title, description, icon }) {
       <h2 className="text-base font-semibold mb-1 group-hover:opacity-80 flex items-center gap-1.5" style={{ color: '#CA9662' }}>
         {icon}
         {title}
+        {badge != null && (
+          <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-xs font-bold">
+            {badge}
+          </span>
+        )}
       </h2>
       <p className="text-sm text-gray-500">{description}</p>
     </Link>
