@@ -84,11 +84,6 @@ export default async function AdminRedemptionsPage() {
         </div>
 
         <RedemptionsClient redemptions={rows} />
-
-        <div className="mt-8 p-4 bg-gray-100 rounded-xl text-xs text-gray-500 font-mono">
-          <p className="font-semibold text-gray-700 mb-1 font-sans text-sm">SQL: Add fulfilled_at column (run in Supabase if needed)</p>
-          <pre className="whitespace-pre-wrap">{`alter table public.redemptions\n  add column if not exists fulfilled_at timestamptz;`}</pre>
-        </div>
       </div>
     </main>
   )
