@@ -245,11 +245,13 @@ export async function markRedemptionFulfilledAction(redemptionId) {
   if (!user) redirect('/login')
   await requireAdmin(supabase, user)
 
-  const { error } = await supabase
+  const service = createServiceClient()
+  const now = new Date().toISOString()
+  const { error } = await service
     .from('redemptions')
-    .update({ status: 'fulfilled', fulfilled_at: new Date().toISOString() })
+    .update({ status: 'fulfilled', fulfilled_at: now })
     .eq('id', redemptionId)
 
   if (error) return { error: error.message }
-  return { success: true, fulfilled_at: new Date().toISOString() }
+  return { success: true, fulfilled_at: now }
 }

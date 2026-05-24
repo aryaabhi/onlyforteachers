@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import RedemptionsClient from './RedemptionsClient'
@@ -15,20 +16,47 @@ export default async function AdminRedemptionsPage() {
     .single()
   if (profile?.role !== 'admin') redirect('/dashboard')
 
-  const { data: redemptions } = await supabase
+  const service = createServiceClient()
+
+  let { data: redemptions, error: redemptionsError } = await service
     .from('redemptions')
-    .select(`
-      *,
-      profiles!redemptions_user_id_fkey(email, first_name),
-      offers!redemptions_offer_id_fkey(title)
-    `)
+    .select('id, user_id, offer_id, points_spent, status, created_at, fulfilled_at')
     .order('created_at', { ascending: false })
 
-  const rows = (redemptions ?? []).map(r => ({
+  // fulfilled_at column may not exist yet — fall back to query without it
+  if (redemptionsError) {
+    console.error('redemptions fetch error (retrying without fulfilled_at):', redemptionsError.message)
+    const fallback = await service
+      .from('redemptions')
+      .select('id, user_id, offer_id, points_spent, status, created_at')
+      .order('created_at', { ascending: false })
+    redemptions = fallback.data
+    if (fallback.error) console.error('redemptions fallback error:', fallback.error.message)
+  }
+
+  const redemptionRows = (redemptions ?? []).map(r => ({ ...r, fulfilled_at: r.fulfilled_at ?? null }))
+
+  const userIds = [...new Set(redemptionRows.map(r => r.user_id).filter(Boolean))]
+  const offerIds = [...new Set(redemptionRows.map(r => r.offer_id).filter(Boolean))]
+
+  const [{ data: profiles }, { data: offers }] = await Promise.all([
+    userIds.length > 0
+      ? service.from('profiles').select('id, email, first_name').in('id', userIds)
+      : { data: [] },
+    offerIds.length > 0
+      ? service.from('offers').select('id, title').in('id', offerIds)
+      : { data: [] },
+  ])
+
+  const profileMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p]))
+  const offerMap = Object.fromEntries((offers ?? []).map(o => [o.id, o]))
+
+  const rows = redemptionRows.map(r => ({
     ...r,
-    email: r.profiles?.email ?? null,
-    first_name: r.profiles?.first_name ?? null,
-    offer_title: r.offers?.title ?? null,
+    fulfilled_at: r.fulfilled_at ?? null,
+    email: profileMap[r.user_id]?.email ?? null,
+    first_name: profileMap[r.user_id]?.first_name ?? null,
+    offer_title: offerMap[r.offer_id]?.title ?? null,
   }))
 
   const totalCount = rows.length
