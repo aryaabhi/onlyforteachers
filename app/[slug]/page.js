@@ -1,4 +1,5 @@
 import { client, urlFor } from '@/lib/sanity'
+import { createClient } from '@/lib/supabase/server'
 import { PortableText } from '@portabletext/react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -134,6 +135,9 @@ function formatDate(iso) {
 
 export default async function BlogPostPage({ params }) {
   const { slug } = await params
+
+  const supabase = await createClient()
+  const { data: { session } } = await supabase.auth.getSession()
 
   const [post, relatedPosts] = await Promise.all([
     client.fetch(
@@ -291,24 +295,26 @@ export default async function BlogPostPage({ params }) {
         </div>
 
         {/* CTA */}
-        <div
-          className="mt-10 rounded-2xl p-8 text-center text-white"
-          style={{ backgroundColor: '#1B3A2D' }}
-        >
-          <h2 className="text-xl font-bold mb-2">
-            Join the community and share your voice
-          </h2>
-          <p className="mb-5 text-sm" style={{ color: '#D4C9B8' }}>
-            Be part of the data. Complete weekly surveys and help shape the UK Teacher Pulse Index.
-          </p>
-          <Link
-            href="/register"
-            className="inline-block px-6 py-3 rounded-full text-white font-semibold text-sm transition-all hover:opacity-90"
-            style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
+        {!session && (
+          <div
+            className="mt-10 rounded-2xl p-8 text-center text-white"
+            style={{ backgroundColor: '#1B3A2D' }}
           >
-            Join free →
-          </Link>
-        </div>
+            <h2 className="text-xl font-bold mb-2">
+              Join the community and share your voice
+            </h2>
+            <p className="mb-5 text-sm" style={{ color: '#D4C9B8' }}>
+              Be part of the data. Complete weekly surveys and help shape the UK Teacher Pulse Index.
+            </p>
+            <Link
+              href="/register"
+              className="inline-block px-6 py-3 rounded-full text-white font-semibold text-sm transition-all hover:opacity-90"
+              style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
+            >
+              Join free →
+            </Link>
+          </div>
+        )}
 
         {/* Related posts */}
         {relatedPosts && relatedPosts.length > 0 && (
