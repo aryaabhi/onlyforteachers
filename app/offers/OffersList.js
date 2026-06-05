@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { redeemOffer } from '@/app/actions/offers'
-import { Star, Lock } from 'lucide-react'
+import { Star } from 'lucide-react'
 
 export default function OffersList({ offers, totalPoints }) {
   const [balance, setBalance] = useState(totalPoints)
@@ -142,8 +142,6 @@ export default function OffersList({ offers, totalPoints }) {
               </div>
             )
           })}
-          <ComingSoonCard />
-          <ComingSoonCard />
         </div>
       </div>
 
@@ -183,17 +181,3 @@ export default function OffersList({ offers, totalPoints }) {
   )
 }
 
-function ComingSoonCard() {
-  return (
-    <div
-      className="rounded-2xl border p-6 flex flex-col items-center justify-center gap-3 text-center"
-      style={{ backgroundColor: '#F5F5F5', borderColor: '#E8DDD0', opacity: 0.7 }}
-    >
-      <Lock className="w-7 h-7" style={{ color: '#B0B0B0' }} />
-      <div>
-        <p className="text-sm font-semibold" style={{ color: '#9A9A9A' }}>Coming soon</p>
-        <p className="text-xs mt-0.5" style={{ color: '#B8B8B8' }}>New reward being sourced</p>
-      </div>
-    </div>
-  )
-}

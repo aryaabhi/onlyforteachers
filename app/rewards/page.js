@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Lock } from 'lucide-react'
 
 export const metadata = {
   title: 'Rewards & Points - Only for Teachers',
@@ -156,8 +155,6 @@ export default async function RewardsPage() {
                 </span>
               </div>
             ))}
-            <RewardsComingSoonCard />
-            <RewardsComingSoonCard />
           </div>
         </section>
 
@@ -204,17 +201,3 @@ function PointsCard({ icon, title, points, description }) {
   )
 }
 
-function RewardsComingSoonCard() {
-  return (
-    <div
-      className="rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col items-center justify-center gap-3 text-center"
-      style={{ backgroundColor: '#F5F5F5', opacity: 0.7 }}
-    >
-      <Lock className="w-7 h-7" style={{ color: '#B0B0B0' }} />
-      <div>
-        <p className="text-sm font-semibold" style={{ color: '#9A9A9A' }}>Coming soon</p>
-        <p className="text-xs mt-0.5" style={{ color: '#B8B8B8' }}>New reward being sourced</p>
-      </div>
-    </div>
-  )
-}
