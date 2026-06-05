@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { PenSquare, Gift } from 'lucide-react'
+import { PenSquare, Gift, MessageSquare } from 'lucide-react'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -21,12 +21,14 @@ export default async function AdminPage() {
     { count: totalCompletions },
     { data: pointsData },
     { count: pendingRedemptions },
+    { count: pendingQuestions },
   ] = await Promise.all([
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('surveys').select('*', { count: 'exact', head: true }),
     supabase.from('survey_completions').select('*', { count: 'exact', head: true }),
     supabase.from('points_ledger').select('points').gt('points', 0),
     supabase.from('redemptions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabase.from('community_questions').select('*', { count: 'exact', head: true }).or('status.is.null,status.eq.pending'),
   ])
 
   const totalPointsAwarded = (pointsData ?? []).reduce((sum, r) => sum + (r.points ?? 0), 0)
@@ -80,6 +82,13 @@ export default async function AdminPage() {
             description="View and fulfil teacher reward redemptions."
             icon={<Gift size={16} />}
             badge={pendingRedemptions > 0 ? pendingRedemptions : null}
+          />
+          <AdminLink
+            href="/admin/questions"
+            title="Questions"
+            description="Browse and manage Ask a question submissions from teachers."
+            icon={<MessageSquare size={16} />}
+            badge={pendingQuestions > 0 ? pendingQuestions : null}
           />
           <AdminLink
             href="/studio"

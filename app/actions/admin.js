@@ -239,6 +239,22 @@ export async function runMonthlyDrawAction(drawMonth) {
   return { success: true, winner: { name: winner.first_name, email: winner.email } }
 }
 
+export async function updateQuestionStatusAction(questionId, status) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+  await requireAdmin(supabase, user)
+
+  const service = createServiceClient()
+  const { error } = await service
+    .from('community_questions')
+    .update({ status })
+    .eq('id', questionId)
+
+  if (error) return { error: error.message }
+  return { success: true }
+}
+
 export async function markRedemptionFulfilledAction(redemptionId) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
