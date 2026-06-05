@@ -120,17 +120,16 @@ function ActionButtons({ questionId, currentStatus }) {
 }
 
 function QuestionRow({ q }) {
-  const [status] = useState(q.status)
   return (
     <tr className="border-b border-gray-50 last:border-0">
       <td className="px-6 py-4">
-        <p className="font-medium text-gray-900">{q.first_name ?? '—'}</p>
+        <p className="font-medium text-gray-900">{q.name ?? '—'}</p>
         <p className="text-gray-400 text-xs mt-0.5">{q.email ?? '—'}</p>
       </td>
       <td className="px-6 py-4 text-gray-700 max-w-xs">
         <div className="flex items-start gap-2">
-          <span className="text-sm leading-snug"><QuestionText text={q.question ?? ''} /></span>
-          <div className="shrink-0 mt-0.5"><CopyButton text={q.question ?? ''} /></div>
+          <span className="text-sm leading-snug"><QuestionText text={q.question_text ?? ''} /></span>
+          <div className="shrink-0 mt-0.5"><CopyButton text={q.question_text ?? ''} /></div>
         </div>
       </td>
       <td className="px-6 py-4 text-gray-500 whitespace-nowrap">{formatDate(q.created_at)}</td>

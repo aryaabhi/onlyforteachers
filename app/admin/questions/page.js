@@ -20,18 +20,18 @@ export default async function AdminQuestionsPage() {
 
   const { data: rows, error } = await service
     .from('community_questions')
-    .select('*, profiles(email, first_name)')
+    .select('*')
     .order('created_at', { ascending: false })
 
   if (error) console.error('community_questions fetch error:', error.message)
 
   const questions = (rows ?? []).map(r => ({
     id: r.id,
-    question: r.question,
+    question_text: r.question_text,
+    name: r.name ?? null,
+    email: r.email ?? null,
     status: r.status ?? 'pending',
     created_at: r.created_at,
-    email: r.profiles?.email ?? null,
-    first_name: r.profiles?.first_name ?? null,
   }))
 
   const totalCount = questions.length
