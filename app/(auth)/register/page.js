@@ -1,10 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Turnstile } from '@marsidev/react-turnstile'
 import { createClient } from '@/lib/supabase/client'
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+const NAME_RE = /^[a-zA-Z\s\-']{2,50}$/
 
 function GoogleIcon() {
   return (
@@ -61,6 +65,10 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
+  // Bot protection state
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const honeypotRef = useRef(null)
+
   function toggleCheckbox(list, setList, value) {
     setList(prev =>
       prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
@@ -69,16 +77,28 @@ export default function RegisterPage() {
 
   function validate() {
     const errs = {}
-    if (!firstName.trim()) errs.firstName = 'First name is required'
+    if (!firstName.trim()) {
+      errs.firstName = 'First name is required'
+    } else if (!NAME_RE.test(firstName.trim())) {
+      errs.firstName = 'Please enter a valid first name'
+    }
     if (!email.trim()) errs.email = 'Email is required'
     if (password.length < 8) errs.password = 'Password must be at least 8 characters'
     if (yearGroups.length === 0) errs.yearGroups = 'Please select at least one year group'
     if (subjects.length === 0) errs.subjects = 'Please select at least one subject'
+    if (TURNSTILE_SITE_KEY && !turnstileToken) errs.turnstile = 'Please complete the security check'
     return errs
   }
 
   async function handleSubmit(e) {
     e.preventDefault()
+
+    // Honeypot: bot filled the hidden field → fake success silently
+    if (honeypotRef.current?.value) {
+      router.push('/dashboard')
+      return
+    }
+
     const errs = validate()
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
@@ -86,6 +106,27 @@ export default function RegisterPage() {
     }
     setErrors({})
     setLoading(true)
+
+    // Turnstile server-side verification
+    if (TURNSTILE_SITE_KEY) {
+      try {
+        const res = await fetch('/api/verify-turnstile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken }),
+        })
+        const { success } = await res.json()
+        if (!success) {
+          setErrors({ form: 'Please complete the security check' })
+          setLoading(false)
+          return
+        }
+      } catch {
+        setErrors({ form: 'Security check failed. Please try again.' })
+        setLoading(false)
+        return
+      }
+    }
 
     const supabase = createClient()
 
@@ -204,6 +245,17 @@ export default function RegisterPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+              {/* Honeypot — invisible to real users, bots fill it */}
+              <input
+                ref={honeypotRef}
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ display: 'none' }}
+              />
+
               {/* Name */}
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
@@ -326,6 +378,19 @@ export default function RegisterPage() {
                   We respect your privacy. You can unsubscribe at any time.
                 </p>
               </div>
+
+              {/* Turnstile widget — only rendered when site key is configured */}
+              {TURNSTILE_SITE_KEY && (
+                <div>
+                  <Turnstile
+                    siteKey={TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => setTurnstileToken('')}
+                    onExpire={() => setTurnstileToken('')}
+                  />
+                  {errors.turnstile && <p className="mt-1 text-xs text-red-600">{errors.turnstile}</p>}
+                </div>
+              )}
 
               {errors.form && (
                 <p className="text-sm text-red-600 bg-red-50 rounded-xl px-4 py-2.5">{errors.form}</p>
