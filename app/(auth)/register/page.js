@@ -4,8 +4,13 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Turnstile } from '@marsidev/react-turnstile'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
+
+const Turnstile = dynamic(
+  () => import('@marsidev/react-turnstile').then(mod => mod.Turnstile),
+  { ssr: false, loading: () => null }
+)
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 const NAME_RE = /^[a-zA-Z\s\-']{2,50}$/
@@ -216,6 +221,7 @@ export default function RegisterPage() {
                 width={160}
                 height={40}
                 className="h-10 w-auto object-contain"
+                priority
               />
             </Link>
             <h1 className="text-3xl font-bold text-[#1B3A2D]">Join free</h1>

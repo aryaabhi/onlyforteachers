@@ -6,7 +6,7 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Script from "next/script";
 import CookieBanner from "@/app/components/CookieBanner";
-import InstallPrompt from "@/app/components/InstallPrompt";
+import InstallPromptLoader from "@/app/components/InstallPromptLoader";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({
@@ -130,7 +130,7 @@ export default async function RootLayout({
           {`if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js'); }`}
         </Script>
         <CookieBanner />
-        <InstallPrompt />
+        <InstallPromptLoader />
         <SpeedInsights />
       </body>
     </html>

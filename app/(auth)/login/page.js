@@ -78,6 +78,7 @@ export default function LoginPage() {
                 width={160}
                 height={40}
                 className="h-10 w-auto object-contain"
+                priority
               />
             </Link>
             <h1 className="text-3xl font-bold text-[#1B3A2D]">Welcome back</h1>

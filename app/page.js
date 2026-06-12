@@ -1,9 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import { client, urlFor } from '@/lib/sanity'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Calendar } from 'lucide-react'
 import MagazineForm from '@/app/components/MagazineForm'
 
 export const metadata = {
@@ -18,115 +15,15 @@ export const metadata = {
 
 export const revalidate = 604800
 
-function formatDate(iso) {
-  if (!iso) return ''
-  return new Date(iso).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  })
-}
-
-function WaveDown() {
-  return (
-    <div className="w-full leading-[0] overflow-hidden">
-      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" className="w-full">
-        <path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#1B3A2D" />
-      </svg>
-    </div>
-  )
-}
-
-function WaveUp() {
-  return (
-    <div className="w-full leading-[0] overflow-hidden">
-      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" className="w-full">
-        <path d="M0,40 C360,0 1080,80 1440,40 L1440,0 L0,0 Z" fill="#1B3A2D" />
-      </svg>
-    </div>
-  )
-}
-
 export default async function HomePage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) redirect('/dashboard')
-  const isLoggedIn = !!user
-
-  const now = new Date().toISOString()
-
-  const [
-    { count: profileCount },
-    { data: activeSurveys },
-    latestPosts,
-  ] = await Promise.all([
-    supabase.from('profiles').select('id', { count: 'exact', head: true }),
-    supabase
-      .from('surveys')
-      .select('*')
-      .lte('starts_at', now)
-      .gte('ends_at', now)
-      .limit(1),
-    client.fetch(
-      `*[_type == "post"] | order(publishedAt desc) [0..3] {
-        title, "slug": slug.current, publishedAt, excerpt, mainImage,
-        categories
-      }`,
-      {},
-      { next: { revalidate: 604800 } }
-    ).catch(() => []),
-  ])
-
-  const activeSurvey = activeSurveys?.[0] ?? null
-  const memberCount = profileCount ?? 855
-
-  if (isLoggedIn) {
-    return (
-      <main>
-        {/* Logged-in hero */}
-        <section className="py-20 px-4 text-center text-white" style={{ backgroundColor: '#1B3A2D' }}>
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4 leading-tight">
-            The community where teachers<br />find their people.
-          </h1>
-          <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
-            Contribute, be heard, and get rewarded - every week.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/dashboard"
-              className="px-8 py-3.5 rounded-full text-white font-semibold text-base transition-all hover:opacity-90 hover:shadow-lg"
-              style={{ backgroundColor: '#C94F2C', textDecoration: 'none' }}
-            >
-              Go to dashboard
-            </Link>
-            <Link
-              href="/survey-results"
-              className="px-8 py-3.5 rounded-full font-semibold text-base border-2 border-white/40 text-white hover:bg-white/10 transition-all"
-              style={{ textDecoration: 'none' }}
-            >
-              See latest insights
-            </Link>
-          </div>
-        </section>
-
-        {/* Stats bar */}
-        <section className="py-10 px-4 text-white" style={{ backgroundColor: '#1B3A2D' }}>
-          <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6 text-center border-t border-white/10 pt-10">
-            <StatItem value="2,500+" label="Teachers in our community" />
-            <StatItem value="26" label="Surveys published" />
-            <StatItem value="£3,000" label="Paid out to teachers" />
-          </div>
-        </section>
-
-        {/* Latest Insights */}
-        <InsightsSection posts={latestPosts} />
-
-        {/* Testimonials */}
-        <TestimonialsSection />
-
-        {/* Magazine / Partners */}
-        <MagazineSection />
-      </main>
-    )
-  }
+  const latestPosts = await client.fetch(
+    `*[_type == "post"] | order(publishedAt desc) [0..3] {
+      title, "slug": slug.current, publishedAt, excerpt, mainImage,
+      categories
+    }`,
+    {},
+    { next: { revalidate: 604800 } }
+  ).catch(() => [])
 
   return (
     <main>
@@ -153,40 +50,10 @@ export default async function HomePage() {
         </p>
       </section>
 
-      {/* Section 2: Active Survey Banner */}
-      {activeSurvey && (
-        <section className="py-12 px-4" style={{ backgroundColor: '#C94F2C' }}>
-          <div className="max-w-3xl mx-auto text-center text-white">
-            <p className="text-xs font-semibold tracking-widest uppercase mb-3 opacity-80">
-              This Week&apos;s Survey
-            </p>
-            <h2 className="text-3xl font-bold mb-3 leading-snug">
-              {activeSurvey.title}
-            </h2>
-            <p className="text-white/80 mb-4">
-              Share your view in under 3 minutes. Results published every week.
-            </p>
-            {activeSurvey.ends_at && (
-              <p className="flex items-center justify-center gap-2 text-sm text-white/70 mb-6">
-                <Calendar className="w-4 h-4" />
-                Closes {formatDate(activeSurvey.ends_at)}
-              </p>
-            )}
-            <Link
-              href="/survey"
-              className="inline-block px-7 py-3 rounded-full font-semibold text-sm border-2 border-white text-white hover:bg-white hover:text-[#C94F2C] transition-all"
-              style={{ textDecoration: 'none' }}
-            >
-              Take this week&apos;s survey →
-            </Link>
-          </div>
-        </section>
-      )}
-
-      {/* Section 3: Latest Insights */}
+      {/* Section 2: Latest Insights */}
       <InsightsSection posts={latestPosts} showJoin />
 
-      {/* Section 4: How It Works */}
+      {/* Section 3: How It Works */}
       <section className="py-20 px-4" style={{ backgroundColor: '#F5EDE0' }}>
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: '#C94F2C' }}>
@@ -212,13 +79,13 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 5: Testimonials */}
+      {/* Section 4: Testimonials */}
       <TestimonialsSection />
 
-      {/* Section 6: Magazine / Partners */}
+      {/* Section 5: Magazine / Partners */}
       <MagazineSection />
 
-      {/* Section 7: Stats bar */}
+      {/* Section 6: Stats bar */}
       <section className="py-14 px-4 text-white" style={{ backgroundColor: '#1B3A2D' }}>
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           <StatItem value="2,500+" label="Teachers in our community" />
@@ -227,7 +94,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Section 8: Final CTA */}
+      {/* Section 7: Final CTA */}
       <section className="py-24 px-4 text-center" style={{ backgroundColor: '#F5EDE0' }}>
         <h2 className="text-3xl sm:text-4xl font-bold text-[#1B3A2D] mb-6">
           Ready to share your voice?
