@@ -105,7 +105,6 @@ export default async function DashboardPage({ searchParams }) {
       .eq('user_id', user.id),
   ])
 
-  console.log('[streak] user:', user.id, 'week_keys:', streakData?.map(r => r.week_key), 'error:', streakError?.message ?? null)
   const firstName = profile?.first_name || user.user_metadata?.first_name || user.email?.split('@')[0] || 'Teacher'
   const totalPoints = (pointsData ?? []).reduce((sum, r) => sum + (r.points ?? 0), 0)
   const currentStreak = calculateConsecutiveStreak(streakData)

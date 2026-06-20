@@ -5,6 +5,18 @@ const protectedRoutes = ['/dashboard', '/survey', '/profile', '/offers', '/compl
 const authRoutes = ['/login', '/register']
 
 export async function proxy(request) {
+  const { pathname } = request.nextUrl
+
+  const isProtected = protectedRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))
+  const isAuthRoute = authRoutes.some(r => pathname === r)
+  const isHome = pathname === '/'
+  const isStudio = pathname === '/studio' || pathname.startsWith('/studio/')
+
+  // Fast path: skip auth entirely for public routes (blog posts, survey-results, etc.)
+  if (!isProtected && !isAuthRoute && !isHome && !isStudio) {
+    return NextResponse.next({ request })
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -26,15 +38,18 @@ export async function proxy(request) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // Protected routes and /studio: validate with Supabase server (security critical, must use getUser)
+  // Homepage and auth routes: read session from cookie only — no network call, fast
+  let user = null
+  if (isProtected || isStudio) {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } else {
+    const { data } = await supabase.auth.getSession()
+    user = data.session?.user ?? null
+  }
 
-  const { pathname } = request.nextUrl
-  const isProtected = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + '/')
-  )
-  const isAuthRoute = authRoutes.some((route) => pathname === route)
-
-  if (user && pathname === '/') {
+  if (isHome && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
@@ -46,8 +61,7 @@ export async function proxy(request) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // /studio: admin-only route
-  if (pathname === '/studio' || pathname.startsWith('/studio/')) {
+  if (isStudio) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
@@ -61,14 +75,13 @@ export async function proxy(request) {
     }
   }
 
-  // /complete-profile: redirect to /dashboard if profile is already complete
+  // /complete-profile: redirect away if profile already complete
   if (user && pathname.startsWith('/complete-profile')) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('year_groups')
       .eq('id', user.id)
       .single()
-
     if (profile?.year_groups?.length > 0) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
