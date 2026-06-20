@@ -25,7 +25,7 @@ function BarRow({ label, count, total }) {
 
 function QuestionResult({ question, responses }) {
   const [textPage, setTextPage] = useState(1)
-  const isAggregate = question.question_type === 'likert_scale' || question.question_type === 'checkbox'
+  const isAggregate = question.question_type === 'likert_scale' || question.question_type === 'checkbox' || question.question_type === 'radio'
   const options = question.question_type === 'likert_scale'
     ? LIKERT_OPTIONS
     : (question.options ?? [])

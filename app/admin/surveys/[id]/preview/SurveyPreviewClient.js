@@ -144,6 +144,25 @@ export default function SurveyPreviewClient({ survey, questions }) {
                 </div>
               )}
 
+              {q.question_type === 'radio' && (
+                <div className="space-y-3">
+                  {(q.options ?? []).map((option, index) => (
+                    <label key={`${q.id}-${index}-${option}`} className="flex items-center gap-3 cursor-pointer group">
+                      <input
+                        type="radio"
+                        name={`q-${q.id}`}
+                        value={option}
+                        checked={answers[q.id] === option}
+                        onChange={() => handleRadioChange(q.id, option)}
+                        className="w-4 h-4 cursor-pointer"
+                        style={{ accentColor: '#C94F2C' }}
+                      />
+                      <span className="text-sm text-[#2C2C2C] group-hover:text-[#1B3A2D]">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
               {q.question_type === 'likert_scale' && (
                 <div className="space-y-3">
                   {LIKERT_OPTIONS.map(option => (

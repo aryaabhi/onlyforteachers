@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 const QUESTION_TYPES = [
   { value: 'likert_scale', label: 'Likert Scale (Strongly Agree → Strongly Disagree)' },
   { value: 'checkbox', label: 'Checkbox (multiple choice)' },
+  { value: 'radio', label: 'Radio (single choice — select one option)' },
   { value: 'textarea', label: 'Text Area (long answer)' },
   { value: 'text', label: 'Text (short answer)' },
 ]
@@ -159,10 +160,13 @@ export default function QuestionsClient({ survey, initialQuestions }) {
             </select>
           </div>
 
-          {questionType === 'checkbox' && (
+          {(questionType === 'checkbox' || questionType === 'radio') && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Options <span className="text-gray-400 font-normal">(one per line)</span>
+                {questionType === 'radio' && (
+                  <span className="text-gray-400 font-normal"> · Single choice — teacher selects one answer only</span>
+                )}
               </label>
               <textarea
                 name="options"
@@ -263,9 +267,14 @@ function EditQuestionForm({ question, onUpdated, onCancel }) {
         </select>
       </div>
 
-      {questionType === 'checkbox' && (
+      {(questionType === 'checkbox' || questionType === 'radio') && (
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Options (one per line)</label>
+          <label className="block text-xs font-medium text-gray-700 mb-1">
+            Options (one per line)
+            {questionType === 'radio' && (
+              <span className="text-gray-400 font-normal"> · Single choice — teacher selects one answer only</span>
+            )}
+          </label>
           <textarea
             name="options"
             rows={4}
