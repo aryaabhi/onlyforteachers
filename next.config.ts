@@ -19,6 +19,17 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        // Prevent search engines from indexing the *.vercel.app preview/prod
+        // domains — only onlyforteachers.co.uk should be indexed.
+        source: '/:path*',
+        has: [{ type: 'host', value: '.*\\.vercel\\.app' }],
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex' }],
+      },
+    ]
+  },
   async redirects() {
     return [
       { source: '/teacher-survey', destination: '/survey-results', permanent: true },

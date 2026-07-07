@@ -36,6 +36,9 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
+    alternates: {
+      canonical: `https://onlyforteachers.co.uk/${post.slug}`,
+    },
     openGraph: {
       title,
       description,

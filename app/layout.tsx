@@ -17,6 +17,9 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://onlyforteachers.co.uk'),
+  alternates: {
+    canonical: './',
+  },
   title: {
     default: 'Only for Teachers - The UK Teacher Community',
     template: '%s | Only for Teachers',
