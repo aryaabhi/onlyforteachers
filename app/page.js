@@ -2,6 +2,7 @@ import { client, urlFor } from '@/lib/sanity'
 import Link from 'next/link'
 import Image from 'next/image'
 import MagazineForm from '@/app/components/MagazineForm'
+import HomeRedirect from '@/app/components/HomeRedirect'
 
 export const metadata = {
   title: 'Only for Teachers - The UK Teacher Community That Rewards You',
@@ -13,6 +14,11 @@ export const metadata = {
   },
 }
 
+// Serve the homepage as edge-cached static HTML for anonymous visitors and
+// bots. force-static neutralises the root layout's cookies()/getUser() call
+// (cookies() returns empty during static render), so / never renders on demand.
+// Logged-in teachers are redirected to /dashboard client-side via <HomeRedirect />.
+export const dynamic = 'force-static'
 export const revalidate = 604800
 
 export default async function HomePage() {
@@ -27,6 +33,7 @@ export default async function HomePage() {
 
   return (
     <main>
+      <HomeRedirect />
       {/* Section 1: Hero */}
       <section className="py-24 px-4 text-center" style={{ backgroundColor: '#F5EDE0' }}>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1B3A2D] mb-5 max-w-3xl mx-auto leading-tight">

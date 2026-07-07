@@ -9,11 +9,13 @@ export async function proxy(request) {
 
   const isProtected = protectedRoutes.some(r => pathname === r || pathname.startsWith(r + '/'))
   const isAuthRoute = authRoutes.some(r => pathname === r)
-  const isHome = pathname === '/'
   const isStudio = pathname === '/studio' || pathname.startsWith('/studio/')
 
-  // Fast path: skip auth entirely for public routes (blog posts, survey-results, etc.)
-  if (!isProtected && !isAuthRoute && !isHome && !isStudio) {
+  // Fast path: skip auth entirely for public routes (homepage, blog posts,
+  // survey-results, etc.) so they can be served as edge-cached static HTML.
+  // The homepage's logged-in -> /dashboard redirect is handled client-side
+  // by <HomeRedirect /> so that / never reads cookies on the server.
+  if (!isProtected && !isAuthRoute && !isStudio) {
     return NextResponse.next({ request })
   }
 
@@ -39,7 +41,7 @@ export async function proxy(request) {
   )
 
   // Protected routes and /studio: validate with Supabase server (security critical, must use getUser)
-  // Homepage and auth routes: read session from cookie only — no network call, fast
+  // Auth routes: read session from cookie only — no network call, fast
   let user = null
   if (isProtected || isStudio) {
     const { data } = await supabase.auth.getUser()
@@ -47,10 +49,6 @@ export async function proxy(request) {
   } else {
     const { data } = await supabase.auth.getSession()
     user = data.session?.user ?? null
-  }
-
-  if (isHome && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   if (isProtected && !user) {
