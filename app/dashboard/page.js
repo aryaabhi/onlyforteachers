@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import CopyButton from './CopyButton'
 import { Star, Flame, Trophy, ClipboardList, BookOpen, Gift, MessageSquare } from 'lucide-react'
+import { isCrayolaActive } from '@/lib/crayola'
 
 function weekKeyToAbsoluteWeek(key) {
   const [yearStr, weekStr] = key.split('-W')
@@ -62,6 +63,7 @@ function getGreeting() {
 export default async function DashboardPage({ searchParams }) {
   const params = await searchParams
   const surveyCompleted = params?.survey === 'completed'
+  const crayolaActive = isCrayolaActive()
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -134,6 +136,7 @@ export default async function DashboardPage({ searchParams }) {
       {surveyCompleted && (
         <div className="px-4 sm:px-6 py-3 text-center text-sm font-medium text-white" style={{ backgroundColor: '#16a34a' }}>
           Thank you! Your survey response has been saved and your points have been added.
+          {crayolaActive && ' You have also been entered into the Crayola prize draw.'}
         </div>
       )}
 
@@ -166,9 +169,12 @@ export default async function DashboardPage({ searchParams }) {
             ) : (
               <>
                 <h2 className="text-xl font-bold mb-1">{survey.title}</h2>
-                <p className="text-sm opacity-60 mb-4">Takes ~3 minutes · {survey.points_value ?? 100} points</p>
+                <p className="text-sm opacity-60 mb-4">
+                  Takes ~3 minutes · {survey.points_value ?? 100} points
+                  {crayolaActive && ' · Brought to you by Crayola – win a £300 creative supplies bundle'}
+                </p>
                 <Link
-                  href="/survey"
+                  href={crayolaActive ? '/crayola' : '/survey'}
                   className="inline-block px-6 py-2.5 rounded-full text-sm font-semibold transition-all hover:opacity-90 hover:shadow-md"
                   style={{ backgroundColor: '#C94F2C', textDecoration: 'none', color: '#fff' }}
                 >

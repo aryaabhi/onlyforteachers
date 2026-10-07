@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { surveyHref } from '@/lib/crayola'
 import {
   House,
   ClipboardList,
@@ -20,7 +21,7 @@ import {
 
 const NAV_LINKS = [
   { href: '/dashboard', label: 'Home', icon: House },
-  { href: '/survey', label: "This week's survey", icon: ClipboardList },
+  { href: surveyHref(), label: "This week's survey", icon: ClipboardList },
   { href: '/my-surveys', label: 'Survey history', icon: BarChart },
   { href: '/survey-results', label: 'Insights hub', icon: BookOpen },
   { href: '/offers', label: 'Rewards & points', icon: Gift },
@@ -48,6 +49,7 @@ export default function SidebarNav({ user }) {
 
   function isActive(href) {
     if (href === '/dashboard') return pathname === '/dashboard'
+    if (href === '/crayola') return pathname?.startsWith('/crayola') || pathname?.startsWith('/survey')
     return pathname?.startsWith(href)
   }
 

@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 import { submitSurveyAction } from '@/app/actions/survey'
 
 const LIKERT_OPTIONS = [
@@ -11,7 +13,7 @@ const LIKERT_OPTIONS = [
   'Strongly Disagree',
 ]
 
-export default function SurveyForm({ survey, questions }) {
+export default function SurveyForm({ survey, questions, sponsored = false }) {
   const [answers, setAnswers] = useState({})
   const [unanswered, setUnanswered] = useState(new Set())
   const [submitError, setSubmitError] = useState('')
@@ -75,6 +77,26 @@ export default function SurveyForm({ survey, questions }) {
     <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
       {/* Hero header */}
       <div className="py-12 px-4 text-center text-white" style={{ backgroundColor: '#1B3A2D' }}>
+        {sponsored && (
+          <div className="mb-6">
+            <p className="text-sm font-medium mb-2 opacity-80">Brought to you by</p>
+            <Link href="/crayola" className="inline-block">
+              <Image
+                src="/crayola/logo.png"
+                alt="Crayola"
+                width={504}
+                height={360}
+                className="mx-auto h-12 w-auto"
+              />
+            </Link>
+            <p className="mt-2 text-xs opacity-70">
+              Complete the survey to be entered into the prize draw for a £300 Crayola creative supplies bundle.{' '}
+              <Link href="/crayola/terms" className="underline" style={{ color: 'inherit' }}>
+                T&amp;Cs apply
+              </Link>
+            </p>
+          </div>
+        )}
         <p className="text-xs font-semibold tracking-widest uppercase mb-2 opacity-70">
           This Week&apos;s Survey
         </p>
