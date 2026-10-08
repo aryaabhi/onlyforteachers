@@ -1,4 +1,5 @@
 import { client } from '@/lib/sanity'
+import { isCrayolaActive } from '@/lib/crayola'
 
 export default async function sitemap() {
   const baseUrl = 'https://onlyforteachers.co.uk'
@@ -13,7 +14,7 @@ export default async function sitemap() {
     { url: `${baseUrl}/privacy-policy`, priority: 0.3, changeFrequency: 'yearly' },
     { url: `${baseUrl}/survey-methodology`, priority: 0.5, changeFrequency: 'monthly' },
     { url: `${baseUrl}/ask-a-question`, priority: 0.6, changeFrequency: 'monthly' },
-    { url: `${baseUrl}/crayola`, priority: 0.8, changeFrequency: 'monthly' },
+    ...(isCrayolaActive() ? [{ url: `${baseUrl}/crayola`, priority: 0.8, changeFrequency: 'weekly' }] : []),
   ]
 
   const posts = await client.fetch(

@@ -21,7 +21,7 @@ import {
 
 const NAV_LINKS = [
   { href: '/dashboard', label: 'Home', icon: House },
-  { href: surveyHref(), label: "This week's survey", icon: ClipboardList },
+  { href: '/survey', label: "This week's survey", icon: ClipboardList },
   { href: '/my-surveys', label: 'Survey history', icon: BarChart },
   { href: '/survey-results', label: 'Insights hub', icon: BookOpen },
   { href: '/offers', label: 'Rewards & points', icon: Gift },
@@ -33,6 +33,8 @@ export default function SidebarNav({ user }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
+  // Resolved on every render so the campaign switch-over is picked up immediately
+  const navLinks = NAV_LINKS.map(l => (l.href === '/survey' ? { ...l, href: surveyHref() } : l))
 
   const displayName =
     user?.user_metadata?.first_name ||
@@ -96,7 +98,7 @@ export default function SidebarNav({ user }) {
               />
             </div>
             <div className="flex-1 px-3 py-4 space-y-1">
-              {NAV_LINKS.map((link) => {
+              {navLinks.map((link) => {
                 const Icon = link.icon
                 const active = isActive(link.href)
                 return (
@@ -150,7 +152,7 @@ export default function SidebarNav({ user }) {
         </div>
 
         <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
-          {NAV_LINKS.map((link) => {
+          {navLinks.map((link) => {
             const Icon = link.icon
             const active = isActive(link.href)
             return (

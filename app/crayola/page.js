@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import heroImage from '@/public/crayola/creativity-week.jpg'
+import { isCrayolaActive } from '@/lib/crayola'
 
-export const metadata = {
+const baseMetadata = {
   title: 'Share Your Views and WIN a £300 Crayola Creative Supplies Bundle',
   description:
     'Complete the Crayola Creativity Week teacher survey on Only for Teachers and be entered into a prize draw to win a Crayola bundle of creative supplies worth £300.',
@@ -21,6 +22,11 @@ export const metadata = {
       'Complete the Crayola Creativity Week teacher survey and be entered into a prize draw to win a £300 Crayola creative supplies bundle.',
     images: ['/crayola/creativity-week.jpg'],
   },
+}
+
+// Keep the page out of search results until the campaign is live
+export function generateMetadata() {
+  return { ...baseMetadata, robots: isCrayolaActive() ? { index: true, follow: true } : { index: false, follow: true } }
 }
 
 const PARAGRAPHS = [
