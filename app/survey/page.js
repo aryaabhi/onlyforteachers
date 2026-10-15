@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import SurveyForm from './SurveyForm'
+import { isCrayolaActive } from '@/lib/crayola'
 
 export default async function SurveyPage() {
   const supabase = await createClient()
@@ -88,5 +89,5 @@ export default async function SurveyPage() {
     .eq('survey_id', survey.id)
     .order('position')
 
-  return <SurveyForm survey={survey} questions={questions ?? []} />
+  return <SurveyForm survey={survey} questions={questions ?? []} sponsored={isCrayolaActive()} />
 }

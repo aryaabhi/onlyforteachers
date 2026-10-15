@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import NavbarMobileMenu from './NavbarMobileMenu'
 import SidebarNav from './SidebarNav'
+import { surveyHref } from '@/lib/crayola'
 
 export default function Navbar({ user }) {
   const isLoggedIn = !!user
@@ -32,7 +33,7 @@ export default function Navbar({ user }) {
           <NavLink href="/rewards">Rewards</NavLink>
           <NavLink href="/survey-results">Insights</NavLink>
           <NavLink href="/teacher-index">Index</NavLink>
-          <NavLink href="/survey">Survey</NavLink>
+          <NavLink href={surveyHref()}>Survey</NavLink>
           <NavLink href="/ask-a-question">Ask a Question</NavLink>
           <NavLink href="/login">Log in</NavLink>
           <Link

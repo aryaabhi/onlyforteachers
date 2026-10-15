@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { surveyHref } from '@/lib/crayola'
 
 export default function Footer() {
   return (
@@ -59,7 +60,7 @@ export default function Footer() {
               <FooterLink href="/about">About us</FooterLink>
               <FooterLink href="/rewards">Rewards</FooterLink>
               <FooterLink href="/survey-results">Insights</FooterLink>
-              <FooterLink href="/survey">This week&apos;s survey</FooterLink>
+              <FooterLink href={surveyHref()}>This week&apos;s survey</FooterLink>
               <FooterLink href="/teacher-index">Teacher Pulse Index</FooterLink>
             </ul>
           </div>
