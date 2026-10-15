@@ -26,6 +26,24 @@ function weekKeyToAbsolute(key) {
   return Math.floor(weekDate.getTime() / (7 * 24 * 60 * 60 * 1000))
 }
 
+// Week keys a completion should count towards for streak purposes.
+//
+// Normally that is just the week the teacher submitted in. But a survey that
+// runs longer than the usual Tuesday-to-Monday slot (e.g. a two-week sponsored
+// survey over a school holiday) can only be completed once, so a teacher would
+// otherwise be left with a gap in their streak for the weeks they did not
+// submit in. To avoid penalising them, credit the week of every Tuesday start
+// within the survey window as well as the submission week.
+function surveyStreakWeekKeys(survey, submissionWeekKey) {
+  const keys = new Set([submissionWeekKey])
+  if (!survey?.starts_at || !survey?.ends_at) return [...keys]
+  const end = new Date(survey.ends_at)
+  for (let d = new Date(survey.starts_at); d < end; d.setUTCDate(d.getUTCDate() + 7)) {
+    keys.add(getISOWeekKey(d))
+  }
+  return [...keys]
+}
+
 export async function submitSurveyAction(surveyId, answers) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -43,13 +61,14 @@ export async function submitSurveyAction(surveyId, answers) {
 
   const { data: survey, error: sError } = await supabase
     .from('surveys')
-    .select('points_value')
+    .select('points_value, starts_at, ends_at')
     .eq('id', surveyId)
     .single()
 
   if (sError) throw new Error(sError.message)
 
   const pointsValue = survey?.points_value ?? 100
+  const streakWeekKeys = surveyStreakWeekKeys(survey, weekKey)
 
   const responseInserts = (questions ?? []).map(q => {
     const answer = answers[q.id]
@@ -97,8 +116,12 @@ export async function submitSurveyAction(surveyId, answers) {
 
   await updateBrevoAttributes(user.email, { LASTSURVEY: new Date().toISOString().split('T')[0] })
 
-  // Insert streak week — ignore unique constraint violations
-  await supabase.from('streak_weeks').insert({ user_id: user.id, week_key: weekKey })
+  // Insert streak weeks — one row per week the survey covers. Inserted one at a
+  // time so a unique-constraint violation on an already-credited week does not
+  // block the others.
+  for (const key of streakWeekKeys) {
+    await supabase.from('streak_weeks').insert({ user_id: user.id, week_key: key })
+  }
 
   // Check for 10-consecutive-week streak
   const { data: allStreaks } = await supabase
