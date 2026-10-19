@@ -33,12 +33,17 @@ function weekKeyToAbsolute(key) {
 // survey over a school holiday) can only be completed once, so a teacher would
 // otherwise be left with a gap in their streak for the weeks they did not
 // submit in. To avoid penalising them, credit the week of every Tuesday start
-// within the survey window as well as the submission week.
+// within the survey window as well as the submission week. The walk starts from
+// the first Tuesday on or after starts_at, so a survey that opens early (e.g. on
+// the Monday before its slot) does not also credit the week after it closes.
 function surveyStreakWeekKeys(survey, submissionWeekKey) {
   const keys = new Set([submissionWeekKey])
   if (!survey?.starts_at || !survey?.ends_at) return [...keys]
   const end = new Date(survey.ends_at)
-  for (let d = new Date(survey.starts_at); d < end; d.setUTCDate(d.getUTCDate() + 7)) {
+  const d = new Date(survey.starts_at)
+  d.setUTCHours(0, 0, 0, 0)
+  d.setUTCDate(d.getUTCDate() + ((2 - d.getUTCDay() + 7) % 7)) // next Tuesday (or today if Tuesday)
+  for (; d < end; d.setUTCDate(d.getUTCDate() + 7)) {
     keys.add(getISOWeekKey(d))
   }
   return [...keys]
