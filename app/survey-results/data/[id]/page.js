@@ -56,7 +56,7 @@ export default async function SurveyDataPage({ params }) {
         }
         return { ...q, resultType: 'aggregate', counts, total: (responses ?? []).length, options: q.options ?? [] }
       }
-      if (q.question_type === 'likert_scale') {
+      if (q.question_type === 'likert_scale' || q.question_type === 'radio') {
         const { data: responses } = await supabase
           .from('responses')
           .select('answer')
@@ -65,7 +65,8 @@ export default async function SurveyDataPage({ params }) {
         for (const r of responses ?? []) {
           if (r.answer) counts[r.answer] = (counts[r.answer] ?? 0) + 1
         }
-        return { ...q, resultType: 'aggregate', counts, total: (responses ?? []).length, options: LIKERT_OPTIONS }
+        const options = q.question_type === 'likert_scale' ? LIKERT_OPTIONS : (q.options ?? [])
+        return { ...q, resultType: 'aggregate', counts, total: (responses ?? []).length, options }
       }
       // For text/textarea: show total response count, no individual answers (privacy)
       const { count } = await supabase
