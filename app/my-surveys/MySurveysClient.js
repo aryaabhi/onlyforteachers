@@ -64,15 +64,20 @@ export default function MySurveysClient({ completions, userId }) {
       supabase.from('responses').select('question_id, answer, answer_array, user_id').eq('survey_id', surveyId),
     ])
 
+    // answer_array is non-null (empty array) on every row since Nov 2026, so pick the column by question type
+    const typeById = {}
+    for (const q of questions ?? []) typeById[q.id] = q.question_type
+    const pickAnswer = r => (typeById[r.question_id] === 'checkbox' ? r.answer_array : r.answer)
+
     const myAnswerMap = {}
     for (const r of myResponses ?? []) {
-      myAnswerMap[r.question_id] = r.answer_array ?? r.answer
+      myAnswerMap[r.question_id] = pickAnswer(r)
     }
 
     const aggregateMap = {}
     for (const r of allResponses ?? []) {
       if (!aggregateMap[r.question_id]) aggregateMap[r.question_id] = {}
-      const ans = r.answer_array ?? r.answer
+      const ans = pickAnswer(r)
       if (Array.isArray(ans)) {
         for (const a of ans) {
           aggregateMap[r.question_id][a] = (aggregateMap[r.question_id][a] ?? 0) + 1
@@ -175,7 +180,7 @@ export default function MySurveysClient({ completions, userId }) {
                 {data && data.questions.map((q, i) => {
                   const myAnswer = data.myAnswerMap[q.id]
                   const aggregate = data.aggregateMap[q.id] ?? {}
-                  const isAggregate = q.question_type === 'checkbox' || q.question_type === 'likert_scale'
+                  const isAggregate = q.question_type === 'checkbox' || q.question_type === 'likert_scale' || q.question_type === 'radio'
 
                   const options = q.question_type === 'likert_scale'
                     ? ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree']

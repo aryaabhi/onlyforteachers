@@ -36,7 +36,8 @@ function QuestionResult({ question, responses }) {
     const counts = {}
     for (const opt of options) counts[opt] = 0
     for (const r of qResponses) {
-      const ans = r.answer_array ?? r.answer
+      // answer_array is non-null (empty array) on every row since Nov 2026, so pick the column by question type
+      const ans = question.question_type === 'checkbox' ? r.answer_array : r.answer
       if (Array.isArray(ans)) {
         for (const a of ans) if (a in counts) counts[a]++
       } else if (typeof ans === 'string' && ans in counts) {
