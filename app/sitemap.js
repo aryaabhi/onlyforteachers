@@ -1,8 +1,9 @@
 import { client } from '@/lib/sanity'
-import { isCrayolaActive } from '@/lib/crayola'
+import { activeCampaign } from '@/lib/campaigns'
 
 export default async function sitemap() {
   const baseUrl = 'https://onlyforteachers.co.uk'
+  const campaign = activeCampaign()
 
   const staticPages = [
     { url: baseUrl, priority: 1.0, changeFrequency: 'daily' },
@@ -14,7 +15,7 @@ export default async function sitemap() {
     { url: `${baseUrl}/privacy-policy`, priority: 0.3, changeFrequency: 'yearly' },
     { url: `${baseUrl}/survey-methodology`, priority: 0.5, changeFrequency: 'monthly' },
     { url: `${baseUrl}/ask-a-question`, priority: 0.6, changeFrequency: 'monthly' },
-    ...(isCrayolaActive() ? [{ url: `${baseUrl}/crayola`, priority: 0.8, changeFrequency: 'weekly' }] : []),
+    ...(campaign ? [{ url: `${baseUrl}/${campaign.slug}`, priority: 0.8, changeFrequency: 'weekly' }] : []),
   ]
 
   const posts = await client.fetch(

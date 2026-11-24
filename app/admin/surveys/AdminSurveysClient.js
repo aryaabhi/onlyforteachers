@@ -9,6 +9,8 @@ import { createSurveyAction, addQuestionAction } from '@/app/actions/admin'
 const QUESTION_TYPES = [
   { value: 'likert_scale', label: 'Likert Scale (Strongly Agree → Strongly Disagree)' },
   { value: 'checkbox', label: 'Checkbox (multiple choice)' },
+  { value: 'radio', label: 'Radio (single choice — select one option)' },
+  { value: 'ranking', label: 'Ranking (teacher orders every option by preference)' },
   { value: 'textarea', label: 'Text Area (long answer)' },
   { value: 'text', label: 'Text (short answer)' },
 ]
@@ -333,7 +335,7 @@ function AddQuestionForm({ surveyId, nextPosition, onSubmit, isPending, error })
         </select>
       </div>
 
-      {questionType === 'checkbox' && (
+      {(questionType === 'checkbox' || questionType === 'radio' || questionType === 'ranking') && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Options <span className="text-gray-400 font-normal">(one per line)</span>

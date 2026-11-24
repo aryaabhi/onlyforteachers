@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { surveyHref } from '@/lib/crayola'
+import SurveyLink from './SurveyLink'
 
 export default function Footer() {
   return (
@@ -60,7 +60,9 @@ export default function Footer() {
               <FooterLink href="/about">About us</FooterLink>
               <FooterLink href="/rewards">Rewards</FooterLink>
               <FooterLink href="/survey-results">Insights</FooterLink>
-              <FooterLink href={surveyHref()}>This week&apos;s survey</FooterLink>
+              <li>
+                <SurveyLink className={FOOTER_LINK_CLASS} style={FOOTER_LINK_STYLE}>This week&apos;s survey</SurveyLink>
+              </li>
               <FooterLink href="/teacher-index">Teacher Pulse Index</FooterLink>
             </ul>
           </div>
@@ -106,13 +108,16 @@ export default function Footer() {
   )
 }
 
+const FOOTER_LINK_CLASS = 'text-sm hover:text-white transition-colors'
+const FOOTER_LINK_STYLE = { color: '#D4C9B8', textDecoration: 'none' }
+
 function FooterLink({ href, children }) {
   return (
     <li>
       <Link
         href={href}
-        className="text-sm hover:text-white transition-colors"
-        style={{ color: '#D4C9B8', textDecoration: 'none' }}
+        className={FOOTER_LINK_CLASS}
+        style={FOOTER_LINK_STYLE}
       >
         {children}
       </Link>

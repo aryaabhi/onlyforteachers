@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { summariseRanking } from '@/lib/ranking'
 
 export const revalidate = 3600
 
@@ -56,6 +57,14 @@ export default async function SurveyDataPage({ params }) {
         }
         return { ...q, resultType: 'aggregate', counts, total: (responses ?? []).length, options: q.options ?? [] }
       }
+      if (q.question_type === 'ranking') {
+        const { data: responses } = await supabase
+          .from('responses')
+          .select('answer_array')
+          .eq('question_id', q.id)
+        const ranking = summariseRanking(q.options ?? [], (responses ?? []).map(r => r.answer_array))
+        return { ...q, resultType: 'ranking', ranking }
+      }
       if (q.question_type === 'likert_scale' || q.question_type === 'radio') {
         const { data: responses } = await supabase
           .from('responses')
@@ -104,6 +113,8 @@ export default async function SurveyDataPage({ params }) {
               </p>
               {q.resultType === 'aggregate' ? (
                 <AggregateChart options={q.options} counts={q.counts} total={q.total} />
+              ) : q.resultType === 'ranking' ? (
+                <RankingChart rows={q.ranking.rows} respondents={q.ranking.respondents} />
               ) : (
                 <p className="text-sm text-gray-500">
                   {q.total} open-ended {q.total === 1 ? 'response' : 'responses'} received.
@@ -127,6 +138,28 @@ export default async function SurveyDataPage({ params }) {
         </div>
       </div>
     </main>
+  )
+}
+
+function RankingChart({ rows, respondents }) {
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-gray-500">Ordered by average rank, most preferred first.</p>
+      {rows.map((row, i) => (
+        <div key={row.option}>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-sm text-gray-700">{i + 1}. {row.option}</span>
+            <span className="text-xs text-gray-500">
+              {row.avgRank === null ? '—' : `avg rank ${row.avgRank.toFixed(1)} · 1st choice for ${row.firstCount}`}
+            </span>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-3">
+            <div className="h-3 rounded-full transition-all duration-300" style={{ width: `${row.score}%`, backgroundColor: '#CA9662' }} />
+          </div>
+        </div>
+      ))}
+      <p className="text-xs text-gray-400 mt-1">{respondents} total {respondents === 1 ? 'response' : 'responses'}</p>
+    </div>
   )
 }
 

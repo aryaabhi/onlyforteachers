@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Copy, Check } from 'lucide-react'
+import RankingQuestion from '@/app/components/RankingQuestion'
 
 const LIKERT_OPTIONS = [
   'Strongly Agree',
@@ -182,6 +183,14 @@ export default function SurveyPreviewClient({ survey, questions }) {
                 </div>
               )}
 
+              {q.question_type === 'ranking' && (
+                <RankingQuestion
+                  options={q.options ?? []}
+                  value={answers[q.id]}
+                  onChange={ordered => handleRadioChange(q.id, ordered)}
+                />
+              )}
+
               {q.question_type === 'textarea' && (
                 <textarea
                   value={answers[q.id] ?? ''}
@@ -237,5 +246,6 @@ export default function SurveyPreviewClient({ survey, questions }) {
 function isAnswered(q, answers) {
   const a = answers[q.id]
   if (q.question_type === 'checkbox') return Array.isArray(a) && a.length > 0
+  if (q.question_type === 'ranking') return Array.isArray(a) && a.length === (q.options ?? []).length
   return a !== undefined && a !== ''
 }

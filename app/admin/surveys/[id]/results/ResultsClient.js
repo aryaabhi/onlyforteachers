@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { summariseRanking } from '@/lib/ranking'
 
 const LIKERT_OPTIONS = ['Strongly Agree', 'Agree', 'Neutral', 'Disagree', 'Strongly Disagree']
 const TEXT_PAGE_SIZE = 20
@@ -31,6 +32,29 @@ function QuestionResult({ question, responses }) {
     : (question.options ?? [])
 
   const qResponses = responses.filter(r => r.question_id === question.id)
+
+  if (question.question_type === 'ranking') {
+    const { rows, respondents } = summariseRanking(options, qResponses.map(r => r.answer_array))
+    return (
+      <div>
+        <p className="text-xs text-gray-500 mb-3">Ordered by average rank (1 = most useful).</p>
+        {rows.map((row, i) => (
+          <div key={row.option} className="mb-2">
+            <div className="flex items-center justify-between text-sm mb-1">
+              <span className="text-gray-700">{i + 1}. {row.option}</span>
+              <span className="text-gray-500 text-xs">
+                {row.avgRank === null ? 'no ranks' : `avg rank ${row.avgRank.toFixed(2)} · ranked 1st by ${row.firstCount}`}
+              </span>
+            </div>
+            <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-full rounded-full" style={{ width: `${row.score}%`, backgroundColor: '#CA9662' }} />
+            </div>
+          </div>
+        ))}
+        <p className="text-xs text-gray-400 mt-2">{respondents} response{respondents !== 1 ? 's' : ''}</p>
+      </div>
+    )
+  }
 
   if (isAggregate) {
     const counts = {}

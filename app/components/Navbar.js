@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import NavbarMobileMenu from './NavbarMobileMenu'
 import SidebarNav from './SidebarNav'
-import { surveyHref } from '@/lib/crayola'
+import SurveyLink from './SurveyLink'
 
 export default function Navbar({ user }) {
   const isLoggedIn = !!user
@@ -33,7 +33,7 @@ export default function Navbar({ user }) {
           <NavLink href="/rewards">Rewards</NavLink>
           <NavLink href="/survey-results">Insights</NavLink>
           <NavLink href="/teacher-index">Index</NavLink>
-          <NavLink href={surveyHref()}>Survey</NavLink>
+          <SurveyLink className={NAV_LINK_CLASS} style={{ textDecoration: 'none' }}>Survey</SurveyLink>
           <NavLink href="/ask-a-question">Ask a Question</NavLink>
           <NavLink href="/login">Log in</NavLink>
           <Link
@@ -52,11 +52,13 @@ export default function Navbar({ user }) {
   )
 }
 
+const NAV_LINK_CLASS = 'text-sm font-medium text-[#2C2C2C] hover:text-[#C94F2C] transition-colors whitespace-nowrap'
+
 function NavLink({ href, children }) {
   return (
     <Link
       href={href}
-      className="text-sm font-medium text-[#2C2C2C] hover:text-[#C94F2C] transition-colors whitespace-nowrap"
+      className={NAV_LINK_CLASS}
       style={{ textDecoration: 'none' }}
     >
       {children}

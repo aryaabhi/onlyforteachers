@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { submitSurveyAction } from '@/app/actions/survey'
+import RankingQuestion from '@/app/components/RankingQuestion'
 
 const LIKERT_OPTIONS = [
   'Strongly Agree',
@@ -13,7 +14,7 @@ const LIKERT_OPTIONS = [
   'Strongly Disagree',
 ]
 
-export default function SurveyForm({ survey, questions, sponsored = false }) {
+export default function SurveyForm({ survey, questions, campaign = null }) {
   const [answers, setAnswers] = useState({})
   const [unanswered, setUnanswered] = useState(new Set())
   const [submitError, setSubmitError] = useState('')
@@ -27,7 +28,13 @@ export default function SurveyForm({ survey, questions, sponsored = false }) {
     if (!q) return false
     const a = answers[questionId]
     if (q.question_type === 'checkbox') return Array.isArray(a) && a.length > 0
+    if (q.question_type === 'ranking') return Array.isArray(a) && a.length === (q.options ?? []).length
     return a !== undefined && a !== ''
+  }
+
+  function handleRankingChange(questionId, ordered) {
+    setAnswers(prev => ({ ...prev, [questionId]: ordered }))
+    setUnanswered(prev => { const next = new Set(prev); next.delete(questionId); return next })
   }
 
   function handleCheckboxChange(questionId, option) {
@@ -77,21 +84,21 @@ export default function SurveyForm({ survey, questions, sponsored = false }) {
     <main className="min-h-screen" style={{ backgroundColor: '#F5EDE0' }}>
       {/* Hero header */}
       <div className="py-12 px-4 text-center text-white" style={{ backgroundColor: '#1B3A2D' }}>
-        {sponsored && (
+        {campaign && (
           <div className="mb-6">
             <p className="text-sm font-medium mb-2 opacity-80">Brought to you by</p>
-            <Link href="/crayola" className="inline-block">
+            <Link href={`/${campaign.slug}`} className="inline-block">
               <Image
-                src="/crayola/logo.png"
-                alt="Crayola"
-                width={504}
-                height={360}
-                className="mx-auto h-12 w-auto"
+                src={campaign.logo.src}
+                alt={campaign.logo.alt}
+                width={campaign.logo.width}
+                height={campaign.logo.height}
+                className={`mx-auto ${campaign.logo.className}`}
               />
             </Link>
-            <p className="mt-2 text-xs opacity-70">
-              Complete the survey to be entered into the prize draw for a £300 Crayola creative supplies bundle.{' '}
-              <Link href="/crayola/terms" className="underline" style={{ color: 'inherit' }}>
+            <p className="mt-2 text-xs opacity-70 max-w-md mx-auto">
+              {campaign.surveyBannerText}{' '}
+              <Link href={`/${campaign.slug}/terms`} className="underline" style={{ color: 'inherit' }}>
                 T&amp;Cs apply
               </Link>
             </p>
@@ -199,6 +206,14 @@ export default function SurveyForm({ survey, questions, sponsored = false }) {
                 </div>
               )}
 
+              {q.question_type === 'ranking' && (
+                <RankingQuestion
+                  options={q.options ?? []}
+                  value={answers[q.id]}
+                  onChange={ordered => handleRankingChange(q.id, ordered)}
+                />
+              )}
+
               {q.question_type === 'textarea' && (
                 <textarea
                   value={answers[q.id] ?? ''}
@@ -222,7 +237,9 @@ export default function SurveyForm({ survey, questions, sponsored = false }) {
               )}
 
               {unanswered.has(q.id) && (
-                <p className="mt-2 text-sm text-red-500">This question is required.</p>
+                <p className="mt-2 text-sm text-red-500">
+                  {q.question_type === 'ranking' ? 'Please rank every option.' : 'This question is required.'}
+                </p>
               )}
             </div>
           ))}
