@@ -204,12 +204,19 @@ export default function MicrosoftLandingPage() {
         </dl>
 
         <div className="flex flex-col items-center gap-4">
-          <CtaButton />
-          <p className="text-sm" style={{ color: MUTED }}>
-            Open to educators employed by UK schools, colleges and educational institutions. One entry per person.{' '}
-            <Link href="/microsoft/terms" className="underline" style={{ color: MUTED }}>
-              T&amp;Cs apply
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <CtaButton />
+            <Link
+              href="/microsoft/terms"
+              className="inline-block px-8 py-4 rounded-full text-lg font-semibold border-2 transition-all hover:opacity-80"
+              style={{ borderColor: NAVY, color: NAVY, textDecoration: 'none' }}
+            >
+              Terms &amp; Conditions
             </Link>
+          </div>
+          <p className="text-sm" style={{ color: MUTED }}>
+            Open to educators employed by UK schools, colleges and educational institutions. One entry per person.
+            Prize draw terms and conditions apply.
           </p>
           <p className="text-sm" style={{ color: MUTED }}>
             New to Only for Teachers?{' '}
