@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { surveyHref } from '@/lib/crayola'
+import { surveyHref } from '@/lib/campaigns'
 import {
   House,
   ClipboardList,
@@ -51,7 +51,7 @@ export default function SidebarNav({ user }) {
 
   function isActive(href) {
     if (href === '/dashboard') return pathname === '/dashboard'
-    if (href === '/crayola') return pathname?.startsWith('/crayola') || pathname?.startsWith('/survey')
+    if (href !== '/survey' && href === surveyHref()) return pathname?.startsWith(href) || pathname?.startsWith('/survey')
     return pathname?.startsWith(href)
   }
 

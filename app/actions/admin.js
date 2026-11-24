@@ -70,7 +70,7 @@ export async function addQuestionAction(formData) {
   const default_text = formData.get('defaultText') || null
   const is_required = formData.get('isRequired') !== 'false'
 
-  const options = question_type === 'checkbox' || question_type === 'radio'
+  const options = question_type === 'checkbox' || question_type === 'radio' || question_type === 'ranking'
     ? optionsRaw.split('\n').map(o => o.trim()).filter(Boolean)
     : []
 
@@ -97,7 +97,7 @@ export async function updateQuestionAction(formData) {
   const default_text = formData.get('defaultText') || null
   const is_required = formData.get('isRequired') === 'true'
 
-  const options = question_type === 'checkbox' || question_type === 'radio'
+  const options = question_type === 'checkbox' || question_type === 'radio' || question_type === 'ranking'
     ? optionsRaw.split('\n').map(o => o.trim()).filter(Boolean)
     : []
 

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import heroImage from '@/public/crayola/creativity-week.jpg'
-import { isCrayolaActive } from '@/lib/crayola'
+import { isCampaignActive } from '@/lib/campaigns'
 
 const baseMetadata = {
   title: 'Share Your Views and WIN a £300 Crayola Creative Supplies Bundle',
@@ -26,7 +26,7 @@ const baseMetadata = {
 
 // Keep the page out of search results until the campaign is live
 export function generateMetadata() {
-  return { ...baseMetadata, robots: isCrayolaActive() ? { index: true, follow: true } : { index: false, follow: true } }
+  return { ...baseMetadata, robots: isCampaignActive('crayola') ? { index: true, follow: true } : { index: false, follow: true } }
 }
 
 const PARAGRAPHS = [

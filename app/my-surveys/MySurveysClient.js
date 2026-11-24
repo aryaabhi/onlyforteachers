@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { summariseRanking, formatRankedAnswer } from '@/lib/ranking'
 
 function formatDate(iso) {
   if (!iso) return '—'
@@ -42,6 +43,26 @@ function BarChart({ options, counts, total }) {
   )
 }
 
+function RankingChart({ rows }) {
+  return (
+    <div className="space-y-2 mt-2">
+      {rows.map((row, i) => (
+        <div key={row.option}>
+          <div className="flex items-center justify-between text-xs mb-1">
+            <span className="text-[#2C2C2C]">{i + 1}. {row.option}</span>
+            <span className="text-[#6B6B6B]">
+              {row.avgRank === null ? '—' : `avg rank ${row.avgRank.toFixed(1)}`}
+            </span>
+          </div>
+          <div className="h-2 rounded-full bg-[#F5EDE0] overflow-hidden">
+            <div className="h-full rounded-full transition-all" style={{ width: `${row.score}%`, backgroundColor: '#C94F2C' }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function MySurveysClient({ completions, userId }) {
   const [expandedId, setExpandedId] = useState(null)
   const [resultsCache, setResultsCache] = useState({})
@@ -67,7 +88,8 @@ export default function MySurveysClient({ completions, userId }) {
     // answer_array is non-null (empty array) on every row since Nov 2026, so pick the column by question type
     const typeById = {}
     for (const q of questions ?? []) typeById[q.id] = q.question_type
-    const pickAnswer = r => (typeById[r.question_id] === 'checkbox' ? r.answer_array : r.answer)
+    const isArrayType = t => t === 'checkbox' || t === 'ranking'
+    const pickAnswer = r => (isArrayType(typeById[r.question_id]) ? r.answer_array : r.answer)
 
     const myAnswerMap = {}
     for (const r of myResponses ?? []) {
@@ -75,9 +97,14 @@ export default function MySurveysClient({ completions, userId }) {
     }
 
     const aggregateMap = {}
+    const rankingMap = {}
     for (const r of allResponses ?? []) {
       if (!aggregateMap[r.question_id]) aggregateMap[r.question_id] = {}
       const ans = pickAnswer(r)
+      if (typeById[r.question_id] === 'ranking') {
+        ;(rankingMap[r.question_id] ??= []).push(ans)
+        continue
+      }
       if (Array.isArray(ans)) {
         for (const a of ans) {
           aggregateMap[r.question_id][a] = (aggregateMap[r.question_id][a] ?? 0) + 1
@@ -91,7 +118,7 @@ export default function MySurveysClient({ completions, userId }) {
 
     setResultsCache(prev => ({
       ...prev,
-      [surveyId]: { questions: questions ?? [], myAnswerMap, aggregateMap, totalRespondents },
+      [surveyId]: { questions: questions ?? [], myAnswerMap, aggregateMap, rankingMap, totalRespondents },
     }))
     setLoading(null)
   }
@@ -188,9 +215,13 @@ export default function MySurveysClient({ completions, userId }) {
 
                   const total = Object.values(aggregate).reduce((s, v) => s + v, 0)
 
-                  const myAnswerDisplay = Array.isArray(myAnswer)
-                    ? myAnswer.join(', ')
-                    : (myAnswer ?? '—')
+                  const isRanking = q.question_type === 'ranking'
+                  const myAnswerDisplay = isRanking
+                    ? formatRankedAnswer(myAnswer)
+                    : Array.isArray(myAnswer)
+                      ? myAnswer.join(', ')
+                      : (myAnswer ?? '—')
+                  const ranking = isRanking ? summariseRanking(options, data.rankingMap?.[q.id] ?? []) : null
 
                   return (
                     <div key={q.id}>
@@ -204,6 +235,14 @@ export default function MySurveysClient({ completions, userId }) {
                         <div>
                           <p className="text-xs text-[#6B6B6B] mb-1">All responses ({total} total):</p>
                           <BarChart options={options} counts={aggregate} total={total} />
+                        </div>
+                      )}
+                      {ranking && (
+                        <div>
+                          <p className="text-xs text-[#6B6B6B] mb-1">
+                            How {ranking.respondents} teacher{ranking.respondents !== 1 ? 's' : ''} ranked these, most useful first:
+                          </p>
+                          <RankingChart rows={ranking.rows} />
                         </div>
                       )}
                     </div>

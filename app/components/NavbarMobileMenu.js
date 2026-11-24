@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { surveyHref } from '@/lib/crayola'
+import SurveyLink from './SurveyLink'
 
 export default function NavbarMobileMenu({ isLoggedIn }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -35,7 +35,7 @@ export default function NavbarMobileMenu({ isLoggedIn }) {
             <MobileLink href="/rewards" onClick={close}>Rewards</MobileLink>
             <MobileLink href="/survey-results" onClick={close}>Insights</MobileLink>
             <MobileLink href="/teacher-index" onClick={close}>Teacher Pulse Index</MobileLink>
-            <MobileLink href={surveyHref()} onClick={close}>Survey</MobileLink>
+            <SurveyLink className={MOBILE_LINK_CLASS} style={{ textDecoration: 'none' }} onClick={close}>Survey</SurveyLink>
             <MobileLink href="/ask-a-question" onClick={close}>Ask a Question</MobileLink>
             <div className="my-1.5 border-t border-[#E8DDD0]" />
             <MobileLink href="/login" onClick={close}>Log in</MobileLink>
@@ -54,12 +54,14 @@ export default function NavbarMobileMenu({ isLoggedIn }) {
   )
 }
 
+const MOBILE_LINK_CLASS = 'block px-4 py-2.5 rounded-lg text-sm font-medium text-[#2C2C2C] hover:bg-[#F5EDE0] transition-colors'
+
 function MobileLink({ href, onClick, children }) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className="block px-4 py-2.5 rounded-lg text-sm font-medium text-[#2C2C2C] hover:bg-[#F5EDE0] transition-colors"
+      className={MOBILE_LINK_CLASS}
       style={{ textDecoration: 'none' }}
     >
       {children}

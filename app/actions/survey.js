@@ -83,7 +83,7 @@ export async function submitSurveyAction(surveyId, answers) {
       user_id: user.id,
       submitted_at: now,
     }
-    if (q.question_type === 'checkbox') {
+    if (q.question_type === 'checkbox' || q.question_type === 'ranking') {
       row.answer_array = Array.isArray(answer) ? answer : []
     } else {
       row.answer = answer ?? ''
